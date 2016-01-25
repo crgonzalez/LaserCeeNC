@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE eagle SYSTEM "eagle.dtd">
+<eagle version="7.1.0">
+<drawing>
+<settings>
+<setting alwaysvectorfont="no"/>
+<setting verticaltext="up"/>
+</settings>
+<grid distance="0.05" unitdist="inch" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
+<layers>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
+<layer number="2" name="Route2" color="1" fill="3" visible="no" active="yes"/>
+<layer number="3" name="Route3" color="4" fill="3" visible="no" active="yes"/>
+<layer number="14" name="Route14" color="1" fill="6" visible="no" active="yes"/>
+<layer number="15" name="Route15" color="4" fill="6" visible="no" active="yes"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
+<layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
+<layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
+<layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
+<layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
+<layer number="34" name="bFinish" color="6" fill="6" visible="no" active="yes"/>
+<layer number="35" name="tGlue" color="7" fill="4" visible="no" active="yes"/>
+<layer number="36" name="bGlue" color="7" fill="5" visible="no" active="yes"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="no" active="yes"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="no" active="yes"/>
+<layer number="39" name="tKeepout" color="4" fill="11" visible="yes" active="yes"/>
+<layer number="40" name="bKeepout" color="1" fill="11" visible="yes" active="yes"/>
+<layer number="41" name="tRestrict" color="4" fill="10" visible="yes" active="yes"/>
+<layer number="42" name="bRestrict" color="1" fill="10" visible="yes" active="yes"/>
+<layer number="43" name="vRestrict" color="2" fill="10" visible="yes" active="yes"/>
+<layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
+<layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
+<layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
+<layer number="93" name="Pins" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="94" name="Symbols" color="4" fill="1" visible="yes" active="yes"/>
+<layer number="95" name="Names" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="96" name="Values" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="97" name="Info" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="98" name="Guide" color="6" fill="1" visible="yes" active="yes"/>
+</layers>
+<library>
+<packages>
+<package name="LAUNCHPADXL">
+<pad name="3.3V" x="-22.86" y="8.16" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_03" x="-22.86" y="5.62" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_13_RX" x="-22.86" y="3.08" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_12_TX" x="-22.86" y="0.54" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_06" x="-22.86" y="-2" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_04" x="-22.86" y="-4.54" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_14_SP_CLK" x="-22.86" y="-7.08" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_07" x="-22.86" y="-9.62" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_10" x="-22.86" y="-12.16" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_11" x="-22.86" y="-14.7" drill="0.9144" shape="octagon"/>
+<pad name="5V" x="-20.32" y="8.16" drill="0.9144" shape="octagon"/>
+<pad name="GND1" x="-20.32" y="5.62" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_02" x="-20.32" y="3.08" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_05" x="-20.32" y="0.54" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_03_NC" x="-20.32" y="-2" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_04_NC" x="-20.32" y="-4.54" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_08" x="-20.32" y="-7.08" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_30" x="-20.32" y="-9.62" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_09" x="-20.32" y="-12.16" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_00" x="-20.32" y="-14.7" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_11_NC" x="20.32" y="8.16" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_10_NC" x="20.32" y="5.62" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_24_NC" x="20.32" y="3.08" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_09_GPIO_00_NC" x="20.32" y="0.54" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_25_GPIO_07_NC" x="20.32" y="-2" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_28_NC" x="20.32" y="-4.54" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_07_NC" x="20.32" y="-7.08" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_05_NC" x="20.32" y="-9.62" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_23" x="20.32" y="-12.16" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_24" x="20.32" y="-14.7" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_22" x="22.86" y="-14.7" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_01" x="22.86" y="-12.16" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_25" x="22.86" y="-9.62" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_15_MISO" x="22.86" y="-7.08" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_16_MOSI" x="22.86" y="-4.54" drill="0.9144" shape="octagon"/>
+<pad name="RESET_OUT" x="22.86" y="-2" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_31" x="22.86" y="0.54" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_17_CS" x="22.86" y="3.08" drill="0.9144" shape="octagon"/>
+<pad name="GPIO_28" x="22.86" y="5.62" drill="0.9144" shape="octagon"/>
+<pad name="GND2" x="22.86" y="8.16" drill="0.9144" shape="octagon"/>
+<text x="-5.08" y="0.54" size="1.27" layer="21">LaunchPad XL</text>
+<wire x1="-24.13" y1="9.43" x2="-19.05" y2="9.43" width="0.127" layer="21"/>
+<wire x1="-19.05" y1="9.43" x2="-19.05" y2="-15.97" width="0.127" layer="21"/>
+<wire x1="-19.05" y1="-15.97" x2="-24.13" y2="-15.97" width="0.127" layer="21"/>
+<wire x1="-24.13" y1="-15.97" x2="-24.13" y2="9.43" width="0.127" layer="21"/>
+<wire x1="19.05" y1="9.43" x2="19.05" y2="-15.97" width="0.127" layer="21"/>
+<wire x1="19.05" y1="-15.97" x2="24.13" y2="-15.97" width="0.127" layer="21"/>
+<wire x1="24.13" y1="-15.97" x2="24.13" y2="9.43" width="0.127" layer="21"/>
+<wire x1="24.13" y1="9.43" x2="19.05" y2="9.43" width="0.127" layer="21"/>
+<wire x1="-26.5" y1="23" x2="26.5" y2="23" width="0.127" layer="21"/>
+<wire x1="26.5" y1="23" x2="26.5" y2="-20" width="0.127" layer="21"/>
+<wire x1="26.5" y1="-20" x2="-26.5" y2="-20" width="0.127" layer="21"/>
+<wire x1="-26.5" y1="-20" x2="-26.5" y2="23" width="0.127" layer="21"/>
+<text x="-18.288" y="4.858" size="1.27" layer="21">GND</text>
+<text x="-25.146" y="10.668" size="1.27" layer="21">+3.3V</text>
+</package>
+</packages>
+<symbols>
+<symbol name="LAUNCHPADXL">
+<pin name="3.3V" x="-63.5" y="22.86" length="middle"/>
+<pin name="GPIO_03" x="-63.5" y="17.78" length="middle"/>
+<pin name="GPIO_13" x="-63.5" y="12.7" length="middle"/>
+<pin name="GPIO_12" x="-63.5" y="7.62" length="middle"/>
+<pin name="GPIO_06" x="-63.5" y="2.54" length="middle"/>
+<pin name="GPIO_04" x="-63.5" y="-2.54" length="middle"/>
+<pin name="GPIO_14_SPI_CLK" x="-63.5" y="-7.62" length="middle"/>
+<pin name="GPIO_07" x="-63.5" y="-12.7" length="middle"/>
+<pin name="GPIO_10_I2C_SCL" x="-63.5" y="-17.78" length="middle"/>
+<pin name="GPIO_11_I2C_SDA" x="-63.5" y="-22.86" length="middle"/>
+<wire x1="-58.42" y1="27.94" x2="-58.42" y2="-27.94" width="0.254" layer="94"/>
+<wire x1="-58.42" y1="-27.94" x2="-22.86" y2="-27.94" width="0.254" layer="94"/>
+<wire x1="-22.86" y1="-27.94" x2="-22.86" y2="27.94" width="0.254" layer="94"/>
+<wire x1="-22.86" y1="27.94" x2="-58.42" y2="27.94" width="0.254" layer="94"/>
+<pin name="5V" x="-17.78" y="22.86" length="middle" rot="R180"/>
+<pin name="GND1" x="-17.78" y="17.78" length="middle" rot="R180"/>
+<pin name="GPIO_02" x="-17.78" y="12.7" length="middle" rot="R180"/>
+<pin name="GPIO_05" x="-17.78" y="7.62" length="middle" rot="R180"/>
+<pin name="GPIO_03_NC" x="-17.78" y="2.54" length="middle" rot="R180"/>
+<pin name="GPIO_04_NC" x="-17.78" y="-2.54" length="middle" rot="R180"/>
+<pin name="GPIO_08" x="-17.78" y="-7.62" length="middle" rot="R180"/>
+<pin name="GPIO_30" x="-17.78" y="-12.7" length="middle" rot="R180"/>
+<pin name="GPIO_09" x="-17.78" y="-17.78" length="middle" rot="R180"/>
+<pin name="GPIO_00" x="-17.78" y="-22.86" length="middle" rot="R180"/>
+<pin name="GPIO_11_NC" x="17.78" y="22.86" length="middle"/>
+<pin name="GPIO_10_NC" x="17.78" y="17.78" length="middle"/>
+<pin name="GPIO_24_NC" x="17.78" y="12.7" length="middle"/>
+<pin name="GPIO_09_NC" x="17.78" y="7.62" length="middle"/>
+<pin name="GPIO_25_NC" x="17.78" y="2.54" length="middle"/>
+<pin name="GPIO_28_NC" x="17.78" y="-2.54" length="middle"/>
+<pin name="GPIO_07_NC" x="17.78" y="-7.62" length="middle"/>
+<pin name="GPIO_05_NC" x="17.78" y="-12.7" length="middle"/>
+<pin name="GPIO_23" x="17.78" y="-17.78" length="middle"/>
+<pin name="GPIO_24" x="17.78" y="-22.86" length="middle"/>
+<wire x1="22.86" y1="27.94" x2="22.86" y2="-27.94" width="0.254" layer="94"/>
+<wire x1="22.86" y1="-27.94" x2="60.96" y2="-27.94" width="0.254" layer="94"/>
+<wire x1="60.96" y1="-27.94" x2="60.96" y2="27.94" width="0.254" layer="94"/>
+<wire x1="60.96" y1="27.94" x2="22.86" y2="27.94" width="0.254" layer="94"/>
+<pin name="GND2" x="66.04" y="22.86" length="middle" rot="R180"/>
+<pin name="GPIO_28" x="66.04" y="17.78" length="middle" rot="R180"/>
+<pin name="GPIO_17" x="66.04" y="12.7" length="middle" rot="R180"/>
+<pin name="GPIO_31" x="66.04" y="7.62" length="middle" rot="R180"/>
+<pin name="RESET_OUT" x="66.04" y="2.54" length="middle" rot="R180"/>
+<pin name="GPIO_16_MOSI" x="66.04" y="-2.54" length="middle" rot="R180"/>
+<pin name="GPIO_15_MISO" x="66.04" y="-7.62" length="middle" rot="R180"/>
+<pin name="GPIO_25" x="66.04" y="-12.7" length="middle" rot="R180"/>
+<pin name="GPIO_01" x="66.04" y="-17.78" length="middle" rot="R180"/>
+<pin name="GPIO_22" x="66.04" y="-22.86" length="middle" rot="R180"/>
+<text x="-5.08" y="0" size="1.27" layer="94">LaunchPad XL</text>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="XL">
+<gates>
+<gate name="G$1" symbol="LAUNCHPADXL" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="LAUNCHPADXL">
+<connects>
+<connect gate="G$1" pin="3.3V" pad="3.3V"/>
+<connect gate="G$1" pin="5V" pad="5V"/>
+<connect gate="G$1" pin="GND1" pad="GND1"/>
+<connect gate="G$1" pin="GND2" pad="GND2"/>
+<connect gate="G$1" pin="GPIO_00" pad="GPIO_00"/>
+<connect gate="G$1" pin="GPIO_01" pad="GPIO_01"/>
+<connect gate="G$1" pin="GPIO_02" pad="GPIO_02"/>
+<connect gate="G$1" pin="GPIO_03" pad="GPIO_03"/>
+<connect gate="G$1" pin="GPIO_03_NC" pad="GPIO_03_NC"/>
+<connect gate="G$1" pin="GPIO_04" pad="GPIO_04"/>
+<connect gate="G$1" pin="GPIO_04_NC" pad="GPIO_04_NC"/>
+<connect gate="G$1" pin="GPIO_05" pad="GPIO_05"/>
+<connect gate="G$1" pin="GPIO_05_NC" pad="GPIO_05_NC"/>
+<connect gate="G$1" pin="GPIO_06" pad="GPIO_06"/>
+<connect gate="G$1" pin="GPIO_07" pad="GPIO_07"/>
+<connect gate="G$1" pin="GPIO_07_NC" pad="GPIO_07_NC"/>
+<connect gate="G$1" pin="GPIO_08" pad="GPIO_08"/>
+<connect gate="G$1" pin="GPIO_09" pad="GPIO_09"/>
+<connect gate="G$1" pin="GPIO_09_NC" pad="GPIO_09_GPIO_00_NC"/>
+<connect gate="G$1" pin="GPIO_10_I2C_SCL" pad="GPIO_10"/>
+<connect gate="G$1" pin="GPIO_10_NC" pad="GPIO_10_NC"/>
+<connect gate="G$1" pin="GPIO_11_I2C_SDA" pad="GPIO_11"/>
+<connect gate="G$1" pin="GPIO_11_NC" pad="GPIO_11_NC"/>
+<connect gate="G$1" pin="GPIO_12" pad="GPIO_12_TX"/>
+<connect gate="G$1" pin="GPIO_13" pad="GPIO_13_RX"/>
+<connect gate="G$1" pin="GPIO_14_SPI_CLK" pad="GPIO_14_SP_CLK"/>
+<connect gate="G$1" pin="GPIO_15_MISO" pad="GPIO_15_MISO"/>
+<connect gate="G$1" pin="GPIO_16_MOSI" pad="GPIO_16_MOSI"/>
+<connect gate="G$1" pin="GPIO_17" pad="GPIO_17_CS"/>
+<connect gate="G$1" pin="GPIO_22" pad="GPIO_22"/>
+<connect gate="G$1" pin="GPIO_23" pad="GPIO_23"/>
+<connect gate="G$1" pin="GPIO_24" pad="GPIO_24"/>
+<connect gate="G$1" pin="GPIO_24_NC" pad="GPIO_24_NC"/>
+<connect gate="G$1" pin="GPIO_25" pad="GPIO_25"/>
+<connect gate="G$1" pin="GPIO_25_NC" pad="GPIO_25_GPIO_07_NC"/>
+<connect gate="G$1" pin="GPIO_28" pad="GPIO_28"/>
+<connect gate="G$1" pin="GPIO_28_NC" pad="GPIO_28_NC"/>
+<connect gate="G$1" pin="GPIO_30" pad="GPIO_30"/>
+<connect gate="G$1" pin="GPIO_31" pad="GPIO_31"/>
+<connect gate="G$1" pin="RESET_OUT" pad="RESET_OUT"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
+</drawing>
+</eagle>
