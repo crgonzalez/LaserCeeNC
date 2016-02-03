@@ -7174,6 +7174,8 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <part name="U$6" library="ChristiansCustom" deviceset="CON_6X2_254MM" device=""/>
 <part name="GND12" library="supply1" deviceset="GND" device=""/>
 <part name="U$5" library="ChristiansCustom" deviceset="CON_2X3_254MM" device=""/>
+<part name="U$7" library="ChristiansCustom" deviceset="CON_2X3_254MM" device=""/>
+<part name="GND13" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -7191,7 +7193,7 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <text x="195.58" y="127" size="1.778" layer="91" rot="R90">NC</text>
 <text x="200.66" y="127" size="1.778" layer="91" rot="R90">NC</text>
 <text x="314.96" y="251.46" size="1.778" layer="91">Headers</text>
-<text x="383.54" y="254" size="1.778" layer="91">Reset</text>
+<text x="304.8" y="322.58" size="1.778" layer="91">Reset</text>
 <text x="330.2" y="223.52" size="1.27" layer="91">NC</text>
 <text x="335.28" y="241.3" size="1.27" layer="91">ARM 2mm JTAG</text>
 <text x="330.2" y="203.2" size="1.27" layer="91">Connector To Laser Control Board</text>
@@ -7204,6 +7206,7 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <text x="251.46" y="127" size="1.778" layer="91" rot="R90">NC</text>
 <text x="256.54" y="236.22" size="1.778" layer="91" rot="R90">NC</text>
 <text x="355.6" y="187.96" size="1.778" layer="91" rot="R180">NC</text>
+<text x="396.24" y="241.3" size="1.27" layer="91">Debug Header</text>
 </plain>
 <instances>
 <instance part="U$1" gate="G$1" x="205.74" y="182.88" smashed="yes">
@@ -7229,9 +7232,9 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <instance part="L1" gate="G$1" x="200.66" y="256.54" rot="R180"/>
 <instance part="C2" gate="G$1" x="185.42" y="254"/>
 <instance part="U$2" gate="G$1" x="162.56" y="281.94" rot="R180"/>
-<instance part="R6" gate="G$1" x="401.32" y="218.44" rot="R90"/>
-<instance part="U$3" gate="G$1" x="401.32" y="231.14" rot="R90"/>
-<instance part="GND9" gate="1" x="401.32" y="210.82"/>
+<instance part="R6" gate="G$1" x="322.58" y="287.02" rot="R90"/>
+<instance part="U$3" gate="G$1" x="322.58" y="299.72" rot="R90"/>
+<instance part="GND9" gate="1" x="322.58" y="279.4"/>
 <instance part="U$4" gate="G$1" x="340.36" y="226.06"/>
 <instance part="GND10" gate="1" x="325.12" y="213.36"/>
 <instance part="GND11" gate="1" x="317.5" y="195.58"/>
@@ -7243,6 +7246,8 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <instance part="U$6" gate="G$1" x="345.44" y="157.48"/>
 <instance part="GND12" gate="1" x="327.66" y="167.64"/>
 <instance part="U$5" gate="G$1" x="342.9" y="190.5"/>
+<instance part="U$7" gate="G$1" x="401.32" y="228.6"/>
+<instance part="GND13" gate="1" x="414.02" y="223.52"/>
 </instances>
 <busses>
 </busses>
@@ -7283,6 +7288,16 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <pinref part="U$6" gate="G$1" pin="2"/>
 <wire x1="353.06" y1="162.56" x2="355.6" y2="162.56" width="0.1524" layer="91"/>
 <label x="355.6" y="162.56" size="1.27" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="U$7" gate="G$1" pin="4"/>
+<wire x1="408.94" y1="228.6" x2="411.48" y2="228.6" width="0.1524" layer="91"/>
+<wire x1="411.48" y1="228.6" x2="411.48" y2="231.14" width="0.1524" layer="91"/>
+<pinref part="U$7" gate="G$1" pin="2"/>
+<wire x1="411.48" y1="231.14" x2="408.94" y2="231.14" width="0.1524" layer="91"/>
+<wire x1="411.48" y1="231.14" x2="411.48" y2="233.68" width="0.1524" layer="91"/>
+<junction x="411.48" y="231.14"/>
+<label x="411.48" y="233.68" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -7444,6 +7459,11 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <pinref part="GND12" gate="1" pin="GND"/>
 <wire x1="332.74" y1="170.18" x2="327.66" y2="170.18" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="U$7" gate="G$1" pin="6"/>
+<pinref part="GND13" gate="1" pin="GND"/>
+<wire x1="408.94" y1="226.06" x2="414.02" y2="226.06" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="N$4" class="0">
 <segment>
@@ -7489,6 +7509,11 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <junction x="132.08" y="187.96"/>
 <label x="132.08" y="190.5" size="1.778" layer="95" xref="yes"/>
 </segment>
+<segment>
+<pinref part="U$7" gate="G$1" pin="5"/>
+<wire x1="393.7" y1="226.06" x2="391.16" y2="226.06" width="0.1524" layer="91"/>
+<label x="391.16" y="226.06" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
 </net>
 <net name="JTAG_TDO" class="0">
 <segment>
@@ -7523,6 +7548,11 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <junction x="215.9" y="243.84"/>
 <label x="215.9" y="246.38" size="1.778" layer="95" rot="R90" xref="yes"/>
 </segment>
+<segment>
+<pinref part="U$7" gate="G$1" pin="3"/>
+<wire x1="393.7" y1="228.6" x2="391.16" y2="228.6" width="0.1524" layer="91"/>
+<label x="391.16" y="228.6" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
 </net>
 <net name="N_RST" class="0">
 <segment>
@@ -7535,8 +7565,8 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 </segment>
 <segment>
 <pinref part="U$3" gate="G$1" pin="2"/>
-<wire x1="401.32" y1="236.22" x2="401.32" y2="243.84" width="0.1524" layer="91"/>
-<label x="401.32" y="243.84" size="1.778" layer="95" rot="R90" xref="yes"/>
+<wire x1="322.58" y1="304.8" x2="322.58" y2="312.42" width="0.1524" layer="91"/>
+<label x="322.58" y="312.42" size="1.778" layer="95" rot="R90" xref="yes"/>
 </segment>
 <segment>
 <pinref part="U$4" gate="G$1" pin="10"/>
@@ -7568,7 +7598,7 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <segment>
 <pinref part="R6" gate="G$1" pin="2"/>
 <pinref part="U$3" gate="G$1" pin="1"/>
-<wire x1="401.32" y1="223.52" x2="401.32" y2="226.06" width="0.1524" layer="91"/>
+<wire x1="322.58" y1="292.1" x2="322.58" y2="294.64" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="LSR_EN" class="0">
@@ -7724,6 +7754,11 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <pinref part="U$1" gate="G$1" pin="48_GPIO3"/>
 <wire x1="271.78" y1="187.96" x2="274.32" y2="187.96" width="0.1524" layer="91"/>
 <label x="274.32" y="187.96" size="1.778" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="U$7" gate="G$1" pin="1"/>
+<wire x1="393.7" y1="231.14" x2="391.16" y2="231.14" width="0.1524" layer="91"/>
+<label x="391.16" y="231.14" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="TILT" class="0">

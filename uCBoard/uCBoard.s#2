@@ -6893,10 +6893,10 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <pad name="7" x="2" y="-1" drill="0.8"/>
 <pad name="9" x="4" y="-1" drill="0.8"/>
 <pad name="10" x="4" y="1" drill="0.8"/>
-<wire x1="-5" y1="2" x2="-5" y2="-2" width="0.127" layer="20"/>
-<wire x1="-5" y1="-2" x2="5" y2="-2" width="0.127" layer="20"/>
-<wire x1="5" y1="-2" x2="5" y2="2" width="0.127" layer="20"/>
-<wire x1="5" y1="2" x2="-5" y2="2" width="0.127" layer="20"/>
+<wire x1="-5" y1="2" x2="-5" y2="-2" width="0.127" layer="21"/>
+<wire x1="-5" y1="-2" x2="5" y2="-2" width="0.127" layer="21"/>
+<wire x1="5" y1="-2" x2="5" y2="2" width="0.127" layer="21"/>
+<wire x1="5" y1="2" x2="-5" y2="2" width="0.127" layer="21"/>
 </package>
 <package name="CON_6X2_254MM">
 <pad name="5" x="-1.27" y="-1.27" drill="1.02"/>
@@ -6911,22 +6911,22 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <pad name="12" x="6.35" y="1.27" drill="1.02"/>
 <pad name="10" x="3.81" y="1.27" drill="1.02"/>
 <pad name="1" x="-6.35" y="-1.27" drill="1.02" shape="square"/>
-<wire x1="-7.62" y1="2.54" x2="-7.62" y2="-2.54" width="0.127" layer="20"/>
-<wire x1="-7.62" y1="-2.54" x2="7.62" y2="-2.54" width="0.127" layer="20"/>
-<wire x1="7.62" y1="-2.54" x2="7.62" y2="2.54" width="0.127" layer="20"/>
-<wire x1="7.62" y1="2.54" x2="-7.62" y2="2.54" width="0.127" layer="20"/>
+<wire x1="-7.62" y1="2.54" x2="-7.62" y2="-2.54" width="0.127" layer="21"/>
+<wire x1="-7.62" y1="-2.54" x2="7.62" y2="-2.54" width="0.127" layer="21"/>
+<wire x1="7.62" y1="-2.54" x2="7.62" y2="2.54" width="0.127" layer="21"/>
+<wire x1="7.62" y1="2.54" x2="-7.62" y2="2.54" width="0.127" layer="21"/>
 </package>
 <package name="CON_2X3_254MM">
-<pad name="1" x="-1.27" y="-1.27" drill="1.02" shape="square"/>
-<pad name="2" x="-1.27" y="1.27" drill="1.02"/>
-<pad name="4" x="1.27" y="1.27" drill="1.02"/>
-<pad name="3" x="1.27" y="-1.27" drill="1.02"/>
-<wire x1="-2.54" y1="2.54" x2="-2.54" y2="-2.54" width="0.3" layer="21"/>
-<wire x1="-2.54" y1="-2.54" x2="5.08" y2="-2.54" width="0.3" layer="21"/>
-<wire x1="5.08" y1="-2.54" x2="5.08" y2="2.54" width="0.3" layer="21"/>
-<wire x1="5.08" y1="2.54" x2="-2.54" y2="2.54" width="0.3" layer="21"/>
-<pad name="6" x="3.81" y="1.27" drill="1.02"/>
-<pad name="5" x="3.81" y="-1.27" drill="1.02"/>
+<pad name="1" x="-2.54" y="-1.27" drill="1.02" shape="square"/>
+<pad name="2" x="-2.54" y="1.27" drill="1.02"/>
+<pad name="4" x="0" y="1.27" drill="1.02"/>
+<pad name="3" x="0" y="-1.27" drill="1.02"/>
+<wire x1="-3.81" y1="2.54" x2="-3.81" y2="-2.54" width="0.3" layer="21"/>
+<wire x1="-3.81" y1="-2.54" x2="3.81" y2="-2.54" width="0.3" layer="21"/>
+<wire x1="3.81" y1="-2.54" x2="3.81" y2="2.54" width="0.3" layer="21"/>
+<wire x1="3.81" y1="2.54" x2="-3.81" y2="2.54" width="0.3" layer="21"/>
+<pad name="6" x="2.54" y="1.27" drill="1.02"/>
+<pad name="5" x="2.54" y="-1.27" drill="1.02"/>
 </package>
 <package name="2201778-1">
 <smd name="VDD" x="0.55" y="-0.7" dx="0.8" dy="1.4" layer="1" rot="R180"/>

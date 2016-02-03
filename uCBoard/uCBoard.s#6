@@ -7207,6 +7207,7 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <text x="256.54" y="236.22" size="1.778" layer="91" rot="R90">NC</text>
 <text x="355.6" y="187.96" size="1.778" layer="91" rot="R180">NC</text>
 <text x="396.24" y="241.3" size="1.27" layer="91">Debug Header</text>
+<text x="396.24" y="205.74" size="1.27" layer="91">Programming Header</text>
 </plain>
 <instances>
 <instance part="U$1" gate="G$1" x="205.74" y="182.88" smashed="yes">
