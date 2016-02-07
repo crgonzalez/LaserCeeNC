@@ -1444,22 +1444,6 @@ for trimmer refence see : &lt;u&gt;www.electrospec-inc.com/cross_references/trim
 <rectangle x1="0.3556" y1="-0.7239" x2="1.1057" y2="0.7262" layer="51"/>
 <rectangle x1="-0.1001" y1="-0.4001" x2="0.1001" y2="0.4001" layer="35"/>
 </package>
-<package name="C1206">
-<description>&lt;b&gt;CAPACITOR&lt;/b&gt;</description>
-<wire x1="-2.473" y1="0.983" x2="2.473" y2="0.983" width="0.0508" layer="39"/>
-<wire x1="2.473" y1="-0.983" x2="-2.473" y2="-0.983" width="0.0508" layer="39"/>
-<wire x1="-2.473" y1="-0.983" x2="-2.473" y2="0.983" width="0.0508" layer="39"/>
-<wire x1="2.473" y1="0.983" x2="2.473" y2="-0.983" width="0.0508" layer="39"/>
-<wire x1="-0.965" y1="0.787" x2="0.965" y2="0.787" width="0.1016" layer="51"/>
-<wire x1="-0.965" y1="-0.787" x2="0.965" y2="-0.787" width="0.1016" layer="51"/>
-<smd name="1" x="-1.4" y="0" dx="1.6" dy="1.8" layer="1"/>
-<smd name="2" x="1.4" y="0" dx="1.6" dy="1.8" layer="1"/>
-<text x="-1.27" y="1.27" size="1.27" layer="25">&gt;NAME</text>
-<text x="-1.27" y="-2.54" size="1.27" layer="27">&gt;VALUE</text>
-<rectangle x1="-1.7018" y1="-0.8509" x2="-0.9517" y2="0.8491" layer="51"/>
-<rectangle x1="0.9517" y1="-0.8491" x2="1.7018" y2="0.8509" layer="51"/>
-<rectangle x1="-0.1999" y1="-0.4001" x2="0.1999" y2="0.4001" layer="35"/>
-</package>
 <package name="C1210">
 <description>&lt;b&gt;CAPACITOR&lt;/b&gt;</description>
 <wire x1="-2.473" y1="1.483" x2="2.473" y2="1.483" width="0.0508" layer="39"/>
@@ -4489,6 +4473,22 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <rectangle x1="-0.15" y1="0.05" x2="0.15" y2="0.1" layer="51"/>
 <rectangle x1="-0.15" y1="-0.1" x2="0.15" y2="-0.05" layer="51"/>
 </package>
+<package name="C1206">
+<description>&lt;b&gt;CAPACITOR&lt;/b&gt;</description>
+<wire x1="-2.473" y1="0.983" x2="2.473" y2="0.983" width="0.0508" layer="39"/>
+<wire x1="2.473" y1="-0.983" x2="-2.473" y2="-0.983" width="0.0508" layer="39"/>
+<wire x1="-2.473" y1="-0.983" x2="-2.473" y2="0.983" width="0.0508" layer="39"/>
+<wire x1="2.473" y1="0.983" x2="2.473" y2="-0.983" width="0.0508" layer="39"/>
+<wire x1="-0.965" y1="0.787" x2="0.965" y2="0.787" width="0.1016" layer="51"/>
+<wire x1="-0.965" y1="-0.787" x2="0.965" y2="-0.787" width="0.1016" layer="51"/>
+<smd name="1" x="-1.4" y="0" dx="1.6" dy="1.8" layer="1"/>
+<smd name="2" x="1.4" y="0" dx="1.6" dy="1.8" layer="1"/>
+<text x="-1.27" y="1.27" size="0.6096" layer="25">&gt;NAME</text>
+<text x="-1.27" y="-1.905" size="0.6096" layer="27">&gt;VALUE</text>
+<rectangle x1="-1.7018" y1="-0.8509" x2="-0.9517" y2="0.8491" layer="51"/>
+<rectangle x1="0.9517" y1="-0.8491" x2="1.7018" y2="0.8509" layer="51"/>
+<rectangle x1="-0.1999" y1="-0.4001" x2="0.1999" y2="0.4001" layer="35"/>
+</package>
 </packages>
 <symbols>
 <symbol name="C-US">
@@ -6091,39 +6091,39 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <pad name="2" x="-5.08" y="0" drill="3"/>
 <pad name="1" x="-5.08" y="-5.08" drill="3"/>
 <pad name="3" x="-5.08" y="5.08" drill="3"/>
-<circle x="0" y="0" radius="12" width="1.27" layer="20"/>
+<circle x="0" y="0" radius="12" width="1.27" layer="21"/>
 <text x="2.54" y="5.08" size="5" layer="51">+</text>
 <text x="2.54" y="-7.62" size="5" layer="51">-</text>
 </package>
 <package name="KEYSTONE3527">
 <pad name="P$1" x="-11.684" y="0" drill="1.9812"/>
 <pad name="P$2" x="11.684" y="0" drill="1.9812"/>
-<wire x1="-13.97" y1="3.175" x2="-13.97" y2="-3.175" width="0.254" layer="20"/>
-<wire x1="13.97" y1="3.175" x2="13.97" y2="-3.175" width="0.254" layer="20"/>
-<wire x1="-12.7" y1="3.175" x2="12.7" y2="3.175" width="0.254" layer="20"/>
-<wire x1="12.7" y1="-3.175" x2="-12.7" y2="-3.175" width="0.254" layer="20"/>
+<wire x1="-13.97" y1="3.175" x2="-13.97" y2="-3.175" width="0.254" layer="21"/>
+<wire x1="13.97" y1="3.175" x2="13.97" y2="-3.175" width="0.254" layer="21"/>
+<wire x1="-12.7" y1="3.175" x2="12.7" y2="3.175" width="0.254" layer="21"/>
+<wire x1="12.7" y1="-3.175" x2="-12.7" y2="-3.175" width="0.254" layer="21"/>
 </package>
 <package name="CON_2X3_254MM">
-<pad name="1" x="-1.27" y="-1.27" drill="1.02" shape="square"/>
-<pad name="2" x="-1.27" y="1.27" drill="1.02"/>
-<pad name="4" x="1.27" y="1.27" drill="1.02"/>
-<pad name="3" x="1.27" y="-1.27" drill="1.02"/>
-<wire x1="-2.54" y1="2.54" x2="-2.54" y2="-2.54" width="0.3" layer="21"/>
-<wire x1="-2.54" y1="-2.54" x2="5.08" y2="-2.54" width="0.3" layer="21"/>
-<wire x1="5.08" y1="-2.54" x2="5.08" y2="2.54" width="0.3" layer="21"/>
-<wire x1="5.08" y1="2.54" x2="-2.54" y2="2.54" width="0.3" layer="21"/>
-<pad name="6" x="3.81" y="1.27" drill="1.02"/>
-<pad name="5" x="3.81" y="-1.27" drill="1.02"/>
+<pad name="1" x="-2.54" y="-1.27" drill="1.02" shape="square"/>
+<pad name="2" x="-2.54" y="1.27" drill="1.02"/>
+<pad name="4" x="0" y="1.27" drill="1.02"/>
+<pad name="3" x="0" y="-1.27" drill="1.02"/>
+<wire x1="-3.81" y1="2.54" x2="-3.81" y2="-2.54" width="0.3" layer="21"/>
+<wire x1="-3.81" y1="-2.54" x2="3.81" y2="-2.54" width="0.3" layer="21"/>
+<wire x1="3.81" y1="-2.54" x2="3.81" y2="2.54" width="0.3" layer="21"/>
+<wire x1="3.81" y1="2.54" x2="-3.81" y2="2.54" width="0.3" layer="21"/>
+<pad name="6" x="2.54" y="1.27" drill="1.02"/>
+<pad name="5" x="2.54" y="-1.27" drill="1.02"/>
 </package>
 <package name="DSBA1H">
 <pad name="E" x="5.95" y="0" drill="1.3"/>
 <pad name="C" x="-5.95" y="0" drill="1.3"/>
 <pad name="+" x="5.95" y="3.1" drill="1.3"/>
 <pad name="-" x="-5.95" y="5.1" drill="1.3"/>
-<wire x1="-8" y1="7" x2="-8" y2="-2" width="0.127" layer="20"/>
-<wire x1="-8" y1="-2" x2="8" y2="-2" width="0.127" layer="20"/>
-<wire x1="8" y1="-2" x2="8" y2="7" width="0.127" layer="20"/>
-<wire x1="8" y1="7" x2="-8" y2="7" width="0.127" layer="20"/>
+<wire x1="-8" y1="7" x2="-8" y2="-2" width="0.127" layer="21"/>
+<wire x1="-8" y1="-2" x2="8" y2="-2" width="0.127" layer="21"/>
+<wire x1="8" y1="-2" x2="8" y2="7" width="0.127" layer="21"/>
+<wire x1="8" y1="7" x2="-8" y2="7" width="0.127" layer="21"/>
 </package>
 </packages>
 <symbols>
@@ -8235,21 +8235,23 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <classes>
 <class number="0" name="default" width="0" drill="0">
 </class>
+<class number="1" name="Laser 5v" width="0" drill="0">
+</class>
 </classes>
 <parts>
 <part name="U$1" library="UA7805CKTTR" deviceset="UA7805CKTTR" device=""/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
 <part name="GND3" library="supply1" deviceset="GND" device=""/>
-<part name="U$2" library="LMS8117AMP-3_3NOPB" deviceset="LMS8117AMP-3.3/NOPB" device=""/>
+<part name="3.3V-REG" library="LMS8117AMP-3_3NOPB" deviceset="LMS8117AMP-3.3/NOPB" device=""/>
 <part name="C1" library="rcl" deviceset="C-US" device="C0805" value="0.33uF"/>
 <part name="C2" library="rcl" deviceset="C-US" device="C0805" value="0.1uF"/>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
-<part name="J1" library="PJ-002AH-SMT-TR" deviceset="PJ-002AH-SMT-TR" device=""/>
+<part name="12V-PWR" library="PJ-002AH-SMT-TR" deviceset="PJ-002AH-SMT-TR" device=""/>
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
-<part name="U$3" library="ChristiansCustom" deviceset="CAPACITOR_POL_0805" device="" value="10uF Tantalum"/>
-<part name="U$4" library="ChristiansCustom" deviceset="CAPACITOR_POL_0805" device="" value="10UF Tantalum"/>
+<part name="U$3" library="ChristiansCustom" deviceset="CAPACITOR_POL_0805" device="" value="10uF Tant."/>
+<part name="U$4" library="ChristiansCustom" deviceset="CAPACITOR_POL_0805" device="" value="10uF Tant."/>
 <part name="U$5" library="ChristiansCustom" deviceset="LB16CKW01-5C-JC" device=""/>
 <part name="GND7" library="supply1" deviceset="GND" device=""/>
 <part name="R1" library="rcl" deviceset="R-US_" device="R0805" value="510Ω 1/2W"/>
@@ -8259,8 +8261,8 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <part name="C3" library="rcl" deviceset="C-US" device="C0805" value="22uF"/>
 <part name="GND9" library="supply1" deviceset="GND" device=""/>
 <part name="R2" library="rcl" deviceset="R-US_" device="R0805" value="10K"/>
-<part name="X1" library="con-molex" deviceset="22-23-2021" device=""/>
-<part name="X2" library="con-molex" deviceset="22-23-2021" device=""/>
+<part name="LASER" library="con-molex" deviceset="22-23-2021" device=""/>
+<part name="FAN" library="con-molex" deviceset="22-23-2021" device=""/>
 <part name="GND10" library="supply1" deviceset="GND" device=""/>
 <part name="GND11" library="supply1" deviceset="GND" device=""/>
 <part name="GND12" library="supply1" deviceset="GND" device=""/>
@@ -8295,12 +8297,12 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <instance part="GND1" gate="1" x="320.04" y="66.04"/>
 <instance part="GND2" gate="1" x="215.9" y="45.72"/>
 <instance part="GND3" gate="1" x="314.96" y="43.18"/>
-<instance part="U$2" gate="A" x="228.6" y="121.92"/>
+<instance part="3.3V-REG" gate="A" x="228.6" y="121.92"/>
 <instance part="C1" gate="G$1" x="215.9" y="55.88"/>
 <instance part="C2" gate="G$1" x="314.96" y="53.34"/>
 <instance part="GND4" gate="1" x="215.9" y="124.46"/>
 <instance part="GND5" gate="1" x="302.26" y="86.36"/>
-<instance part="J1" gate="G$1" x="76.2" y="127"/>
+<instance part="12V-PWR" gate="G$1" x="76.2" y="127"/>
 <instance part="GND6" gate="1" x="93.98" y="114.3"/>
 <instance part="U$3" gate="G$1" x="302.26" y="99.06"/>
 <instance part="U$4" gate="G$1" x="314.96" y="109.22"/>
@@ -8313,10 +8315,10 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <instance part="C3" gate="G$1" x="162.56" y="66.04"/>
 <instance part="GND9" gate="1" x="162.56" y="53.34"/>
 <instance part="R2" gate="G$1" x="71.12" y="73.66" rot="R90"/>
-<instance part="X1" gate="-1" x="302.26" y="200.66"/>
-<instance part="X1" gate="-2" x="302.26" y="198.12"/>
-<instance part="X2" gate="-1" x="299.72" y="172.72"/>
-<instance part="X2" gate="-2" x="299.72" y="170.18"/>
+<instance part="LASER" gate="-1" x="302.26" y="200.66"/>
+<instance part="LASER" gate="-2" x="302.26" y="198.12"/>
+<instance part="FAN" gate="-1" x="299.72" y="172.72"/>
+<instance part="FAN" gate="-2" x="299.72" y="170.18"/>
 <instance part="GND10" gate="1" x="292.1" y="195.58"/>
 <instance part="GND11" gate="1" x="289.56" y="165.1"/>
 <instance part="GND12" gate="1" x="215.9" y="198.12"/>
@@ -8363,7 +8365,7 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <pinref part="C2" gate="G$1" pin="2"/>
 </segment>
 <segment>
-<pinref part="U$2" gate="A" pin="ADJ/GND"/>
+<pinref part="3.3V-REG" gate="A" pin="ADJ/GND"/>
 <wire x1="228.6" y1="121.92" x2="223.52" y2="121.92" width="0.1524" layer="91"/>
 <wire x1="223.52" y1="121.92" x2="223.52" y2="129.54" width="0.1524" layer="91"/>
 <wire x1="223.52" y1="129.54" x2="215.9" y2="129.54" width="0.1524" layer="91"/>
@@ -8381,11 +8383,11 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <pinref part="U$4" gate="G$1" pin="-"/>
 </segment>
 <segment>
-<pinref part="J1" gate="G$1" pin="3"/>
+<pinref part="12V-PWR" gate="G$1" pin="3"/>
 <pinref part="GND6" gate="1" pin="GND"/>
 <wire x1="81.28" y1="127" x2="93.98" y2="127" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="127" x2="93.98" y2="121.92" width="0.1524" layer="91"/>
-<pinref part="J1" gate="G$1" pin="2"/>
+<pinref part="12V-PWR" gate="G$1" pin="2"/>
 <wire x1="93.98" y1="121.92" x2="93.98" y2="116.84" width="0.1524" layer="91"/>
 <wire x1="81.28" y1="121.92" x2="93.98" y2="121.92" width="0.1524" layer="91"/>
 <junction x="93.98" y="121.92"/>
@@ -8403,12 +8405,12 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <wire x1="162.56" y1="55.88" x2="162.56" y2="60.96" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="X1" gate="-2" pin="S"/>
+<pinref part="LASER" gate="-2" pin="S"/>
 <pinref part="GND10" gate="1" pin="GND"/>
 <wire x1="299.72" y1="198.12" x2="292.1" y2="198.12" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="X2" gate="-2" pin="S"/>
+<pinref part="FAN" gate="-2" pin="S"/>
 <pinref part="GND11" gate="1" pin="GND"/>
 <wire x1="297.18" y1="170.18" x2="289.56" y2="170.18" width="0.1524" layer="91"/>
 <wire x1="289.56" y1="170.18" x2="289.56" y2="167.64" width="0.1524" layer="91"/>
@@ -8446,9 +8448,9 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <wire x1="314.96" y1="121.92" x2="299.72" y2="121.92" width="0.1524" layer="91"/>
 <wire x1="314.96" y1="121.92" x2="314.96" y2="137.16" width="0.1524" layer="91"/>
 <junction x="314.96" y="121.92"/>
-<pinref part="U$2" gate="A" pin="VOUT_2"/>
+<pinref part="3.3V-REG" gate="A" pin="VOUT_2"/>
 <wire x1="228.6" y1="119.38" x2="210.82" y2="119.38" width="0.1524" layer="91"/>
-<pinref part="U$2" gate="A" pin="VOUT"/>
+<pinref part="3.3V-REG" gate="A" pin="VOUT"/>
 <wire x1="294.64" y1="121.92" x2="299.72" y2="121.92" width="0.1524" layer="91"/>
 <junction x="299.72" y="121.92"/>
 <label x="314.96" y="137.16" size="1.778" layer="95" rot="R180" xref="yes"/>
@@ -8476,7 +8478,7 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <label x="152.4" y="198.12" size="1.778" layer="95" rot="MR90" xref="yes"/>
 </segment>
 </net>
-<net name="+5V" class="0">
+<net name="+5V" class="1">
 <segment>
 <wire x1="314.96" y1="55.88" x2="314.96" y2="58.42" width="0.1524" layer="91"/>
 <pinref part="U$1" gate="A" pin="OUTPUT"/>
@@ -8497,7 +8499,7 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <label x="83.82" y="71.12" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="X2" gate="-1" pin="S"/>
+<pinref part="FAN" gate="-1" pin="S"/>
 <wire x1="297.18" y1="172.72" x2="289.56" y2="172.72" width="0.1524" layer="91"/>
 <label x="289.56" y="172.72" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -8533,7 +8535,7 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <wire x1="302.26" y1="104.14" x2="302.26" y2="101.6" width="0.1524" layer="91"/>
 <wire x1="302.26" y1="119.38" x2="302.26" y2="104.14" width="0.1524" layer="91"/>
 <junction x="302.26" y="104.14"/>
-<pinref part="U$2" gate="A" pin="VIN"/>
+<pinref part="3.3V-REG" gate="A" pin="VIN"/>
 <wire x1="294.64" y1="119.38" x2="302.26" y2="119.38" width="0.1524" layer="91"/>
 <label x="274.32" y="104.14" size="1.778" layer="95" rot="R180" xref="yes"/>
 <pinref part="U$3" gate="G$1" pin="+"/>
@@ -8566,7 +8568,7 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 </net>
 <net name="N$2" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="1"/>
+<pinref part="12V-PWR" gate="G$1" pin="1"/>
 <pinref part="U$6" gate="G$1" pin="1"/>
 <wire x1="81.28" y1="132.08" x2="93.98" y2="132.08" width="0.1524" layer="91"/>
 </segment>
@@ -8578,7 +8580,7 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <wire x1="106.68" y1="132.08" x2="142.24" y2="132.08" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="LSR_PWR" class="0">
+<net name="LSR_PWR" class="1">
 <segment>
 <pinref part="U$7" gate="A" pin="OUT_2"/>
 <wire x1="149.86" y1="68.58" x2="152.4" y2="68.58" width="0.1524" layer="91"/>
@@ -8598,7 +8600,7 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <label x="165.1" y="73.66" size="1.778" layer="95" xref="yes"/>
 </segment>
 <segment>
-<pinref part="X1" gate="-1" pin="S"/>
+<pinref part="LASER" gate="-1" pin="S"/>
 <wire x1="299.72" y1="200.66" x2="292.1" y2="200.66" width="0.1524" layer="91"/>
 <label x="292.1" y="200.66" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
