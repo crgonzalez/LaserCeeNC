@@ -7281,6 +7281,10 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 </variantdefs>
 <classes>
 <class number="0" name="Default" width="0" drill="0">
+<clearance class="0" value="0.254"/>
+</class>
+<class number="1" name="Antenna" width="0" drill="0">
+<clearance class="1" value="0.127"/>
 </class>
 </classes>
 <parts>
@@ -7464,7 +7468,7 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <label x="401.32" y="154.94" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="GND" class="0">
+<net name="GND" class="1">
 <segment>
 <pinref part="GND2" gate="1" pin="GND"/>
 <pinref part="U$1" gate="G$1" pin="1_GND"/>
@@ -7776,14 +7780,14 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <label x="353.06" y="220.98" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="N$3" class="0">
+<net name="N$3" class="1">
 <segment>
 <pinref part="U$1" gate="G$1" pin="31_RF_BG"/>
 <pinref part="L1" gate="G$1" pin="1"/>
 <wire x1="200.66" y1="233.68" x2="200.66" y2="248.92" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$5" class="0">
+<net name="N$5" class="1">
 <segment>
 <pinref part="C2" gate="G$1" pin="1"/>
 <wire x1="185.42" y1="256.54" x2="185.42" y2="266.7" width="0.1524" layer="91"/>

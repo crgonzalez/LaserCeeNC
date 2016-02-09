@@ -6945,6 +6945,9 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <smd name="GND@4" x="-5.065" y="8.96" dx="0.65" dy="1.6" layer="1"/>
 <smd name="SWB" x="-4.84" y="10.465" dx="1.1" dy="0.45" layer="1"/>
 <smd name="SWA" x="-4.815" y="11.125" dx="1.15" dy="0.45" layer="1"/>
+<rectangle x1="-4.34" y1="-3.65" x2="-3.16" y2="-3.05" layer="41"/>
+<rectangle x1="-4.55" y1="2.09" x2="4.45" y2="7.62" layer="41"/>
+<rectangle x1="5.31" y1="3.45" x2="6.71" y2="6.95" layer="41"/>
 </package>
 </packages>
 <symbols>
@@ -7277,7 +7280,7 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <variantdefs>
 </variantdefs>
 <classes>
-<class number="0" name="default" width="0" drill="0">
+<class number="0" name="Default" width="0" drill="0">
 </class>
 </classes>
 <parts>
