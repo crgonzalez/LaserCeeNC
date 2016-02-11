@@ -6490,7 +6490,7 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <part name="U$6" library="ChristiansCustom" deviceset="FUSE_KEYSTONE_3527" device=""/>
 <part name="U$7" library="TPS2023D" deviceset="TPS2023_D_8" device=""/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
-<part name="C3" library="rcl" deviceset="C-US" device="C0805"/>
+<part name="C3" library="rcl" deviceset="C-US" device="C0805" value="22uF"/>
 <part name="GND9" library="supply1" deviceset="GND" device=""/>
 <part name="R2" library="rcl" deviceset="R-US_" device="R0805" value="10K"/>
 <part name="X1" library="con-molex" deviceset="22-23-2021" device=""/>
@@ -6513,6 +6513,7 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <text x="152.4" y="213.36" size="1.778" layer="91">To uC Board</text>
 <text x="149.86" y="66.04" size="1.778" layer="91">NC</text>
 <text x="165.1" y="193.04" size="1.778" layer="91">NC</text>
+<text x="154.94" y="132.08" size="1.778" layer="91">NC</text>
 </plain>
 <instances>
 <instance part="U$1" gate="A" x="236.22" y="60.96"/>
@@ -6602,17 +6603,6 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <junction x="93.98" y="121.92"/>
 </segment>
 <segment>
-<pinref part="U$5" gate="G$1" pin="3"/>
-<pinref part="GND7" gate="1" pin="GND"/>
-<wire x1="152.4" y1="132.08" x2="160.02" y2="132.08" width="0.1524" layer="91"/>
-<wire x1="160.02" y1="132.08" x2="177.8" y2="132.08" width="0.1524" layer="91"/>
-<wire x1="177.8" y1="132.08" x2="177.8" y2="124.46" width="0.1524" layer="91"/>
-<pinref part="U$5" gate="G$1" pin="-"/>
-<wire x1="152.4" y1="129.54" x2="160.02" y2="129.54" width="0.1524" layer="91"/>
-<wire x1="160.02" y1="129.54" x2="160.02" y2="132.08" width="0.1524" layer="91"/>
-<junction x="160.02" y="132.08"/>
-</segment>
-<segment>
 <pinref part="GND8" gate="1" pin="GND"/>
 <wire x1="83.82" y1="81.28" x2="91.44" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="91.44" y1="81.28" x2="91.44" y2="73.66" width="0.1524" layer="91"/>
@@ -6641,6 +6631,12 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <wire x1="142.24" y1="205.74" x2="134.62" y2="205.74" width="0.1524" layer="91"/>
 <pinref part="GND12" gate="1" pin="GND"/>
 <pinref part="U$8" gate="G$1" pin="1"/>
+</segment>
+<segment>
+<pinref part="GND7" gate="1" pin="GND"/>
+<wire x1="177.8" y1="124.46" x2="177.8" y2="129.54" width="0.1524" layer="91"/>
+<pinref part="U$5" gate="G$1" pin="-"/>
+<wire x1="177.8" y1="129.54" x2="152.4" y2="129.54" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="+3V3" class="0">

@@ -3362,7 +3362,7 @@ design rules under a new name.</description>
 <attribute name="VALUE" x="11.9126" y="10.795" size="1.27" layer="27" ratio="6" rot="SR0"/>
 </element>
 <element name="U$8" library="ChristiansCustom" package="CON_2X3_254MM" value="CON_2X3_254MM" x="66.04" y="56.388" locked="yes" rot="R270"/>
-<element name="U$9" library="ChristiansCustom" package="DSBA1H" value="DSBA1H" x="48.514" y="52.832"/>
+<element name="U$9" library="ChristiansCustom" package="DSBA1H" value="DSDA1H" x="48.514" y="52.832"/>
 <element name="LASER" library="con-molex" package="22-23-2021" value="22-23-2021" x="12.7" y="3.048" smashed="yes" rot="R180">
 <attribute name="OC_NEWARK" value="25C3832" x="12.7" y="3.048" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="OC_FARNELL" value="1462926" x="12.7" y="3.048" size="1.778" layer="27" rot="R180" display="off"/>

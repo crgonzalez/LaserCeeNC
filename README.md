@@ -1,7 +1,4 @@
 # LaserCeeNC
 Team 8 Senior Thesis Project code
 
-Isaac's test commit
-
-Group test commit
-
+Prototype Version 1 - Completed as of 2/10/16

@@ -4483,8 +4483,8 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <wire x1="-0.965" y1="-0.787" x2="0.965" y2="-0.787" width="0.1016" layer="51"/>
 <smd name="1" x="-1.4" y="0" dx="1.6" dy="1.8" layer="1"/>
 <smd name="2" x="1.4" y="0" dx="1.6" dy="1.8" layer="1"/>
-<text x="-1.27" y="1.27" size="0.6096" layer="25">&gt;NAME</text>
-<text x="-1.27" y="-1.905" size="0.6096" layer="27">&gt;VALUE</text>
+<text x="-1.27" y="1.27" size="1.27" layer="25">&gt;NAME</text>
+<text x="-1.27" y="-2.54" size="1.27" layer="27">&gt;VALUE</text>
 <rectangle x1="-1.7018" y1="-0.8509" x2="-0.9517" y2="0.8491" layer="51"/>
 <rectangle x1="0.9517" y1="-0.8491" x2="1.7018" y2="0.8509" layer="51"/>
 <rectangle x1="-0.1999" y1="-0.4001" x2="0.1999" y2="0.4001" layer="35"/>
@@ -6337,7 +6337,7 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="DSDA1H">
+<deviceset name="DSBA1H">
 <gates>
 <gate name="G$1" symbol="TILT-SWITCH" x="0" y="0"/>
 </gates>
@@ -8270,7 +8270,7 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <part name="Q1" library="m-pad-2.1" deviceset="BSS138" device=""/>
 <part name="R3" library="rcl" deviceset="R-US_" device="R0805" value="10K"/>
 <part name="R4" library="rcl" deviceset="R-US_" device="R0805" value="10K"/>
-<part name="U$9" library="ChristiansCustom" deviceset="DSDA1H" device=""/>
+<part name="U$9" library="ChristiansCustom" deviceset="DSBA1H" device=""/>
 <part name="R5" library="rcl" deviceset="R-US_" device="R0805" value="200"/>
 <part name="R6" library="rcl" deviceset="R-US_" device="R0805" value="100K"/>
 <part name="GND13" library="supply1" deviceset="GND" device=""/>
@@ -8291,6 +8291,7 @@ Please send any comments to: &lt;a href="mailto:messi@users.sourceforge.net"&gt;
 <text x="154.94" y="132.08" size="1.778" layer="91">NC</text>
 <text x="91.44" y="213.36" size="1.778" layer="91">Tilt Sensor</text>
 <text x="132.08" y="213.36" size="1.778" layer="91">Level Shifter</text>
+<text x="22.86" y="35.56" size="6.4516" layer="91">Laser Controller Board</text>
 </plain>
 <instances>
 <instance part="U$1" gate="A" x="236.22" y="60.96"/>

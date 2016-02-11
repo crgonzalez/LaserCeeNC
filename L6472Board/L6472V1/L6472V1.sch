@@ -7455,6 +7455,7 @@ W = angled&lt;p&gt;
 <sheets>
 <sheet>
 <plain>
+<text x="-55.88" y="-119.38" size="6.4516" layer="91">Motor Controller Board</text>
 </plain>
 <instances>
 <instance part="X_L6472" gate="G$1" x="50.8" y="50.8"/>

@@ -636,7 +636,7 @@
 </device>
 </devices>
 </deviceset>
-<deviceset name="DSDA1H">
+<deviceset name="DSBA1H">
 <gates>
 <gate name="G$1" symbol="TILT-SWITCH" x="0" y="0"/>
 </gates>
