@@ -2863,7 +2863,7 @@ design rules under a new name.</description>
 <wire x1="63.1825" y1="9.8425" x2="64.4525" y2="11.1125" width="0.762" layer="1"/>
 <wire x1="64.4525" y1="11.1125" x2="64.4525" y2="25.0825" width="0.762" layer="1"/>
 <wire x1="64.4525" y1="25.0825" x2="64.135" y2="25.4" width="0.762" layer="1"/>
-<wire x1="20.32" y1="17.78" x2="17.78" y2="17.78" width="0" layer="19" extent="1-1"/>
+<wire x1="17.78" y1="17.78" x2="20.32" y2="17.78" width="0.762" layer="1"/>
 </signal>
 <signal name="GND" class="1">
 <contactref element="U$1" pad="P1"/>
