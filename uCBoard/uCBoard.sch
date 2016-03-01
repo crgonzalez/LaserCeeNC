@@ -11171,7 +11171,7 @@ Source: AVX .. aphvc.pdf</description>
 <label x="355.6" y="149.86" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="SPI_CS" class="0">
+<net name="SPI_CLK" class="0">
 <segment>
 <pinref part="U$6" gate="G$1" pin="3"/>
 <wire x1="337.82" y1="160.02" x2="335.28" y2="160.02" width="0.1524" layer="91"/>
@@ -11243,7 +11243,7 @@ Source: AVX .. aphvc.pdf</description>
 <label x="220.98" y="129.54" size="1.778" layer="95" rot="R270" xref="yes"/>
 </segment>
 </net>
-<net name="SPI_MISO" class="0">
+<net name="SPI_MOSI" class="0">
 <segment>
 <pinref part="U$6" gate="G$1" pin="9"/>
 <wire x1="337.82" y1="152.4" x2="335.28" y2="152.4" width="0.1524" layer="91"/>
@@ -11255,7 +11255,7 @@ Source: AVX .. aphvc.pdf</description>
 <label x="231.14" y="129.54" size="1.778" layer="95" rot="R270" xref="yes"/>
 </segment>
 </net>
-<net name="SPI_CLK" class="0">
+<net name="SPI_CS" class="0">
 <segment>
 <pinref part="U$6" gate="G$1" pin="7"/>
 <wire x1="337.82" y1="154.94" x2="335.28" y2="154.94" width="0.1524" layer="91"/>
@@ -11265,18 +11265,6 @@ Source: AVX .. aphvc.pdf</description>
 <pinref part="U$1" gate="G$1" pin="8_GPIO17"/>
 <wire x1="226.06" y1="132.08" x2="226.06" y2="129.54" width="0.1524" layer="91"/>
 <label x="226.06" y="129.54" size="1.778" layer="95" rot="R270" xref="yes"/>
-</segment>
-</net>
-<net name="SPI_MOSI" class="0">
-<segment>
-<pinref part="U$6" gate="G$1" pin="5"/>
-<wire x1="337.82" y1="157.48" x2="335.28" y2="157.48" width="0.1524" layer="91"/>
-<label x="335.28" y="157.48" size="1.27" layer="95" rot="R180" xref="yes"/>
-</segment>
-<segment>
-<pinref part="U$1" gate="G$1" pin="6_GPIO15"/>
-<wire x1="236.22" y1="132.08" x2="236.22" y2="129.54" width="0.1524" layer="91"/>
-<label x="236.22" y="129.54" size="1.778" layer="95" rot="R270" xref="yes"/>
 </segment>
 </net>
 <net name="UART0_TX" class="0">
@@ -11361,6 +11349,18 @@ Source: AVX .. aphvc.pdf</description>
 <pinref part="U$8" gate="G$1" pin="CLK"/>
 <wire x1="406.4" y1="152.4" x2="401.32" y2="152.4" width="0.1524" layer="91"/>
 <label x="401.32" y="152.4" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="SPI_MISO" class="0">
+<segment>
+<pinref part="U$1" gate="G$1" pin="6_GPIO15"/>
+<wire x1="236.22" y1="132.08" x2="236.22" y2="129.54" width="0.1524" layer="91"/>
+<label x="236.22" y="129.54" size="1.778" layer="95" rot="R270" xref="yes"/>
+</segment>
+<segment>
+<pinref part="U$6" gate="G$1" pin="5"/>
+<wire x1="337.82" y1="157.48" x2="335.28" y2="157.48" width="0.1524" layer="91"/>
+<label x="335.28" y="157.48" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 </nets>

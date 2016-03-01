@@ -370,7 +370,7 @@ UsedLibrary="E:/Senior Thesis/LaserCeeNC/ChristiansEagleLibs/SparkfunLibs/User-S
 
 [Win_1]
 Type="Control Panel"
-Loc="960 0 1903 1000"
+Loc="0 0 1919 1016"
 State=2
 Number=0
 
