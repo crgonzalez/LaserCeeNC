@@ -6605,7 +6605,7 @@ Source: &lt;a href="http://www.farnell.com/datasheets/461166.pdf"&gt; Data sheet
 <part name="U$4" library="ChristiansCustom" deviceset="CAPACITOR_POL_0805" device="" value="10uF Tant."/>
 <part name="U$5" library="ChristiansCustom" deviceset="LB16CKW01-5C-JC" device=""/>
 <part name="GND7" library="supply1" deviceset="GND" device=""/>
-<part name="R1" library="rcl" deviceset="R-US_" device="R0805" value="155"/>
+<part name="R1" library="rcl" deviceset="R-US_" device="R0805" value="510"/>
 <part name="U$6" library="ChristiansCustom" deviceset="FUSE_KEYSTONE_3527" device=""/>
 <part name="U$7" library="TPS2023D" deviceset="TPS2023_D_8" device=""/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
@@ -6879,11 +6879,6 @@ Source: &lt;a href="http://www.farnell.com/datasheets/461166.pdf"&gt; Data sheet
 <junction x="76.2" y="198.12"/>
 <label x="76.2" y="203.2" size="1.778" layer="95" rot="MR90" xref="yes"/>
 </segment>
-<segment>
-<pinref part="R1" gate="G$1" pin="2"/>
-<wire x1="127" y1="114.3" x2="121.92" y2="114.3" width="0.1524" layer="91"/>
-<label x="121.92" y="114.3" size="1.27" layer="95" rot="R180" xref="yes"/>
-</segment>
 </net>
 <net name="+12V" class="0">
 <segment>
@@ -6915,6 +6910,11 @@ Source: &lt;a href="http://www.farnell.com/datasheets/461166.pdf"&gt; Data sheet
 <wire x1="246.38" y1="195.58" x2="248.92" y2="195.58" width="0.1524" layer="91"/>
 <label x="248.92" y="195.58" size="1.778" layer="95" xref="yes"/>
 <pinref part="U$8" gate="G$1" pin="2"/>
+</segment>
+<segment>
+<pinref part="R1" gate="G$1" pin="2"/>
+<wire x1="127" y1="114.3" x2="121.92" y2="114.3" width="0.1524" layer="91"/>
+<label x="121.92" y="114.3" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="N$2" class="0">
