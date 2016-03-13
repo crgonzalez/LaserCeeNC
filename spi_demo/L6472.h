@@ -10,6 +10,9 @@
 
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
+
+typedef enum DIRECTION { POSITIVE, NEGATIVE } direction_t;
 
 void L6472_init( void );
 
@@ -23,5 +26,11 @@ int x_get_max_speed( void );
 
 void y_set_max_speed( uint16_t speed );
 int y_get_max_speed( void );
+
+void y_set_speed( uint32_t speed );
+int y_get_speed( void );
+
+void y_run( direction_t dir, uint32_t speed );
+void y_move( direction_t dir, uint32_t steps );
 
 #endif /* L6472_H_ */

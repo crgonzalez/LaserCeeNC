@@ -225,11 +225,18 @@ void MasterMain()
     //
 
     // Set max speed
-    x_set_max_speed( 0x0201 );
+    x_set_max_speed( 0x03ff );
     Report( "\n\rx max speed: %d", x_get_max_speed() );
 
-    y_set_max_speed( 0x0201 );
+    y_set_max_speed( 0x03ff );
     Report( "\n\ry max speed: %d", y_get_max_speed() );
+
+    y_move( FORWARD, 0x0fff );
+    y_move( REVERSE, 0x0fff );
+    y_move( FORWARD, 0x0fff );
+    y_move( REVERSE, 0x0fff );
+    y_move( FORWARD, 0x0fff );
+    y_move( REVERSE, 0x0fff );
 
     /*Report("\n\r0x07, 0x07: %d", L6472_spi_txrx( 0x07, 0x07 ));
     Report("\n\r0x03, 0x03: %d", L6472_spi_txrx( 0x03, 0x03 ));

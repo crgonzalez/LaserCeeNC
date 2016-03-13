@@ -117,4 +117,69 @@ int y_get_max_speed( void ) {
 	return speed;
 }
 
+void y_set_speed( uint32_t speed ) {
+	// Truncate speed to 20 bits
+	speed &= 0x000fffff;
+	// Command
+	y_byte_txrx( 0x04 );
+	// MSByte
+	y_byte_txrx( (uint8_t)( (speed >> 16) & 0xff) );
+	// Middle Byte
+	y_byte_txrx( (uint8_t)( (speed >> 8) & 0xff) );
+	// LSByte
+	y_byte_txrx( (uint8_t)(speed & 0xff) );
+}
+
+int y_get_speed( void ) {
+	int speed = 0;
+	// Command
+	y_byte_txrx( 0x24 );
+	// nops while reading
+	speed = (int)( y_byte_txrx( 0x00 ) );
+	speed <<= 8;
+	speed += (int)( y_byte_txrx( 0x00 ) );
+	speed <<= 8;
+	speed += (int)( y_byte_txrx( 0x00 ) );
+
+	return speed;
+}
+
+void y_run( direction_t dir, uint32_t speed ) {
+	//Choose directional command
+	if( dir == POSITIVE ) {
+		y_byte_txrx( 0x51 );
+	} else {
+		y_byte_txrx( 0x50 );
+	}
+
+	// Truncate speed to 20 bits
+	speed &= 0x000fffff;
+
+	// MSByte
+	y_byte_txrx( (uint8_t)( (speed >> 16) & 0xff) );
+	// Middle Byte
+	y_byte_txrx( (uint8_t)( (speed >> 8) & 0xff) );
+	// LSByte
+	y_byte_txrx( (uint8_t)(speed & 0xff) );
+}
+
+void y_move( direction_t dir, uint32_t steps ) {
+	//Choose directional command
+	if( dir == POSITIVE ) {
+		y_byte_txrx( 0x41 );
+	} else {
+		y_byte_txrx( 0x40 );
+	}
+
+	// Truncate steps to 20 bits
+	steps &= 0x000fffff;
+
+	// MSByte
+	y_byte_txrx( (uint8_t)( (steps >> 16) & 0xff) );
+	// Middle Byte
+	y_byte_txrx( (uint8_t)( (steps >> 8) & 0xff) );
+	// LSByte
+	y_byte_txrx( (uint8_t)(steps & 0xff) );
+}
+
 
