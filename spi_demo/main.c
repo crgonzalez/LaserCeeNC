@@ -74,6 +74,9 @@
 #include "uart_if.h"
 #include "pinmux.h"
 
+// My includes
+#include "L6472.h"
+
 
 #define APPLICATION_VERSION     "1.1.1"
 //*****************************************************************************
@@ -86,7 +89,7 @@
 //*****************************************************************************
 #define MASTER_MODE      1
 
-#define SPI_IF_BIT_RATE  100000
+#define SPI_IF_BIT_RATE  25000
 #define TR_BUFF_SIZE     100
 
 #define MASTER_MSG       "This is CC3200 SPI Master Application\n\r"
@@ -183,11 +186,11 @@ void MasterMain()
     //
     MAP_SPIConfigSetExpClk(GSPI_BASE,MAP_PRCMPeripheralClockGet(PRCM_GSPI),
                      SPI_IF_BIT_RATE,SPI_MODE_MASTER,SPI_SUB_MODE_3,
-                     (SPI_SW_CTRL_CS |
+					 (SPI_SW_CTRL_CS |//(SPI_HW_CTRL_CS |
                      SPI_4PIN_MODE |
                      SPI_TURBO_OFF |
                      SPI_CS_ACTIVELOW |
-                     SPI_WL_8));
+					 SPI_WL_8));
 
     //
     // Enable SPI for communication
@@ -220,15 +223,85 @@ void MasterMain()
     //
     // My own spi message
     //
-    memcpy(g_ucTxBuff,"ab",sizeof("ab"));
-    MAP_SPITransfer(GSPI_BASE,g_ucTxBuff,g_ucRxBuff,2,
-                SPI_CS_ENABLE|SPI_CS_DISABLE);
 
-    //
-    // Report to the user
-    //
-    Report("\n\rSend      %s",g_ucTxBuff);
-    Report("Received  %s",g_ucRxBuff);
+    // Set max speed
+    x_set_max_speed( 0x0000 );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x0001 );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x0002 );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x0003 );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x0004 );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x0005 );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x0006 );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x0007 );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x0008 );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x0009 );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x000a );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x000b );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x000c );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x000d );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x000e );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    x_set_max_speed( 0x000f );
+    Report("\n\rx max speed: %d", x_get_max_speed());
+
+    /*x_set_max_speed( 0x0000 );
+    y_set_max_speed( 0x0000 );
+
+    Report("\n\rx max speed: %d", x_get_max_speed());
+    Report("\n\ry max speed: %d", y_get_max_speed());
+
+    x_set_max_speed( 0x0001 );
+    y_set_max_speed( 0x0001 );
+
+    Report("\n\rx max speed: %d", x_get_max_speed());
+    Report("\n\ry max speed: %d", y_get_max_speed());
+
+    x_set_max_speed( 0x0002 );
+    y_set_max_speed( 0x0002 );
+
+    Report("\n\rx max speed: %d", x_get_max_speed());
+    Report("\n\ry max speed: %d", y_get_max_speed());
+
+    x_set_max_speed( 0x0003 );
+    y_set_max_speed( 0x0003 );
+
+    Report("\n\rx max speed: %d", x_get_max_speed());
+    Report("\n\ry max speed: %d", y_get_max_speed());
+
+    x_set_max_speed( 0x0018 );
+    y_set_max_speed( 0x0018 );
+
+    Report("\n\rx max speed: %d", x_get_max_speed());
+    Report("\n\ry max speed: %d", y_get_max_speed());*/
 
     //
     // Print a message
