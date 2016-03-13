@@ -225,83 +225,34 @@ void MasterMain()
     //
 
     // Set max speed
-    x_set_max_speed( 0x0000 );
-    Report("\n\rx max speed: %d", x_get_max_speed());
+    x_set_max_speed( 0x0201 );
+    Report( "\n\rx max speed: %d", x_get_max_speed() );
 
-    x_set_max_speed( 0x0001 );
-    Report("\n\rx max speed: %d", x_get_max_speed());
+    y_set_max_speed( 0x0201 );
+    Report( "\n\ry max speed: %d", y_get_max_speed() );
 
-    x_set_max_speed( 0x0002 );
-    Report("\n\rx max speed: %d", x_get_max_speed());
+    /*Report("\n\r0x07, 0x07: %d", L6472_spi_txrx( 0x07, 0x07 ));
+    Report("\n\r0x03, 0x03: %d", L6472_spi_txrx( 0x03, 0x03 ));
+    Report("\n\r0xff, 0xff: %d", L6472_spi_txrx( 0xff, 0xff ));
+    Report("\n\r0x27, 0x27: %d", L6472_spi_txrx( 0x27, 0x27 ));
+    Report("\n\r0x00, 0x00: %d", L6472_spi_txrx( 0x00, 0x00 ));
+    Report("\n\r0x00, 0x00: %d", L6472_spi_txrx( 0x00, 0x00 ));*/
 
-    x_set_max_speed( 0x0003 );
-    Report("\n\rx max speed: %d", x_get_max_speed());
+    /*Report("\n\rx 0x07: %d", x_byte_txrx( 0x07 ) );
+    Report("\n\rx 0x03: %d", x_byte_txrx( 0x03 ) );
+    Report("\n\rx 0x0f: %d", x_byte_txrx( 0x0f ) );
 
-    x_set_max_speed( 0x0004 );
-    Report("\n\rx max speed: %d", x_get_max_speed());
+    Report("\n\rx 0x27: %d", x_byte_txrx( 0x27 ) );
+    Report("\n\rx 0x00: %d", x_byte_txrx( 0x00 ) );
+    Report("\n\rx 0x00: %d", x_byte_txrx( 0x00 ) );
 
-    x_set_max_speed( 0x0005 );
-    Report("\n\rx max speed: %d", x_get_max_speed());
+    Report("\n\ry 0x07: %d", y_byte_txrx( 0x07 ) );
+    Report("\n\ry 0x03: %d", y_byte_txrx( 0x03 ) );
+    Report("\n\ry 0x0f: %d", y_byte_txrx( 0x0f ) );
 
-    x_set_max_speed( 0x0006 );
-    Report("\n\rx max speed: %d", x_get_max_speed());
-
-    x_set_max_speed( 0x0007 );
-    Report("\n\rx max speed: %d", x_get_max_speed());
-
-    x_set_max_speed( 0x0008 );
-    Report("\n\rx max speed: %d", x_get_max_speed());
-
-    x_set_max_speed( 0x0009 );
-    Report("\n\rx max speed: %d", x_get_max_speed());
-
-    x_set_max_speed( 0x000a );
-    Report("\n\rx max speed: %d", x_get_max_speed());
-
-    x_set_max_speed( 0x000b );
-    Report("\n\rx max speed: %d", x_get_max_speed());
-
-    x_set_max_speed( 0x000c );
-    Report("\n\rx max speed: %d", x_get_max_speed());
-
-    x_set_max_speed( 0x000d );
-    Report("\n\rx max speed: %d", x_get_max_speed());
-
-    x_set_max_speed( 0x000e );
-    Report("\n\rx max speed: %d", x_get_max_speed());
-
-    x_set_max_speed( 0x000f );
-    Report("\n\rx max speed: %d", x_get_max_speed());
-
-    /*x_set_max_speed( 0x0000 );
-    y_set_max_speed( 0x0000 );
-
-    Report("\n\rx max speed: %d", x_get_max_speed());
-    Report("\n\ry max speed: %d", y_get_max_speed());
-
-    x_set_max_speed( 0x0001 );
-    y_set_max_speed( 0x0001 );
-
-    Report("\n\rx max speed: %d", x_get_max_speed());
-    Report("\n\ry max speed: %d", y_get_max_speed());
-
-    x_set_max_speed( 0x0002 );
-    y_set_max_speed( 0x0002 );
-
-    Report("\n\rx max speed: %d", x_get_max_speed());
-    Report("\n\ry max speed: %d", y_get_max_speed());
-
-    x_set_max_speed( 0x0003 );
-    y_set_max_speed( 0x0003 );
-
-    Report("\n\rx max speed: %d", x_get_max_speed());
-    Report("\n\ry max speed: %d", y_get_max_speed());
-
-    x_set_max_speed( 0x0018 );
-    y_set_max_speed( 0x0018 );
-
-    Report("\n\rx max speed: %d", x_get_max_speed());
-    Report("\n\ry max speed: %d", y_get_max_speed());*/
+    Report("\n\ry 0x27: %d", y_byte_txrx( 0x27 ) );
+    Report("\n\ry 0x00: %d", y_byte_txrx( 0x00 ) );
+    Report("\n\ry 0x00: %d", y_byte_txrx( 0x00 ) );*/
 
     //
     // Print a message
