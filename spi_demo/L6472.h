@@ -18,6 +18,8 @@ void L6472_init( void );
 
 uint8_t y_busy( void );
 void y_wait( void );
+void y_set_origin( void );
+void y_goto_origin( void );
 
 uint16_t get_status( void );
 

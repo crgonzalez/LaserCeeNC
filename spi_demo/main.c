@@ -225,14 +225,34 @@ void MasterMain()
     //
     L6472_init();
 
-    // Set max speed
-    y_move( POSITIVE, 0xffff );
+    // Move to a different position
+    //y_move( POSITIVE, 0x7fff );
+    //y_wait();
+
+    // Set Speeds
+    y_set_max_speed( 4 );
+    Report( "\r\nmax speed: %d", y_get_max_speed() );
+    /*y_set_speed(  );
+    Report( "\r\nspeed: %d", y_get_speed() );*/
+
+    // Set origin
+    y_set_origin();
+
+    // Move to a different position
+    y_move( POSITIVE, 50000 );
     y_wait();
-    y_move( NEGATIVE, 0xffff );
-    y_wait();
 
+    // Go home to origin
+    //y_goto_origin();
+    //y_wait();
 
+    // Move to a different position
+    //y_move( NEGATIVE, 0xffff );
+    //y_wait();
 
+    // Go home to origin
+    //y_goto_origin();
+    //y_wait();
 
     /*Report("\n\r0x07, 0x07: %d", L6472_spi_txrx( 0x07, 0x07 ));
     Report("\n\r0x03, 0x03: %d", L6472_spi_txrx( 0x03, 0x03 ));

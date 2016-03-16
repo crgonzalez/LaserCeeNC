@@ -23,6 +23,12 @@
 //*****************************************************************************
 #define TR_BUFF_SIZE     100
 
+// Y_Busy pin definitions
+#define Y_BUSY_PCLK		PRCM_GPIOA3
+#define	Y_BUSY_PIN		PIN_18
+#define Y_BUSY_GPIOBASE	GPIOA3_BASE
+#define	Y_BUSY_GPIOPIN	GPIO_PIN_4
+
 //*****************************************************************************
 //                 GLOBAL VARIABLES
 //*****************************************************************************
@@ -42,14 +48,14 @@ static uint8_t return_buffer[5];
 
 void L6472_init( void ) {
 
-    MAP_PRCMPeripheralClkEnable(PRCM_GPIOA3, PRCM_RUN_MODE_CLK);
+    MAP_PRCMPeripheralClkEnable(Y_BUSY_PCLK, PRCM_RUN_MODE_CLK);
 
     //
-    // Configure PIN_01 for GPIOOutput
+    // Configure Y_BUSY for input
     //
     // I think GPIO22(A2-6) is pin 15, mode 0 for gpio, and false to make it not open drain
-    MAP_PinTypeGPIO(PIN_18, PIN_MODE_0, false);
-    MAP_GPIODirModeSet(GPIOA3_BASE, GPIO_PIN_4, GPIO_DIR_MODE_IN);
+    MAP_PinTypeGPIO(Y_BUSY_PIN, PIN_MODE_0, false);
+    MAP_GPIODirModeSet(Y_BUSY_GPIOBASE, Y_BUSY_GPIOPIN, GPIO_DIR_MODE_IN);
 
 }
 
@@ -65,6 +71,23 @@ uint8_t y_busy( void ) {
 
 void y_wait( void ) {
 	while( y_busy() );
+}
+
+void y_set_origin( void ) {
+	int origin = 0;
+	// Command (Set param ABS_POS)
+	y_byte_txrx( 0x01 );
+	// MSByte
+	y_byte_txrx( (uint8_t)( (origin >> 16) & 0xff) );
+	// Middle Byte
+	y_byte_txrx( (uint8_t)( (origin >> 8) & 0xff) );
+	// LSByte
+	y_byte_txrx( (uint8_t)(origin & 0xff) );
+}
+
+void y_goto_origin( void ) {
+	// Command (Go Home to ABS_POS = 0)
+	y_byte_txrx( 0x70 );
 }
 
 uint16_t get_status( void ) {
