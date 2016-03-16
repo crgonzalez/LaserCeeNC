@@ -42,29 +42,29 @@ static uint8_t return_buffer[5];
 
 void L6472_init( void ) {
 
-	Report( "\r\na" );
-    MAP_PRCMPeripheralClkEnable(PRCM_GPIOA2, PRCM_RUN_MODE_CLK);
-    Report( "\r\nA" );
+    MAP_PRCMPeripheralClkEnable(PRCM_GPIOA3, PRCM_RUN_MODE_CLK);
 
     //
     // Configure PIN_01 for GPIOOutput
     //
     // I think GPIO22(A2-6) is pin 15, mode 0 for gpio, and false to make it not open drain
-    Report( "\r\nb" );
-    MAP_PinTypeGPIO(PIN_15, PIN_MODE_0, false);
-    Report( "\r\nB" );
-    Report( "\r\nc" );
-    MAP_GPIODirModeSet(GPIOA2_BASE, GPIO_PIN_6, GPIO_DIR_MODE_OUT);
-    Report( "\r\nC" );
+    MAP_PinTypeGPIO(PIN_18, PIN_MODE_0, false);
+    MAP_GPIODirModeSet(GPIOA3_BASE, GPIO_PIN_4, GPIO_DIR_MODE_IN);
 
 }
 
 uint8_t y_busy( void ) {
-	if( GPIOPinRead( GPIOA2_BASE, GPIO_PIN_6 ) ) {
-		return 1;
-	} else {
+	// Active low means its executing a command (probably Move())
+	if( GPIOPinRead( GPIOA3_BASE, GPIO_PIN_4 ) ) {
 		return 0;
+	// Inactive high means its done
+	} else {
+		return 1;
 	}
+}
+
+void y_wait( void ) {
+	while( y_busy() );
 }
 
 uint16_t get_status( void ) {

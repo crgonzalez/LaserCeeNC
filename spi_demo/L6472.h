@@ -17,6 +17,7 @@ typedef enum DIRECTION { POSITIVE, NEGATIVE } direction_t;
 void L6472_init( void );
 
 uint8_t y_busy( void );
+void y_wait( void );
 
 uint16_t get_status( void );
 
