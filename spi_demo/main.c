@@ -223,20 +223,18 @@ void MasterMain()
     //
     // My own spi message
     //
+    Report( "\r\na" );
+    L6472_init();
+    Report( "\r\nA" );
 
     // Set max speed
-    x_set_max_speed( 0x03ff );
-    Report( "\n\rx max speed: %d", x_get_max_speed() );
+    Report( "\r\nb" );
+    Report( "\n\ry busy: %d", y_busy() );
+    Report( "\r\nB" );
 
-    y_set_max_speed( 0x03ff );
-    Report( "\n\ry max speed: %d", y_get_max_speed() );
+    y_move( POSITIVE, 0xffff );
 
-    y_move( FORWARD, 0x0fff );
-    y_move( REVERSE, 0x0fff );
-    y_move( FORWARD, 0x0fff );
-    y_move( REVERSE, 0x0fff );
-    y_move( FORWARD, 0x0fff );
-    y_move( REVERSE, 0x0fff );
+    Report( "\n\ry busy: %d", y_busy() );
 
     /*Report("\n\r0x07, 0x07: %d", L6472_spi_txrx( 0x07, 0x07 ));
     Report("\n\r0x03, 0x03: %d", L6472_spi_txrx( 0x03, 0x03 ));

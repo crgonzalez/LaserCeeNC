@@ -13,6 +13,10 @@
 #include "hw_memmap.h"
 #include "spi.h"
 #include "rom_map.h"
+#include "gpio.h"
+#include "pin.h"
+#include "prcm.h"
+#include "uart_if.h"
 
 //*****************************************************************************
 //                 Definitions
@@ -38,6 +42,41 @@ static uint8_t return_buffer[5];
 
 void L6472_init( void ) {
 
+	Report( "\r\na" );
+    MAP_PRCMPeripheralClkEnable(PRCM_GPIOA2, PRCM_RUN_MODE_CLK);
+    Report( "\r\nA" );
+
+    //
+    // Configure PIN_01 for GPIOOutput
+    //
+    // I think GPIO22(A2-6) is pin 15, mode 0 for gpio, and false to make it not open drain
+    Report( "\r\nb" );
+    MAP_PinTypeGPIO(PIN_15, PIN_MODE_0, false);
+    Report( "\r\nB" );
+    Report( "\r\nc" );
+    MAP_GPIODirModeSet(GPIOA2_BASE, GPIO_PIN_6, GPIO_DIR_MODE_OUT);
+    Report( "\r\nC" );
+
+}
+
+uint8_t y_busy( void ) {
+	if( GPIOPinRead( GPIOA2_BASE, GPIO_PIN_6 ) ) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+uint16_t get_status( void ) {
+	uint16_t status;
+	// Command
+	x_byte_txrx( 0xd0 );
+	// nops while reading
+	status = (uint16_t)( x_byte_txrx( 0x00 ) );
+	status <<= 8;
+	status += (uint16_t)( x_byte_txrx( 0x00 ) );
+
+	return status;
 }
 
 uint16_t L6472_spi_txrx( uint8_t xByte, uint8_t yByte ) {

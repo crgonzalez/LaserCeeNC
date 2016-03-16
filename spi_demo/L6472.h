@@ -16,6 +16,10 @@ typedef enum DIRECTION { POSITIVE, NEGATIVE } direction_t;
 
 void L6472_init( void );
 
+uint8_t y_busy( void );
+
+uint16_t get_status( void );
+
 uint16_t L6472_spi_txrx( uint8_t xByte, uint8_t yByte );
 
 uint8_t x_byte_txrx( uint8_t xByte );
