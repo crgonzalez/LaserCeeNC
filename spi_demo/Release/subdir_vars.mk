@@ -8,6 +8,7 @@ CMD_SRCS += \
 
 C_SRCS += \
 ../L6472.c \
+../LaserBoard.c \
 ../main.c \
 ../pinmux.c \
 C:/TI/CC3200SDK_1.1.0/cc3200-sdk/example/common/startup_ccs.c \
@@ -15,6 +16,7 @@ C:/TI/CC3200SDK_1.1.0/cc3200-sdk/example/common/uart_if.c
 
 OBJS += \
 ./L6472.obj \
+./LaserBoard.obj \
 ./main.obj \
 ./pinmux.obj \
 ./startup_ccs.obj \
@@ -22,6 +24,7 @@ OBJS += \
 
 C_DEPS += \
 ./L6472.pp \
+./LaserBoard.pp \
 ./main.pp \
 ./pinmux.pp \
 ./startup_ccs.pp \
@@ -29,6 +32,7 @@ C_DEPS += \
 
 C_DEPS__QUOTED += \
 "L6472.pp" \
+"LaserBoard.pp" \
 "main.pp" \
 "pinmux.pp" \
 "startup_ccs.pp" \
@@ -36,6 +40,7 @@ C_DEPS__QUOTED += \
 
 OBJS__QUOTED += \
 "L6472.obj" \
+"LaserBoard.obj" \
 "main.obj" \
 "pinmux.obj" \
 "startup_ccs.obj" \
@@ -43,6 +48,7 @@ OBJS__QUOTED += \
 
 C_SRCS__QUOTED += \
 "../L6472.c" \
+"../LaserBoard.c" \
 "../main.c" \
 "../pinmux.c" \
 "C:/TI/CC3200SDK_1.1.0/cc3200-sdk/example/common/startup_ccs.c" \

@@ -11,6 +11,7 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./L6472.obj" \
+"./LaserBoard.obj" \
 "./main.obj" \
 "./pinmux.obj" \
 "./startup_ccs.obj" \
@@ -156,8 +157,8 @@ spi_demo.bin: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
-	-$(RM) "L6472.pp" "main.pp" "pinmux.pp" "startup_ccs.pp" "uart_if.pp" 
-	-$(RM) "L6472.obj" "main.obj" "pinmux.obj" "startup_ccs.obj" "uart_if.obj" 
+	-$(RM) "L6472.pp" "LaserBoard.pp" "main.pp" "pinmux.pp" "startup_ccs.pp" "uart_if.pp" 
+	-$(RM) "L6472.obj" "LaserBoard.obj" "main.obj" "pinmux.obj" "startup_ccs.obj" "uart_if.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

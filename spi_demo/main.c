@@ -76,6 +76,7 @@
 
 // My includes
 #include "L6472.h"
+#include "LaserBoard.h"
 
 
 #define APPLICATION_VERSION     "1.1.1"
@@ -224,6 +225,7 @@ void MasterMain()
     // My own spi message
     //
     L6472_init();
+    //laser_init();
 
     // Move to a different position
     //y_move( POSITIVE, 0x7fff );
@@ -231,16 +233,21 @@ void MasterMain()
 
     // Set Speeds
     y_set_max_speed( 4 );
-    Report( "\r\nmax speed: %d", y_get_max_speed() );
+    //Report( "\r\nmax speed: %d", y_get_max_speed() );
+    Report( "\r\nbuts" );
     /*y_set_speed(  );
     Report( "\r\nspeed: %d", y_get_speed() );*/
 
     // Set origin
     y_set_origin();
 
+    //laser_on();
+
     // Move to a different position
     y_move( POSITIVE, 50000 );
     y_wait();
+
+    //laser_off();
 
     // Go home to origin
     //y_goto_origin();
