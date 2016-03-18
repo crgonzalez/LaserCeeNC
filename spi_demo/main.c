@@ -225,7 +225,7 @@ void MasterMain()
     // My own spi message
     //
     L6472_init();
-    //laser_init();
+    laser_init();
 
     // Move to a different position
     //y_move( POSITIVE, 0x7fff );
@@ -241,13 +241,13 @@ void MasterMain()
     // Set origin
     y_set_origin();
 
-    //laser_on();
+    laser_on();
 
     // Move to a different position
-    y_move( POSITIVE, 50000 );
+    y_move( POSITIVE, 10000 );
     y_wait();
 
-    //laser_off();
+    laser_off();
 
     // Go home to origin
     //y_goto_origin();
