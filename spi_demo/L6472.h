@@ -19,6 +19,7 @@ void L6472_init( void );
 uint16_t get_status( void );
 uint16_t L6472_spi_txrx( uint8_t xByte, uint8_t yByte );
 
+void 	y_move_mm( float MMs );
 
 void 	y_move( direction_t dir, uint32_t steps );
 void 	y_wait( void );

@@ -6,6 +6,7 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 
 #include "L6472.h"
 
@@ -31,6 +32,9 @@
 #define	Y_BUSY_PIN		PIN_18
 #define Y_BUSY_GPIOBASE	GPIOA3_BASE
 #define	Y_BUSY_GPIOPIN	GPIO_PIN_4
+
+// Step Conversion Definitions
+#define STEPS_TO_MM		800
 
 //*****************************************************************************
 //                 GLOBAL VARIABLES
@@ -92,6 +96,17 @@ void L6472_init( void ) {
     MAP_PinTypeGPIO(Y_BUSY_PIN, PIN_MODE_0, false);
     MAP_GPIODirModeSet(Y_BUSY_GPIOBASE, Y_BUSY_GPIOPIN, GPIO_DIR_MODE_IN);
 
+}
+
+void 	y_move_mm( float MMs ) {
+	// Determine Distance
+	uint32_t steps = (uint32_t)abs( MMs*STEPS_TO_MM );
+
+	if( MMs > 0 ) {
+		y_move( POSITIVE, steps );
+	} else if( MMs < 0 ) {
+		y_move( NEGATIVE, steps );
+	}
 }
 
 uint8_t y_busy( void ) {

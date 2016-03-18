@@ -192,7 +192,7 @@ void main()
     laser_on();
 
     // Move to a different position
-    y_move( POSITIVE, 10000 );
+    y_move_mm( 100 );
     y_wait();
 
     laser_off();
