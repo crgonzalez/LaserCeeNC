@@ -21,6 +21,9 @@
 //*****************************************************************************
 //                 Definitions
 //*****************************************************************************
+// SPI Definitions
+#define SPI_IF_BIT_RATE  25000
+
 #define TR_BUFF_SIZE     100
 
 // Y_Busy pin definitions
@@ -47,6 +50,38 @@ static uint8_t return_buffer[5];
 
 
 void L6472_init( void ) {
+	// Enable SPI Peripheral Clock
+    MAP_PRCMPeripheralClkEnable(PRCM_GSPI, PRCM_RUN_MODE_CLK);
+
+    // Configure PIN_05 for SPI0 GSPI_CLK
+    MAP_PinTypeSPI(PIN_05, PIN_MODE_7);
+
+    // Configure PIN_06 for SPI0 GSPI_MISO
+    MAP_PinTypeSPI(PIN_06, PIN_MODE_7);
+
+    // Configure PIN_07 for SPI0 GSPI_MOSI
+    MAP_PinTypeSPI(PIN_07, PIN_MODE_7);
+
+    // Configure PIN_08 for SPI0 GSPI_CS
+    MAP_PinTypeSPI(PIN_08, PIN_MODE_7);
+
+    // Enable the SPI module clock
+    MAP_PRCMPeripheralClkEnable(PRCM_GSPI,PRCM_RUN_MODE_CLK);
+
+    // Reset SPI
+    MAP_SPIReset(GSPI_BASE);
+
+    // Configure SPI interface
+    MAP_SPIConfigSetExpClk(GSPI_BASE,MAP_PRCMPeripheralClockGet(PRCM_GSPI),
+                     SPI_IF_BIT_RATE,SPI_MODE_MASTER,SPI_SUB_MODE_3,
+					 (SPI_SW_CTRL_CS |//(SPI_HW_CTRL_CS |
+                     SPI_4PIN_MODE |
+                     SPI_TURBO_OFF |
+                     SPI_CS_ACTIVELOW |
+					 SPI_WL_8));
+
+    // Enable SPI for communication
+    MAP_SPIEnable(GSPI_BASE);
 
     MAP_PRCMPeripheralClkEnable(Y_BUSY_PCLK, PRCM_RUN_MODE_CLK);
 
