@@ -24,17 +24,36 @@
 //*****************************************************************************
 // SPI Definitions
 #define SPI_IF_BIT_RATE  25000
-
 #define TR_BUFF_SIZE     100
 
-// Y_Busy pin definitions
+
+// Step Conversion Definitions
+#define STEPS_TO_MM		800
+
+/****************************************************************************
+ * Parameters for Y_BUSY GPIO pin
+ ****************************************************************************/
+// Dev board
 #define Y_BUSY_PCLK		PRCM_GPIOA3
 #define	Y_BUSY_PIN		PIN_18
 #define Y_BUSY_GPIOBASE	GPIOA3_BASE
 #define	Y_BUSY_GPIOPIN	GPIO_PIN_4
 
-// Step Conversion Definitions
-#define STEPS_TO_MM		800
+// Actual board
+/*#define Y_BUSY_PCLK		PRCM_GPIOA0
+#define	Y_BUSY_PIN		PIN_61
+#define Y_BUSY_GPIOBASE	GPIOA0_BASE
+#define	Y_BUSY_GPIOPIN	GPIO_PIN_6*/
+
+/****************************************************************************
+ * Parameters for X_BUSY GPIO pin
+ ****************************************************************************/
+// Actual board
+#define X_BUSY_PCLK		PRCM_GPIOA0
+#define	X_BUSY_PIN		PIN_60
+#define X_BUSY_GPIOBASE	GPIOA0_BASE
+#define	X_BUSY_GPIOPIN	GPIO_PIN_5
+
 
 //*****************************************************************************
 //                 GLOBAL VARIABLES
@@ -42,17 +61,27 @@
 static unsigned char g_ucTxBuff[TR_BUFF_SIZE];
 static unsigned char g_ucRxBuff[TR_BUFF_SIZE];
 
-static uint8_t send_buffer[5];
-static uint8_t return_buffer[5];
-
 
 
 //*****************************************************************************
 //                 Private function prototypes
 //*****************************************************************************
+uint16_t get_status( void );
+uint16_t L6472_spi_txrx( uint8_t xByte, uint8_t yByte );
 
+void	y_set_run_current( uint8_t current );
+uint8_t y_byte_txrx( uint8_t yByte );
+void 	y_move( direction_t dir, uint32_t steps );
+uint8_t y_busy( void );
 
+void	x_set_run_current( uint8_t current );
+uint8_t x_byte_txrx( uint8_t xByte );
+void 	x_move( direction_t dir, uint32_t steps );
+uint8_t x_busy( void );
 
+//*****************************************************************************
+//                  Public Functions
+//*****************************************************************************
 void L6472_init( void ) {
 	// Enable SPI Peripheral Clock
     MAP_PRCMPeripheralClkEnable(PRCM_GSPI, PRCM_RUN_MODE_CLK);
@@ -87,16 +116,33 @@ void L6472_init( void ) {
     // Enable SPI for communication
     MAP_SPIEnable(GSPI_BASE);
 
-    MAP_PRCMPeripheralClkEnable(Y_BUSY_PCLK, PRCM_RUN_MODE_CLK);
-
-    //
     // Configure Y_BUSY for input
-    //
-    // I think GPIO22(A2-6) is pin 15, mode 0 for gpio, and false to make it not open drain
+    MAP_PRCMPeripheralClkEnable(Y_BUSY_PCLK, PRCM_RUN_MODE_CLK);
     MAP_PinTypeGPIO(Y_BUSY_PIN, PIN_MODE_0, false);
     MAP_GPIODirModeSet(Y_BUSY_GPIOBASE, Y_BUSY_GPIOPIN, GPIO_DIR_MODE_IN);
 
+    // Configure X_BUSY for input
+    MAP_PRCMPeripheralClkEnable(X_BUSY_PCLK, PRCM_RUN_MODE_CLK);
+    MAP_PinTypeGPIO(X_BUSY_PIN, PIN_MODE_0, false);
+    MAP_GPIODirModeSet(X_BUSY_GPIOBASE, X_BUSY_GPIOPIN, GPIO_DIR_MODE_IN);
+
+    // Reset the device
+    y_reset();
+
+    // Configure motor current parameter
+    y_set_run_current( 10 );
+
 }
+
+void 	xy_wait( void ) {
+	while( y_busy() || x_busy() );
+}
+
+
+void y_reset( void ) {
+	y_byte_txrx( 0xc0 );
+}
+
 
 void 	y_move_mm( float MMs ) {
 	// Determine Distance
@@ -109,19 +155,12 @@ void 	y_move_mm( float MMs ) {
 	}
 }
 
-uint8_t y_busy( void ) {
-	// Active low means its executing a command (probably Move())
-	if( GPIOPinRead( GPIOA3_BASE, GPIO_PIN_4 ) ) {
-		return 0;
-	// Inactive high means its done
-	} else {
-		return 1;
-	}
+
+void	y_release_bridge( void ) {
+	// Put motor bridges into high impedance
+	y_byte_txrx( 0xa0 );
 }
 
-void y_wait( void ) {
-	while( y_busy() );
-}
 
 void y_set_origin( void ) {
 	int origin = 0;
@@ -135,11 +174,91 @@ void y_set_origin( void ) {
 	y_byte_txrx( (uint8_t)(origin & 0xff) );
 }
 
+
 void y_goto_origin( void ) {
 	// Command (Go Home to ABS_POS = 0)
 	y_byte_txrx( 0x70 );
 }
 
+
+void y_wait( void ) {
+	while( y_busy() );
+}
+
+
+void y_set_max_speed( uint16_t speed ) {
+	// Command
+	y_byte_txrx( 0x07 );
+	// MSByte
+	y_byte_txrx( (uint8_t)( (speed >> 8) & 0xff) );
+	// LSByte
+	y_byte_txrx( (uint8_t)(speed & 0xff) );
+}
+
+
+void x_reset( void ) {
+	x_byte_txrx( 0xc0 );
+}
+
+
+void 	x_move_mm( float MMs ) {
+	// Determine Distance
+	uint32_t steps = (uint32_t)abs( MMs*STEPS_TO_MM );
+
+	if( MMs > 0 ) {
+		x_move( POSITIVE, steps );
+	} else if( MMs < 0 ) {
+		x_move( NEGATIVE, steps );
+	}
+}
+
+
+void	x_release_bridge( void ) {
+	// Put motor bridges into high impedance
+	x_byte_txrx( 0xa0 );
+}
+
+
+void x_set_origin( void ) {
+	int origin = 0;
+	// Command (Set param ABS_POS)
+	x_byte_txrx( 0x01 );
+	// MSByte
+	x_byte_txrx( (uint8_t)( (origin >> 16) & 0xff) );
+	// Middle Byte
+	x_byte_txrx( (uint8_t)( (origin >> 8) & 0xff) );
+	// LSByte
+	x_byte_txrx( (uint8_t)(origin & 0xff) );
+}
+
+
+void x_goto_origin( void ) {
+	// Command (Go Home to ABS_POS = 0)
+	x_byte_txrx( 0x70 );
+}
+
+
+void x_wait( void ) {
+	while( x_busy() );
+}
+
+
+void x_set_max_speed( uint16_t speed ) {
+	// Command
+	x_byte_txrx( 0x07 );
+	// MSByte
+	x_byte_txrx( (uint8_t)( (speed >> 8) & 0xff) );
+	// LSByte
+	x_byte_txrx( (uint8_t)(speed & 0xff) );
+}
+
+
+
+
+
+//*****************************************************************************
+//                 Private functions
+//*****************************************************************************
 uint16_t get_status( void ) {
 	uint16_t status;
 	// Command
@@ -151,6 +270,7 @@ uint16_t get_status( void ) {
 
 	return status;
 }
+
 
 uint16_t L6472_spi_txrx( uint8_t xByte, uint8_t yByte ) {
 
@@ -169,14 +289,14 @@ uint16_t L6472_spi_txrx( uint8_t xByte, uint8_t yByte ) {
     return return_word;
 }
 
-uint8_t x_byte_txrx( uint8_t xByte ) {
 
-	uint16_t received_word;
-
-	received_word = L6472_spi_txrx( xByte, 0 );
-
-	return (uint8_t)( (received_word >> 8) & 0x00ff );
+void	y_set_run_current( uint8_t current ) {
+	// Command
+	y_byte_txrx( 0x0A );
+	// LSByte
+	y_byte_txrx( current );
 }
+
 
 uint8_t y_byte_txrx( uint8_t yByte ) {
 
@@ -187,93 +307,6 @@ uint8_t y_byte_txrx( uint8_t yByte ) {
 	return (uint8_t)(received_word & 0x00ff);
 }
 
-void x_set_max_speed( uint16_t speed ) {
-	// Command
-	x_byte_txrx( 0x07 );
-	// MSByte
-	x_byte_txrx( (uint8_t)( (speed >> 8) & 0xff) );
-	// LSByte
-	x_byte_txrx( (uint8_t)(speed & 0xff) );
-}
-
-int x_get_max_speed( void ) {
-	int speed = 0;
-	// Command
-	x_byte_txrx( 0x27 );
-	// nops while reading
-	speed = (int)( x_byte_txrx( 0x00 ) );
-	speed <<= 8;
-	speed += (int)( x_byte_txrx( 0x00 ) );
-
-	return speed;
-}
-
-void y_set_max_speed( uint16_t speed ) {
-	// Command
-	y_byte_txrx( 0x07 );
-	// MSByte
-	y_byte_txrx( (uint8_t)( (speed >> 8) & 0xff) );
-	// LSByte
-	y_byte_txrx( (uint8_t)(speed & 0xff) );
-}
-
-int y_get_max_speed( void ) {
-	int speed = 0;
-	// Command
-	y_byte_txrx( 0x27 );
-	// nops while reading
-	speed = (int)( y_byte_txrx( 0x00 ) );
-	speed <<= 8;
-	speed += (int)( y_byte_txrx( 0x00 ) );
-
-	return speed;
-}
-
-void y_set_speed( uint32_t speed ) {
-	// Truncate speed to 20 bits
-	speed &= 0x000fffff;
-	// Command
-	y_byte_txrx( 0x04 );
-	// MSByte
-	y_byte_txrx( (uint8_t)( (speed >> 16) & 0xff) );
-	// Middle Byte
-	y_byte_txrx( (uint8_t)( (speed >> 8) & 0xff) );
-	// LSByte
-	y_byte_txrx( (uint8_t)(speed & 0xff) );
-}
-
-int y_get_speed( void ) {
-	int speed = 0;
-	// Command
-	y_byte_txrx( 0x24 );
-	// nops while reading
-	speed = (int)( y_byte_txrx( 0x00 ) );
-	speed <<= 8;
-	speed += (int)( y_byte_txrx( 0x00 ) );
-	speed <<= 8;
-	speed += (int)( y_byte_txrx( 0x00 ) );
-
-	return speed;
-}
-
-void y_run( direction_t dir, uint32_t speed ) {
-	//Choose directional command
-	if( dir == POSITIVE ) {
-		y_byte_txrx( 0x51 );
-	} else {
-		y_byte_txrx( 0x50 );
-	}
-
-	// Truncate speed to 20 bits
-	speed &= 0x000fffff;
-
-	// MSByte
-	y_byte_txrx( (uint8_t)( (speed >> 16) & 0xff) );
-	// Middle Byte
-	y_byte_txrx( (uint8_t)( (speed >> 8) & 0xff) );
-	// LSByte
-	y_byte_txrx( (uint8_t)(speed & 0xff) );
-}
 
 void y_move( direction_t dir, uint32_t steps ) {
 	//Choose directional command
@@ -293,5 +326,66 @@ void y_move( direction_t dir, uint32_t steps ) {
 	// LSByte
 	y_byte_txrx( (uint8_t)(steps & 0xff) );
 }
+
+
+uint8_t y_busy( void ) {
+	// Active low means its executing a command (probably Move())
+	if( GPIOPinRead( Y_BUSY_GPIOBASE, Y_BUSY_GPIOPIN ) ) {
+		return 0;
+	// Inactive high means its done
+	} else {
+		return 1;
+	}
+}
+
+
+void	x_set_run_current( uint8_t current ) {
+	// Command
+	x_byte_txrx( 0x0A );
+	// LSByte
+	x_byte_txrx( current );
+}
+
+
+uint8_t x_byte_txrx( uint8_t xByte ) {
+
+	uint16_t received_word;
+
+	received_word = L6472_spi_txrx( xByte, 0 );
+
+	return (uint8_t)( (received_word >> 8) & 0x00ff );
+}
+
+
+void x_move( direction_t dir, uint32_t steps ) {
+	//Choose directional command
+	if( dir == POSITIVE ) {
+		x_byte_txrx( 0x41 );
+	} else {
+		x_byte_txrx( 0x40 );
+	}
+
+	// Truncate steps to 20 bits
+	steps &= 0x000fffff;
+
+	// MSByte
+	x_byte_txrx( (uint8_t)( (steps >> 16) & 0xff) );
+	// Middle Byte
+	x_byte_txrx( (uint8_t)( (steps >> 8) & 0xff) );
+	// LSByte
+	x_byte_txrx( (uint8_t)(steps & 0xff) );
+}
+
+
+uint8_t x_busy( void ) {
+	// Active low means its executing a command (probably Move())
+	if( GPIOPinRead( X_BUSY_GPIOBASE, X_BUSY_GPIOPIN ) ) {
+		return 0;
+	// Inactive high means its done
+	} else {
+		return 1;
+	}
+}
+
 
 

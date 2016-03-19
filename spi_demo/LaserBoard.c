@@ -14,18 +14,25 @@
 #include "prcm.h"
 #include "rom_map.h"
 
-
-
+/****************************************************************************
+ * Parameters for laser control GPIO pin
+ ****************************************************************************/
+// Dev board
 #define LASER_PCLK		PRCM_GPIOA2
 #define	LASER_PIN		PIN_15
 #define LASER_GPIOBASE	GPIOA2_BASE
 #define	LASER_GPIOPIN	GPIO_PIN_6
 
+// Actual board
+/*#define LASER_PCLK	PRCM_GPIOA0
+#define	LASER_PIN		PIN_59
+#define LASER_GPIOBASE	GPIOA0_BASE
+#define	LASER_GPIOPIN	GPIO_PIN_4*/
+
 void laser_init( void ) {
 
     // Configure LASER_PIN for laser control
     MAP_PRCMPeripheralClkEnable(LASER_PCLK, PRCM_RUN_MODE_CLK);
-    MAP_PRCMPeripheralClkEnable(PRCM_GPIOA1, PRCM_RUN_MODE_CLK);
 
     // Configure laser for output
     MAP_PinTypeGPIO(LASER_PIN, PIN_MODE_0, false);

@@ -14,30 +14,78 @@ typedef unsigned int uint32_t;
 
 typedef enum DIRECTION { POSITIVE, NEGATIVE } direction_t;
 
+/**********************************************************************
+ * Initialization function
+ **********************************************************************/
 void L6472_init( void );
 
-uint16_t get_status( void );
-uint16_t L6472_spi_txrx( uint8_t xByte, uint8_t yByte );
+/**********************************************************************
+ * X and Y control functions
+ **********************************************************************/
+// Loop until x and y motor commands finish execution
+//
+// IMPORTANT - this function must be executed after simultaneous x and
+// y move commands!
+void 	xy_wait( void );
 
+/**********************************************************************
+ * Y motor control functions
+ **********************************************************************/
+// Reset the y motor controller
+void	y_reset( void );
+
+// Move the y axis a number of millimeters (positve or negative)
 void 	y_move_mm( float MMs );
 
-void 	y_move( direction_t dir, uint32_t steps );
-void 	y_wait( void );
+// Turn off current to a stationary motor
+void	y_release_bridge( void );
+
+// Set current position to the origin location
 void 	y_set_origin( void );
+
+// Return to origin position
 void 	y_goto_origin( void );
 
-uint8_t y_byte_txrx( uint8_t yByte );
-uint8_t y_busy( void );
+// Loop until motor command finishes execution
+//
+// IMPORTANT - this function must be executed after a move command!
+void 	y_wait( void );
+
+// Choose the speed at which the motor will run
+//
+// RECOMENDATION - 0 to 4 for cutting speed, 10 for fast movement when not cutting
 void 	y_set_max_speed( uint16_t speed );
-int 	y_get_max_speed( void );
-void 	y_set_speed( uint32_t speed );
-int 	y_get_speed( void );
-void 	y_run( direction_t dir, uint32_t speed );
+
+/**********************************************************************
+ * X motor control functions
+ **********************************************************************/
+// Reset the x motor controller
+void	x_reset( void );
+
+// Move the x axis a number of millimeters (positve or negative)
+void 	x_move_mm( float MMs );
+
+// Turn off current to a stationary motor
+void	x_release_bridge( void );
+
+// Set current position to the origin location
+void 	x_set_origin( void );
+
+// Return to origin position
+void 	x_goto_origin( void );
+
+// Loop until motor command finishes execution
+//
+// IMPORTANT - this function must be executed after a move command!
+void 	x_wait( void );
+
+// Choose the speed at which the motor will run
+//
+// RECOMENDATION - 0 to 4 for cutting speed, 10 for fast movement when not cutting
+void 	x_set_max_speed( uint16_t speed );
 
 
-uint8_t x_byte_txrx( uint8_t xByte );
 
-void x_set_max_speed( uint16_t speed );
-int x_get_max_speed( void );
+
 
 #endif /* L6472_H_ */

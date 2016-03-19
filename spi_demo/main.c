@@ -99,10 +99,7 @@
 //*****************************************************************************
 //                 GLOBAL VARIABLES -- Start
 //*****************************************************************************
-static unsigned char g_ucTxBuff[TR_BUFF_SIZE];
-static unsigned char g_ucRxBuff[TR_BUFF_SIZE];
-static unsigned char ucTxBuffNdx;
-static unsigned char ucRxBuffNdx;
+
 
 #if defined(ccs)
 extern void (* const g_pfnVectors[])(void);
@@ -181,19 +178,33 @@ void main()
     unsigned long ulUserData;
     ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 
-    // Set Speeds
-    y_set_max_speed( 4 );
 
-    Report( "\r\nbuts" );
 
-    // Set origin
-    y_set_origin();
+    uint16_t i;
+    for( i = 1; i <= 10; i++ ) {
+		// Set Speeds
+		//y_set_max_speed_mm( 0.1*i );
+    	y_set_max_speed( i );
+		Report( "\r\n%d max speed", i );
+		// Move to a different position
+		y_move_mm( 50 );
+		y_wait();
+		y_release_bridge();
+		i++;
 
-    laser_on();
+		// Set Speeds
+		//y_set_max_speed_mm( 0.1*i );
+    	y_set_max_speed( i );
+		Report( "\r\n%d max speed", i );
+		// Move to a different position
+		y_move_mm( -50 );
+		y_wait();
+		y_release_bridge();
+    }
 
-    // Move to a different position
-    y_move_mm( 100 );
+    /*y_move_mm( 100 );
     y_wait();
+    y_release_bridge();*/
 
     laser_off();
 
