@@ -1,12 +1,13 @@
 //*****************************************************************************
-// pinmux.c 
-// 
-// Configure the device pins for different peripheral signals
-// 
+// mmc_demo.h
+//
+// MMC Demo Application header file. 
+//
 // Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/ 
 // 
 // 
 //  Redistribution and use in source and binary forms, with or without 
+//  modification, are permitted provided that the following conditions 
 //  are met:
 //
 //    Redistributions of source code must retain the above copyright 
@@ -35,81 +36,35 @@
 //
 //*****************************************************************************
 
-//*****************************************************************************
-// This file was automatically generated on 7/21/2014 at 3:06:20 PM
-// by TI PinMux version 3.0.334
-//
-//*****************************************************************************
-
-#include "pinmux.h"
-#include "hw_types.h"
-#include "hw_memmap.h"
-#include "hw_gpio.h"
-#include "pin.h"
-#include "rom.h"
-#include "rom_map.h"
-#include "gpio.h"
-#include "prcm.h"
+#ifndef __MMC_DEMO_H__
+#define __MMC_DEMO_H__
 
 //*****************************************************************************
-void
-PinMuxConfig(void)
+// Card Attribute structure                                 
+//*****************************************************************************
+typedef struct
 {
-    //
-    // Enable Peripheral Clocks 
-    //
-    MAP_PRCMPeripheralClkEnable(PRCM_UARTA0, PRCM_RUN_MODE_CLK);
-    MAP_PRCMPeripheralClkEnable(PRCM_GPIOA0, PRCM_RUN_MODE_CLK);
-    //MAP_PRCMPeripheralClkEnable(PRCM_GPIOA1, PRCM_RUN_MODE_CLK);
-    MAP_PRCMPeripheralClkEnable(PRCM_SDHOST, PRCM_RUN_MODE_CLK);
+  unsigned long  ulCardType;
+  unsigned long  long ullCapacity;
+  unsigned long  ulVersion;
+  unsigned long  ulCapClass;
+  unsigned short ulRCA;
+}CardAttrib_t;
 
-    //
-    // Configure PIN_55 for UART0 UART0_TX
-    //
-    MAP_PinTypeUART(PIN_55, PIN_MODE_3);
+//*****************************************************************************
+// MACROS                                
+//*****************************************************************************
+#define RETRY_TIMEOUT        2000
 
-    //
-    // Configure PIN_57 for UART0 UART0_RX
-    //
-    MAP_PinTypeUART(PIN_57, PIN_MODE_3);
+#define CARD_TYPE_UNKNOWN    0
+#define CARD_TYPE_MMC        1
+#define CARD_TYPE_SDCARD     2
 
-    //
-    // Configure PIN_58 for GPIOInput
-    //
-    MAP_PinTypeGPIO(PIN_58, PIN_MODE_0, false);
-    MAP_GPIODirModeSet(GPIOA0_BASE, 0x8, GPIO_DIR_MODE_IN);
+#define CARD_CAP_CLASS_SDSC  0
+#define CARD_CAP_CLASS_SDHC  1
 
-    //
-    // Configure PIN_64 for GPIOOutput
-    //
-//    MAP_PinTypeGPIO(PIN_64, PIN_MODE_0, false);
-//    MAP_GPIODirModeSet(GPIOA1_BASE, 0x2, GPIO_DIR_MODE_OUT);
-
-    //
-    // Configure PIN_01 for GPIOOutput
-    //
-//    MAP_PinTypeGPIO(PIN_01, PIN_MODE_0, false);
-//    MAP_GPIODirModeSet(GPIOA1_BASE, 0x4, GPIO_DIR_MODE_OUT);
-
-    //
-    // Configure PIN_02 for GPIOOutput
-    //
-//    MAP_PinTypeGPIO(PIN_02, PIN_MODE_0, false);
-//    MAP_GPIODirModeSet(GPIOA1_BASE, 0x8, GPIO_DIR_MODE_OUT);
+#define CARD_VERSION_1       0
+#define CARD_VERSION_2       1
 
 
-    //
-    // Configure PIN_64 for SDHOST0 SDHost_D0
-    //
-    MAP_PinTypeSDHost(PIN_64, PIN_MODE_6);
-
-    //
-    // Configure PIN_01 for SDHOST0 SDHost_CLK
-    //
-    MAP_PinTypeSDHost(PIN_01, PIN_MODE_6);
-
-    //
-    // Configure PIN_02 for SDHOST0 SDHost_CMD
-    //
-    MAP_PinTypeSDHost(PIN_02, PIN_MODE_6);
-}
+#endif //__MMC_DEMO_H__
