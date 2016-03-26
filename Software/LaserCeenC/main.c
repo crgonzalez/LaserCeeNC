@@ -73,6 +73,8 @@
 #include "rom.h"
 #include "rom_map.h"
 #include "prcm.h"
+#include "hw_common_reg.h"
+#include "sdhost.h"
 
 //Free_rtos/ti-rtos includes
 #include "osi.h"
@@ -82,8 +84,19 @@
 #include "uart_if.h"
 #include "common.h"
 
+//fatfs includes
+#include "sdhost_demo.h"
+#include "stdcmd.h"
+
 #include "smartconfig.h"
 #include "pinmux.h"
+
+
+#define WRITE_TEST_EN        0
+
+#if WRITE_TEST_EN
+#warning Enabling WRITE_TEST_EN will corrupt the existing filesystem on the card
+#endif
 
 
 #define APPLICATION_NAME        "Webpage Example"
@@ -141,13 +154,14 @@ int g_iSimplelinkRole = ROLE_INVALID;
 signed int g_uiIpAddress = 0;
 unsigned char g_ucSSID[AP_SSID_LEN_MAX];
 unsigned char* G_FILE;				//Will hold data from received file
+long G_FILE_SIZE;					//Size of sstring holding file data
 
 //Variables for tasks
 OsiMsgQ_t FileAvail;					//Signal between tasks for file availability
-//OsiLockObj_t* HTTP_OBJ;				//HTTP Server sync object
-//OsiLockObj_t* SAVE_FILE_OBJ;			//Save File sync object
-//OsiTime_t TASK_WAIT_TIME = OSI_WAIT_FOREVER;	//Sets infinite wait time on tasks
+OsiMsgQ_t Processing;					//Signal that file is currently being processed
 
+//OsiTime_t TASK_WAIT_TIME = OSI_WAIT_FOREVER;	//Sets infinite wait time on tasks
+static unsigned char g_ucDataBuff[512];
 
 #if defined(ccs)
 extern void (* const g_pfnVectors[])(void);
@@ -245,6 +259,478 @@ void vApplicationStackOverflowHook( OsiTaskHandle *pxTask,
     }
 }
 #endif //USE_FREERTOS
+
+
+
+
+//*****************************************************************************
+//
+//! Send Command to card
+//!
+//! \param ulCmd is the command to be send
+//! \paran ulArg is the command argument
+//!
+//! This function sends command to attached card and check the response status
+//! if any.
+//!
+//! \return Returns 0 on success, 1 otherwise
+//
+//*****************************************************************************
+static unsigned long
+SendCmd(unsigned long ulCmd, unsigned long ulArg)
+{
+    unsigned long ulStatus;
+
+    //
+    // Clear interrupt status
+    //
+    MAP_SDHostIntClear(SDHOST_BASE,0xFFFFFFFF);
+
+    //
+    // Send command
+    //
+    MAP_SDHostCmdSend(SDHOST_BASE,ulCmd,ulArg);
+
+    //
+    // Wait for command complete or error
+    //
+    do
+    {
+        ulStatus = MAP_SDHostIntStatus(SDHOST_BASE);
+        ulStatus = (ulStatus & (SDHOST_INT_CC|SDHOST_INT_ERRI));
+    }
+    while( !ulStatus );
+
+    //
+    // Check error status
+    //
+    if(ulStatus & SDHOST_INT_ERRI)
+    {
+        //
+        // Reset the command line
+        //
+        MAP_SDHostCmdReset(SDHOST_BASE);
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+//*****************************************************************************
+//
+//! Get the capacity of specified card
+//!
+//! \param ulRCA is the Relative Card Address (RCA)
+//!
+//! This function gets the capacity of card addressed by \e ulRCA paramaeter.
+//!
+//! \return Returns card capacity on success, 0 otherwise.
+//
+//*****************************************************************************
+static unsigned long long
+CardCapacityGet(unsigned short ulRCA)
+{
+    unsigned long ulRet;
+    unsigned long ulResp[4];
+    unsigned long long ullCapacity;
+    unsigned long ulBlockSize;
+    unsigned long ulBlockCount;
+    unsigned long ulCSizeMult;
+    unsigned long ulCSize;
+
+    //
+    // Read the CSD register
+    //
+    ulRet = SendCmd(CMD_SEND_CSD,(ulRCA << 16));
+    if(ulRet == 0)
+    {
+        //
+        // Read the response
+        //
+        MAP_SDHostRespGet(SDHOST_BASE,ulResp);
+    }
+    else
+    {
+        return 0;
+    }
+
+    //
+    // 136 bit CSD register is read into an array of 4 words.
+    // ulResp[0] = CSD[31:0]
+    // ulResp[1] = CSD[63:32]
+    // ulResp[2] = CSD[95:64]
+    // ulResp[3] = CSD[127:96]
+    //
+    if( ((ulResp[3] >> 30) & 0x1) == 1)
+    {
+        ulBlockSize = 512 * 1024;
+        ulBlockCount = (ulResp[1] >> 16 | ((ulResp[2] & 0x3F) << 16)) + 1;
+    }
+    else
+    {
+        ulBlockSize  = 1 << ((ulResp[2] >> 16) & 0xF);
+        ulCSizeMult  = ((ulResp[1] >> 15) & 0x7);
+        ulCSize      = ((ulResp[1] >> 30) | (ulResp[2] & 0x3FF) << 2);
+        ulBlockCount = (ulCSize + 1) * (1<<(ulCSizeMult + 2));
+    }
+
+    //
+    // Calculate the card capacity in bytes
+    //
+    ullCapacity = (unsigned long long)ulBlockSize * (ulBlockCount );
+
+    //
+    // Return the capacity
+    //
+    return ullCapacity;
+}
+
+//*****************************************************************************
+//
+//! Initializes the card and fills the card attribute structure.
+//!
+//! \param CardAttrib is the pointer to card attribute structure.
+//!
+//! This function initializes the card and fills in the card attribute
+//! structure.
+//!
+//! \return Returns 0 success, 1 otherwise.
+//
+//*****************************************************************************
+static unsigned long
+CardInit(CardAttrib_t *CardAttrib)
+{
+    unsigned long ulRet;
+    unsigned long ulResp[4];
+
+    //
+    // Initialize the attributes.
+    //
+    CardAttrib->ulCardType = CARD_TYPE_UNKNOWN;
+    CardAttrib->ulCapClass = CARD_CAP_CLASS_SDSC;
+    CardAttrib->ulRCA      = 0;
+    CardAttrib->ulVersion  = CARD_VERSION_1;
+
+    //
+    // Send std GO IDLE command
+    //
+    if( SendCmd(CMD_GO_IDLE_STATE, 0) == 0)
+    {
+
+        ulRet = SendCmd(CMD_SEND_IF_COND,0x00000100);
+
+        //
+        // It's a SD ver 2.0 or higher card
+        //
+        if(ulRet == 0)
+        {
+            CardAttrib->ulVersion = CARD_VERSION_2;
+            CardAttrib->ulCardType = CARD_TYPE_SDCARD;
+
+            //
+            // Wait for card to become ready.
+            //
+            do
+            {
+                //
+                // Send ACMD41
+                //
+                SendCmd(CMD_APP_CMD,0);
+                ulRet = SendCmd(CMD_SD_SEND_OP_COND,0x40E00000);
+
+                //
+                // Response contains 32-bit OCR register
+                //
+                MAP_SDHostRespGet(SDHOST_BASE,ulResp);
+
+            }while(((ulResp[0] >> 31) == 0));
+
+            if(ulResp[0] & (1UL<<30))
+            {
+            CardAttrib->ulCapClass = CARD_CAP_CLASS_SDHC;
+            }
+
+        }
+        else //It's a MMC or SD 1.x card
+        {
+
+            //
+            // Wait for card to become ready.
+            //
+            do
+            {
+                if( (ulRet = SendCmd(CMD_APP_CMD,0)) == 0 )
+                {
+                    ulRet = SendCmd(CMD_SD_SEND_OP_COND,0x00E00000);
+
+                    //
+                    // Response contains 32-bit OCR register
+                    //
+                    MAP_SDHostRespGet(SDHOST_BASE,ulResp);
+                }
+            }while((ulRet == 0) && ((ulResp[0] >> 31) == 0));
+
+            //
+            // Check the response
+            //
+            if(ulRet == 0)
+            {
+                CardAttrib->ulCardType = CARD_TYPE_SDCARD;
+            }
+            else // CMD 55 is not recognised by SDHost cards.
+            {
+                //
+                // Confirm if its a SDHost card
+                //
+                ulRet = SendCmd(CMD_SEND_OP_COND,0);
+                if( ulRet == 0)
+                {
+                    CardAttrib->ulCardType = CARD_TYPE_MMC;
+                }
+            }
+        }
+    }
+
+    //
+    // Get the RCA of the attached card
+    //
+    if(ulRet == 0)
+    {
+        ulRet = SendCmd(CMD_ALL_SEND_CID,0);
+        if( ulRet == 0)
+        {
+            SendCmd(CMD_SEND_REL_ADDR,0);
+            MAP_SDHostRespGet(SDHOST_BASE,ulResp);
+
+            //
+            //  Fill in the RCA
+            //
+            CardAttrib->ulRCA = (ulResp[0] >> 16);
+
+            //
+            // Get tha card capacity
+            //
+            CardAttrib->ullCapacity = CardCapacityGet(CardAttrib->ulRCA);
+        }
+    }
+
+    //
+    // return status.
+    //
+    return ulRet;
+}
+
+//*****************************************************************************
+//
+//! Select a card for reading or writing
+//!
+//! \param Card is the pointer to card attribute structure.
+//!
+//! This function selects a card for reading or writing using its RCA from
+//! \e Card parameter.
+//!
+//! \return Returns 0 success, 1 otherwise.
+//
+//*****************************************************************************
+static unsigned long
+CardSelect(CardAttrib_t *Card)
+{
+    unsigned long ulRet;
+
+    //
+    // Send select command with card's RCA.
+    //
+    ulRet = SendCmd(CMD_SELECT_CARD, (Card->ulRCA << 16));
+
+    if(ulRet == 0)
+    {
+        while( !(MAP_SDHostIntStatus(SDHOST_BASE) & SDHOST_INT_TC) )
+        {
+
+        }
+    }
+
+    //
+    // Delay for card to become ready
+    //
+    MAP_UtilsDelay(80000000/12);
+
+    return ulRet;
+}
+
+//*****************************************************************************
+//
+//! Deselects previously selected card.
+//!
+//! This function deselects previously selected card.
+//!
+//! \return None.
+//
+//*****************************************************************************
+static void
+CardDeselect()
+{
+    //
+    // Send deselect command
+    //
+    SendCmd(CMD_DESELECT_CARD,0);
+}
+
+//*****************************************************************************
+//
+//! Reads a block of data.
+//!
+//! \param Card is pointer to a valid card attrib structure.
+//! \param pBuffer is pointer to the buffer to be read into.
+//! \param ulBlockNo is stating block number.
+//! \param ulBlockCount is number of block to be read.
+//!
+//! This function reads specified number of block into \e pBuffer. Each block
+//! is of 512 byte.
+//!
+//! \return Returns 0 on success, 1 otherwise.
+//
+//*****************************************************************************
+static unsigned long
+CardReadBlock(CardAttrib_t *Card, unsigned char *pBuffer,
+              unsigned long ulBlockNo, unsigned long ulBlockCount)
+{
+
+    unsigned long ulSize;
+
+
+    //
+    // SDSC linear address instead of block address
+    //
+    if(Card->ulCapClass == CARD_CAP_CLASS_SDSC)
+    {
+    ulBlockNo = ulBlockNo * 512;
+    }
+
+    //
+    // Set the number of block on the host
+    //
+    MAP_SDHostBlockCountSet(SDHOST_BASE,ulBlockCount);
+
+    //
+    // Compute total size in words.
+    //
+    ulSize = (512*ulBlockCount)/4;
+
+    //
+    // Send multi block read command to the card
+    //
+    if( SendCmd(CMD_READ_MULTI_BLK, ulBlockNo) == 0 )
+    {
+        //
+        // Read out the data.
+        //
+        while(ulSize--)
+        {
+            MAP_SDHostDataRead(SDHOST_BASE,(unsigned long *)pBuffer);
+            pBuffer+=4;
+        }
+
+        //
+        // Send multi block read stop command to the card
+        //
+        SendCmd(CMD_STOP_TRANS,0);
+
+        //
+        // return success.
+        //
+        return 0;
+    }
+
+    //
+    // Return error
+    //
+    return 1;
+}
+
+//*****************************************************************************
+//
+//! Write a block of data.
+//!
+//! \param Card is pointer to a valid card attrib structure.
+//! \param pBuffer is pointer to the buffer to be written
+//! \param ulBlockNo is stating block number.
+//! \param ulBlockCount is number of block to be read.
+//!
+//! This function write specified number of block into \e pBuffer. Each block
+//! is of 512 byte.
+//!
+//! \return Returns 0 on success, 1 otherwise.
+//
+//*****************************************************************************
+#if WRITE_TEST_EN
+static unsigned long
+CardWriteBlock(CardAttrib_t *Card, unsigned char *pBuffer,
+              unsigned long ulBlockNo, unsigned long ulBlockCount)
+{
+    unsigned long ulSize;
+
+    //
+    // SDSC linear address instead of block address
+    //
+    if(Card->ulCapClass == CARD_CAP_CLASS_SDSC)
+    {
+        ulBlockNo = ulBlockNo * 512;
+    }
+
+    //
+    // Set the number of block on the host
+    //
+    MAP_SDHostBlockCountSet(SDHOST_BASE,ulBlockCount);
+
+    //
+    // Compute total size in words.
+    //
+    ulSize = (512 * ulBlockCount)/4;
+
+    //
+    // Send multi block read command to the card
+    //
+    if( SendCmd(CMD_WRITE_MULTI_BLK, ulBlockNo) == 0 )
+    {
+        //
+        // Write the data
+        //
+        while(ulSize--)
+        {
+            MAP_SDHostDataWrite(SDHOST_BASE,*(unsigned long *)pBuffer);
+            pBuffer += 4;
+        }
+
+        //
+        // Wait for transfer completion.
+        //
+        while( !(MAP_SDHostIntStatus(SDHOST_BASE) & SDHOST_INT_TC) )
+        {
+
+        }
+
+        //
+        // Send multi block write stop command to the card
+        //
+        SendCmd(CMD_STOP_TRANS,0);
+
+        //
+        // return
+        //
+        return 0;
+    }
+
+    //
+    // Return error
+    //
+    return 1;
+}
+#endif
+
+
 
 
 
@@ -630,7 +1116,6 @@ void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent,
 
         case SL_NETAPP_HTTPPOSTTOKENVALUE_EVENT:
         {
-        	UART_PRINT("idk");
           unsigned char *ptr = pSlHttpServerEvent->EventData.httpPostData.token_name.data;
 
           if(memcmp(ptr, POST_token, strlen((const char *)POST_token)) == 0)
@@ -642,17 +1127,24 @@ void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent,
             if(memcmp(ptr, Z_STRING, strLenVal) != 0)
             	break;
 
-            unsigned char ucQueueMsg = 0;
-            long lRetVal = 0;
+            //unsigned char ucQueueMsg = 0;
+            //long lRetVal = 0;
+            ptr = ptr + 10;
 
+            //strcat((char*)G_FILE, (const char*)ptr);    //Stores it here so it can be used outside task
 
-            G_FILE = ptr;    //Stores it here so it can be used outside task
-            lRetVal = osi_MsgQWrite(&FileAvail, &ucQueueMsg, OSI_NO_WAIT);
-            if ( lRetVal < 0 )
+        	UART_PRINT((const char *)ptr);
+
+            /*if ((const char*)ptr == "\0")
             {
-            	UART_PRINT("Unable to write to Message Q\n\r");
-            	UART_PRINT("Cannot save file\n\r");
-            }
+            	//UART_PRINT((const char*)G_FILE);
+            	lRetVal = osi_MsgQWrite(&FileAvail, &ucQueueMsg, OSI_NO_WAIT);
+            	if ( lRetVal < 0 )
+            	{
+            		UART_PRINT("Unable to write to Message Q\n\r");
+            		UART_PRINT("Cannot save file\n\r");
+            	}
+            }*/
           }
         }
           break;
@@ -1085,15 +1577,58 @@ static void SaveFileTask(void *pvParameters)
     osi_MsgQRead(&FileAvail, &ucQueueMsg, OSI_WAIT_FOREVER);
     osi_MsgQDelete(&FileAvail);
 
-    unsigned long MaxSize = 63 * 1024;
+    //unsigned long MaxSize = 63 * 1024;
     long fileHandle = -1;
     unsigned long Token = 0;
-    long file_size = 0;
+    long lRetVal = 0;
 
     UART_PRINT("\nSaveFileTask has started!\n\r");
 
+    lRetVal = sl_FsOpen((_u8 *)FILE_NAME, FS_MODE_OPEN_WRITE, &Token, &fileHandle);
+    if(lRetVal < 0)
+    {
+        // File Doesn't exit create a new of 40 KB file
+        lRetVal = sl_FsOpen((unsigned char *)FILE_NAME, \
+                           FS_MODE_OPEN_CREATE(0xFFF, \
+                           _FS_FILE_OPEN_FLAG_COMMIT|_FS_FILE_PUBLIC_WRITE),
+                           &Token, &fileHandle);
+        ASSERT_ON_ERROR(lRetVal);
+    }
+
+
+
+    while(1)
+    {
+        lRetVal = sl_FsWrite(fileHandle, 0xFFFFFF,
+                                G_FILE, G_FILE_SIZE);
+
+        if(lRetVal < G_FILE_SIZE)
+        {
+            UART_PRINT("Failed during writing the file, Error-code: %d\r\n", \
+                         FILE_WRITE_ERROR);
+            // Close file without saving
+            lRetVal = sl_FsClose(fileHandle, 0, (unsigned char*) "A", 1);
+        }
+
+        break;
+        //if ((len - 2) >= 0 && G_FILE[G_FILE_SIZE - 2] == '\r' && G_FILE [G_FILE_SIZE - 1] == '\n'){
+        //    break;
+        //}
+    }
+
+    //
+    // If user file has checksum which can be used to verify the temporary
+    // file then file should be verified
+    // In case of invalid file (FILE_NAME) should be closed without saving to
+    // recover the previous version of file
+    //
+
+    // Save and close file
+    //UART_PRINT("Total bytes received: %d\n\r", bytesReceived);
+    lRetVal = sl_FsClose(fileHandle, 0, 0, 0);
+
     if (G_FILE)
-    	UART_PRINT(G_FILE);
+    	UART_PRINT((const char*)G_FILE);
 
 }
 //*****************************************************************************
@@ -1155,6 +1690,9 @@ BoardInit(void)
 void main()
 {
     long lRetVal = -1;
+    CardAttrib_t sCard;
+    unsigned long ulCapacity;
+    unsigned long ulAddress;
 
     //Board Initialization
     BoardInit();
@@ -1211,15 +1749,139 @@ void main()
         LOOP_FOREVER();
     }
 
-
-
     lRetVal = osi_TaskCreate(SaveFileTask, (signed char*)"SaveFileTask",
-                         OSI_STACK_SIZE, NULL, 7, NULL );
+                         OSI_STACK_SIZE, NULL, 5, NULL );
     if(lRetVal < 0)
     {
         UART_PRINT("Unable to create Save File Task\n\r");
         LOOP_FOREVER();
     }
+
+   // lRetVal = osi_TaskCreate(GCodeParse, (signed char*)"GCodeParse",
+  //                       OSI_STACK_SIZE, NULL, 7, NULL );
+  //  if(lRetVal < 0)
+  //  {
+  //      UART_PRINT("Unable to create G-Code Parse Task\n\r");
+  //      LOOP_FOREVER();
+  //  }
+
+    //
+    // Set the SD card clock as output pin
+    //
+    MAP_PinDirModeSet(PIN_01,PIN_DIR_MODE_OUT);
+
+    //
+    // Enable Pull up on data
+    //
+    MAP_PinConfigSet(PIN_64,PIN_STRENGTH_4MA, PIN_TYPE_STD_PU);
+
+    //
+    // Enable Pull up on CMD
+    //
+    MAP_PinConfigSet(PIN_02,PIN_STRENGTH_4MA, PIN_TYPE_STD_PU);
+
+    //
+    // Enable SDHOST
+    //
+    MAP_PRCMPeripheralClkEnable(PRCM_SDHOST,PRCM_RUN_MODE_CLK);
+
+    //
+    // Reset SDHOST
+    //
+    MAP_PRCMPeripheralReset(PRCM_SDHOST);
+
+    //
+    // Configure SDHOST
+    //
+    MAP_SDHostInit(SDHOST_BASE);
+
+    //
+    // Configure card clock to 15 Mhz
+    //
+    MAP_SDHostSetExpClk(SDHOST_BASE, MAP_PRCMPeripheralClockGet(PRCM_SDHOST),
+                            15000000);
+
+    //
+    // Initialize the card
+    //
+    if( CardInit(&sCard) )
+    {
+        Message("Error : Failed to initialize the card. Check "
+                    "if card is properly inserted \n\r");
+    }
+    else
+    {
+        //
+        // Print Card Details
+        //
+        ulCapacity = (sCard.ullCapacity/(1024*1024));
+        Message("********************\n\r");
+        Message("Card Info \n\r");
+        Message("********************\n\r");
+        Report("Card Type   : %s \n\r",
+                    (sCard.ulCardType == CARD_TYPE_MMC)?"MMC":"SD Card");
+        Report("Class       : %s \n\r",
+                    (sCard.ulCapClass == CARD_CAP_CLASS_SDHC)?"SDHC":"SDSC");
+        Report("Capacity    : %d MB \n\r",ulCapacity);
+        Report("Version     : Ver %s \n\r",
+                        (sCard.ulVersion  == CARD_VERSION_2)?"2.0":"1.0");
+
+        //
+        // Select the card
+        //
+        CardSelect(&sCard);
+
+        //
+        // Set the block size on the controller.
+        //
+        MAP_SDHostBlockSizeSet(SDHOST_BASE,512);
+
+#if WRITE_TEST_EN
+
+        Message("\n\n\rWriting first Block.....\n\n\r");
+        Message("Info : This will corrupt the existing filesystem on the card\n\r");
+
+        //
+        // Initialize the buffer with pattern
+        //
+        for(ulAddress = 0; ulAddress < 512; ulAddress++)
+        {
+          g_ucDataBuff[ulAddress] = ulAddress;
+        }
+
+        //
+        // Write 1 block (512 bytes) to the card
+        //
+        CardWriteBlock(&sCard,g_ucDataBuff,0,1);
+
+#endif
+
+        Message("\n\rReading first Block.....\n\r");
+
+        //
+        // Read 1 Block (512 Bytes) from the card
+        //
+        CardReadBlock(&sCard,g_ucDataBuff,0,1);
+
+        //
+        // Display the content
+        //
+        for(ulAddress=0; ulAddress < 512; ulAddress++)
+        {
+            if(ulAddress%20 == 0)
+            {
+                Report("\n\r%0.4x :", ulAddress);
+            }
+            Report("%2.2x ",g_ucDataBuff[ulAddress]);
+        }
+
+
+        //
+        // de-select the card
+        //
+        CardDeselect();
+    }
+
 
     //
     // Start OS Scheduler
