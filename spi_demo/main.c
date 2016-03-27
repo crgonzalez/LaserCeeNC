@@ -188,47 +188,58 @@ void main()
     //Report( "\r\nstatus: %d", y_get_status() );
 
 
+	xy_get_accel_speed();
+	xy_get_decel_speed();
+	xy_get_max_speed();
+	xy_get_min_speed();
+	xy_get_fullstep_speed();
+    xy_get_const_cur();
+    xy_get_accel_cur();
+    xy_get_decel_cur();
+    xy_get_status();
+    xy_get_config();
+
     uint16_t i;
-    for( i = 9; i <= 10; i++ ) {
-		// Set Speeds
-		//y_set_max_speed_mm( 0.1*i );
+    for( i = 1; i <= 4; i++ ) {
+		// Start
     	y_set_max_speed( i );
-		Report( "\r\n%d max speed", i );
-		// Move to a different position
-		y_move_mm( 50 );
-		y_wait();
-		y_release_bridge();
-		i++;
-
-		// Set Speeds
-		//y_set_max_speed_mm( 0.1*i );
-    	y_set_max_speed( i );
-		Report( "\r\n%d max speed", i );
-		// Move to a different position
-		y_move_mm( -50 );
-		y_wait();
-		y_release_bridge();
-    }
-
-    //uint16_t i;
-    for( i = 9; i <= 10; i++ ) {
-		// Set Speeds
-		//y_set_max_speed_mm( 0.1*i );
     	x_set_max_speed( i );
-		Report( "\r\n%d max speed", i );
+		Report( "\r\n%d: ", i );
+
 		// Move to a different position
-		x_move_mm( 50 );
-		x_wait();
+		Report( "e " );
+		//y_move_mm( 20 );
+		//x_move_mm( 20 );
+		xy_move_mm( 20, 20 );
+		xy_wait();
+		y_release_bridge();
 		x_release_bridge();
-		i++;
 
-		// Set Speeds
-		//y_set_max_speed_mm( 0.1*i );
-    	x_set_max_speed( i );
-		Report( "\r\n%d max speed", i );
 		// Move to a different position
-		x_move_mm( -50 );
-		x_wait();
+		Report( "f " );
+		//y_move_mm( -20 );
+		//x_move_mm( 20 );
+		xy_move_mm( 20, -20 );
+		xy_wait();
+		y_release_bridge();
+		x_release_bridge();
+
+		// Move to a different position
+		Report( "g " );
+		//y_move_mm( -20 );
+		//x_move_mm( -20 );
+		xy_move_mm( -20, -20 );
+		xy_wait();
+		y_release_bridge();
+		x_release_bridge();
+
+		// Move to a different position
+		Report( "h " );
+		//y_move_mm( 20 );
+		//x_move_mm( -20 );
+		xy_move_mm( -20, 20 );
+		xy_wait();
+		y_release_bridge();
 		x_release_bridge();
     }
 

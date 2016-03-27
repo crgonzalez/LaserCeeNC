@@ -74,6 +74,9 @@ static unsigned char g_ucRxBuff[TR_BUFF_SIZE];
 uint16_t get_status( void );
 uint16_t L6472_spi_txrx( uint8_t xByte, uint8_t yByte );
 
+void	xy_byte_tx( uint8_t xByte, uint8_t yByte );
+void	xy_move( direction_t xdir, uint32_t xsteps, direction_t ydir, uint32_t ysteps );
+
 void	y_set_run_current( uint8_t current );
 uint8_t y_byte_txrx( uint8_t yByte );
 void 	y_move( direction_t dir, uint32_t steps );
@@ -85,7 +88,7 @@ void 	x_move( direction_t dir, uint32_t steps );
 uint8_t x_busy( void );
 
 //*****************************************************************************
-//                  Public Functions
+//                  General Public Functions
 //*****************************************************************************
 void L6472_init( void ) {
 	// Enable SPI Peripheral Clock
@@ -136,16 +139,47 @@ void L6472_init( void ) {
     x_reset();
 
     // Configure motor current parameter
-    y_set_run_current( 10 );
-    x_set_run_current( 10 );
+    y_set_run_current( 15 );
+    x_set_run_current( 15 );
+
+    // Force microstepping
+    xy_set_fs_speed( 0x3ff, 0x3ff );
 
 }
 
+
+//*****************************************************************************
+//                  XY Public Functions
+//*****************************************************************************
 void 	xy_wait( void ) {
 	while( y_busy() || x_busy() );
 }
 
 
+void	xy_move_mm( float xMMs, float yMMs ) {
+	// Determine Distance
+	uint32_t xsteps = (uint32_t)abs( xMMs*STEPS_TO_MM );
+	uint32_t ysteps = (uint32_t)abs( yMMs*STEPS_TO_MM );
+
+	if( xMMs > 0 ) {
+		if( yMMs > 0 ) {
+			xy_move( POSITIVE, xsteps, POSITIVE, ysteps );
+		} else if( yMMs < 0 ) {
+			xy_move( POSITIVE, xsteps, NEGATIVE, ysteps );
+		}
+	} else if( xMMs < 0 ) {
+		if( yMMs > 0 ) {
+			xy_move( NEGATIVE, xsteps, POSITIVE, ysteps );
+		} else if( yMMs < 0 ) {
+			xy_move( NEGATIVE, xsteps, NEGATIVE, ysteps );
+		}
+	}
+}
+
+
+//*****************************************************************************
+//                  Y Public Functions
+//*****************************************************************************
 void y_reset( void ) {
 	y_byte_txrx( 0xc0 );
 }
@@ -215,6 +249,9 @@ uint16_t y_get_max_speed( void ) {
 }
 
 
+//*****************************************************************************
+//                  X Public Functions
+//*****************************************************************************
 void x_reset( void ) {
 	x_byte_txrx( 0xc0 );
 }
@@ -261,7 +298,6 @@ void x_wait( void ) {
 	while( x_busy() );
 }
 
-
 void x_set_max_speed( uint16_t speed ) {
 	// Command
 	x_byte_txrx( 0x07 );
@@ -286,7 +322,7 @@ uint16_t x_get_max_speed( void ) {
 
 
 //*****************************************************************************
-//                 Private functions
+//                 General Private functions
 //*****************************************************************************
 uint16_t get_status( void ) {
 	uint16_t status;
@@ -319,6 +355,47 @@ uint16_t L6472_spi_txrx( uint8_t xByte, uint8_t yByte ) {
 }
 
 
+//*****************************************************************************
+//                 XY Private functions
+//*****************************************************************************
+void	xy_byte_tx( uint8_t xByte, uint8_t yByte ) {
+	// Send x and y bytes
+	L6472_spi_txrx( xByte, yByte );
+}
+
+
+void	xy_move( direction_t xdir, uint32_t xsteps, direction_t ydir, uint32_t ysteps ) {
+	// Choose direction
+	if( xdir == POSITIVE ) {
+		if( ydir == POSITIVE ) {
+			xy_byte_tx( 0x41, 0x41 );
+		} else {
+			xy_byte_tx( 0x41, 0x40 );
+		}
+	} else {
+		if( ydir == POSITIVE ) {
+			xy_byte_tx( 0x40, 0x41 );
+		} else {
+			xy_byte_tx( 0x40, 0x40 );
+		}
+	}
+
+	// Truncate x and y steps to 20 bits
+	xsteps &= 0x000fffff;
+	ysteps &= 0x000fffff;
+
+	// MSByte
+	xy_byte_tx( (uint8_t)( (xsteps >> 16) & 0xff), (uint8_t)( (ysteps >> 16) & 0xff) );
+	// Middle Byte
+	xy_byte_tx( (uint8_t)( (xsteps >> 8) & 0xff), (uint8_t)( (ysteps >> 8) & 0xff) );
+	// LSByte
+	xy_byte_tx( (uint8_t)(xsteps & 0xff), (uint8_t)(ysteps & 0xff) );
+}
+
+
+//*****************************************************************************
+//                 Y Private functions
+//*****************************************************************************
 void	y_set_run_current( uint8_t current ) {
 	// Command
 	y_byte_txrx( 0x0A );
@@ -368,6 +445,9 @@ uint8_t y_busy( void ) {
 }
 
 
+//*****************************************************************************
+//                 X Private functions
+//*****************************************************************************
 void	x_set_run_current( uint8_t current ) {
 	// Command
 	x_byte_txrx( 0x0A );
@@ -417,4 +497,78 @@ uint8_t x_busy( void ) {
 }
 
 
+/**********************************************************************
+ * X and Y Register Setting Functions
+ **********************************************************************/
+void xy_set_fs_speed( uint16_t xfsspeed, uint16_t yfsspeed ) {
+	// strip off extra bits (more than 10 bits)
+	xfsspeed &= 0x03ff;
+	yfsspeed &= 0x03ff;
+
+	// MSByte
+	xy_byte_tx( (uint8_t)( (xfsspeed >> 8) & 0xff), (uint8_t)( (yfsspeed >> 8) & 0xff) );
+	// LSByte
+	xy_byte_tx( (uint8_t)(xfsspeed & 0xff), (uint8_t)(yfsspeed & 0xff) );
+}
+
+
+/**********************************************************************
+ * X and Y Register Reading Functions
+ **********************************************************************/
+void	xy_get_accel_speed( void ) {
+	xy_byte_tx( 0x25, 0x25 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_decel_speed( void ) {
+	xy_byte_tx( 0x26, 0x26 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_max_speed( void ) {
+	xy_byte_tx( 0x27, 0x27 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_min_speed( void ) {
+	xy_byte_tx( 0x28, 0x28 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_fullstep_speed( void ) {
+	xy_byte_tx( 0x35, 0x35 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_const_cur( void ) {
+	xy_byte_tx( 0x2A, 0x2A );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_accel_cur( void ) {
+	xy_byte_tx( 0x2B, 0x2B);
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_decel_cur( void ) {
+	xy_byte_tx( 0x2C, 0x2C );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_status( void ) {
+	xy_byte_tx( 0x39, 0x39 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_config( void ) {
+	xy_byte_tx( 0x38, 0x38 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
 
