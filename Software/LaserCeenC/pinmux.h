@@ -1,12 +1,13 @@
 //*****************************************************************************
-// pinmux.h 
-// 
-// Header file for pinmuxconfig
-// 
+// pinmux.h
+//
+// function prototype for pinmuxconfig
+//
 // Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/ 
 // 
 // 
 //  Redistribution and use in source and binary forms, with or without 
+//  modification, are permitted provided that the following conditions 
 //  are met:
 //
 //    Redistributions of source code must retain the above copyright 
@@ -35,7 +36,6 @@
 //
 //*****************************************************************************
 
-//*****************************************************************************
 // This file was automatically generated on 7/21/2014 at 3:06:20 PM
 // by TI PinMux version 3.0.334
 //

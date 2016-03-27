@@ -31,6 +31,11 @@
 			<locationURI>CC3200_SDK_ROOT/example/common/gpio_if.c</locationURI>
 		</link>
 		<link>
+			<name>macros.ini_initial</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/spi_demo/macros.ini_initial</locationURI>
+		</link>
+		<link>
 			<name>startup_ccs.c</name>
 			<type>1</type>
 			<locationURI>CC3200_SDK_ROOT/example/common/startup_ccs.c</locationURI>
@@ -45,6 +50,10 @@
 		<variable>
 			<name>CC3200_SDK_ROOT</name>
 			<value>$%7BPARENT-3-ORIGINAL_PROJECT_ROOT%7D</value>
+		</variable>
+		<variable>
+			<name>COMPONENT_CONTROL</name>
+			<value>file:/C:/Users/Zachary/Documents/GitHub/LaserCeeNC/spi_demo</value>
 		</variable>
 		<variable>
 			<name>ORIGINAL_PROJECT_ROOT</name>
