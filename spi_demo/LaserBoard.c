@@ -18,16 +18,16 @@
  * Parameters for laser control GPIO pin
  ****************************************************************************/
 // Dev board
-#define LASER_PCLK		PRCM_GPIOA2
+/*#define LASER_PCLK		PRCM_GPIOA2
 #define	LASER_PIN		PIN_15
 #define LASER_GPIOBASE	GPIOA2_BASE
-#define	LASER_GPIOPIN	GPIO_PIN_6
+#define	LASER_GPIOPIN	GPIO_PIN_6*/
 
 // Actual board
-/*#define LASER_PCLK	PRCM_GPIOA0
+#define LASER_PCLK	PRCM_GPIOA0
 #define	LASER_PIN		PIN_59
 #define LASER_GPIOBASE	GPIOA0_BASE
-#define	LASER_GPIOPIN	GPIO_PIN_4*/
+#define	LASER_GPIOPIN	GPIO_PIN_4
 
 void laser_init( void ) {
 

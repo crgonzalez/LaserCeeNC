@@ -94,6 +94,8 @@ void 	x_set_max_speed( uint16_t speed );
  * X and Y Register Setting Functions
  **********************************************************************/
 void xy_set_fs_speed( uint16_t xfsspeed, uint16_t yfsspeed );
+void xy_set_accel_speed( uint16_t xaccel, uint16_t yaccel );
+void xy_set_decel_speed( uint16_t xdecel, uint16_t ydecel );
 
 /**********************************************************************
  * X and Y Register Reading Functions

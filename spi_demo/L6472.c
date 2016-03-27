@@ -34,31 +34,31 @@
  * Parameters for Y_BUSY GPIO pin
  ****************************************************************************/
 // Dev board
-#define Y_BUSY_PCLK		PRCM_GPIOA3
+/*#define Y_BUSY_PCLK		PRCM_GPIOA3
 #define	Y_BUSY_PIN		PIN_18
 #define Y_BUSY_GPIOBASE	GPIOA3_BASE
-#define	Y_BUSY_GPIOPIN	GPIO_PIN_4
+#define	Y_BUSY_GPIOPIN	GPIO_PIN_4*/
 
 // Actual board
-/*#define Y_BUSY_PCLK		PRCM_GPIOA0
+#define Y_BUSY_PCLK		PRCM_GPIOA0
 #define	Y_BUSY_PIN		PIN_61
 #define Y_BUSY_GPIOBASE	GPIOA0_BASE
-#define	Y_BUSY_GPIOPIN	GPIO_PIN_6*/
+#define	Y_BUSY_GPIOPIN	GPIO_PIN_6
 
 /****************************************************************************
  * Parameters for X_BUSY GPIO pin
  ****************************************************************************/
 // Dev board
-#define X_BUSY_PCLK		PRCM_GPIOA3
+/*#define X_BUSY_PCLK		PRCM_GPIOA3
 #define	X_BUSY_PIN		PIN_17
 #define X_BUSY_GPIOBASE	GPIOA3_BASE
-#define	X_BUSY_GPIOPIN	GPIO_PIN_0
+#define	X_BUSY_GPIOPIN	GPIO_PIN_0*/
 
 // Actual board
-/*#define X_BUSY_PCLK		PRCM_GPIOA0
+#define X_BUSY_PCLK		PRCM_GPIOA0
 #define	X_BUSY_PIN		PIN_60
 #define X_BUSY_GPIOBASE	GPIOA0_BASE
-#define	X_BUSY_GPIOPIN	GPIO_PIN_5*/
+#define	X_BUSY_GPIOPIN	GPIO_PIN_5
 
 //*****************************************************************************
 //                 GLOBAL VARIABLES
@@ -152,7 +152,23 @@ void L6472_init( void ) {
 //                  XY Public Functions
 //*****************************************************************************
 void 	xy_wait( void ) {
-	while( y_busy() || x_busy() );
+	uint8_t xBool = 1;
+	uint8_t yBool = 1;
+	while( 1 ) {
+		if( xBool == 0 && yBool == 0 ) {
+			return;
+		}
+
+		if( xBool == 1 && x_busy() == 0 ) {
+			xBool = 0;
+			x_release_bridge();
+		}
+
+		if( yBool == 1 && y_busy() == 0 ) {
+			yBool = 0;
+			y_release_bridge();
+		}
+	}
 }
 
 
@@ -224,6 +240,7 @@ void y_goto_origin( void ) {
 
 void y_wait( void ) {
 	while( y_busy() );
+	y_release_bridge();
 }
 
 
@@ -296,6 +313,7 @@ void x_goto_origin( void ) {
 
 void x_wait( void ) {
 	while( x_busy() );
+	x_release_bridge();
 }
 
 void x_set_max_speed( uint16_t speed ) {
@@ -505,10 +523,40 @@ void xy_set_fs_speed( uint16_t xfsspeed, uint16_t yfsspeed ) {
 	xfsspeed &= 0x03ff;
 	yfsspeed &= 0x03ff;
 
+	// Command
+	xy_byte_tx( 0x15, 0x15 );
 	// MSByte
 	xy_byte_tx( (uint8_t)( (xfsspeed >> 8) & 0xff), (uint8_t)( (yfsspeed >> 8) & 0xff) );
 	// LSByte
 	xy_byte_tx( (uint8_t)(xfsspeed & 0xff), (uint8_t)(yfsspeed & 0xff) );
+}
+
+
+void xy_set_accel_speed( uint16_t xaccel, uint16_t yaccel ) {
+	// strip off extra bits (more than 12 bits)
+	xaccel &= 0x0fff;
+	yaccel &= 0x0fff;
+
+	// Command
+	xy_byte_tx( 0x05, 0x05 );
+	// MSByte
+	xy_byte_tx( (uint8_t)( (xaccel >> 8) & 0xff), (uint8_t)( (yaccel >> 8) & 0xff) );
+	// LSByte
+	xy_byte_tx( (uint8_t)(xaccel & 0xff), (uint8_t)(yaccel & 0xff) );
+}
+
+
+void xy_set_decel_speed( uint16_t xdecel, uint16_t ydecel ) {
+	// strip off extra bits (more than 12 bits)
+	xdecel &= 0x0fff;
+	ydecel &= 0x0fff;
+
+	// Command
+	xy_byte_tx( 0x06, 0x06 );
+	// MSByte
+	xy_byte_tx( (uint8_t)( (xdecel >> 8) & 0xff), (uint8_t)( (ydecel >> 8) & 0xff) );
+	// LSByte
+	xy_byte_tx( (uint8_t)(xdecel & 0xff), (uint8_t)(ydecel & 0xff) );
 }
 
 
