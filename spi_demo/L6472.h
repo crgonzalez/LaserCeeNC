@@ -56,6 +56,8 @@ void 	y_wait( void );
 // RECOMENDATION - 0 to 4 for cutting speed, 10 for fast movement when not cutting
 void 	y_set_max_speed( uint16_t speed );
 
+uint16_t y_get_max_speed( void );
+
 /**********************************************************************
  * X motor control functions
  **********************************************************************/
@@ -84,7 +86,7 @@ void 	x_wait( void );
 // RECOMENDATION - 0 to 4 for cutting speed, 10 for fast movement when not cutting
 void 	x_set_max_speed( uint16_t speed );
 
-
+uint16_t x_get_max_speed( void );
 
 
 

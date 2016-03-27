@@ -48,12 +48,17 @@
 /****************************************************************************
  * Parameters for X_BUSY GPIO pin
  ****************************************************************************/
+// Dev board
+#define X_BUSY_PCLK		PRCM_GPIOA3
+#define	X_BUSY_PIN		PIN_17
+#define X_BUSY_GPIOBASE	GPIOA3_BASE
+#define	X_BUSY_GPIOPIN	GPIO_PIN_0
+
 // Actual board
-#define X_BUSY_PCLK		PRCM_GPIOA0
+/*#define X_BUSY_PCLK		PRCM_GPIOA0
 #define	X_BUSY_PIN		PIN_60
 #define X_BUSY_GPIOBASE	GPIOA0_BASE
-#define	X_BUSY_GPIOPIN	GPIO_PIN_5
-
+#define	X_BUSY_GPIOPIN	GPIO_PIN_5*/
 
 //*****************************************************************************
 //                 GLOBAL VARIABLES
@@ -128,9 +133,11 @@ void L6472_init( void ) {
 
     // Reset the device
     y_reset();
+    x_reset();
 
     // Configure motor current parameter
     y_set_run_current( 10 );
+    x_set_run_current( 10 );
 
 }
 
@@ -195,6 +202,18 @@ void y_set_max_speed( uint16_t speed ) {
 	y_byte_txrx( (uint8_t)(speed & 0xff) );
 }
 
+uint16_t y_get_max_speed( void ) {
+	uint16_t max_speed = 0;
+	// Command
+	y_byte_txrx( 0x27 );
+	// NOP
+	max_speed += (uint16_t)(y_byte_txrx( 0x00 ));
+	max_speed <<= 8;
+	// NOP
+	max_speed += (uint16_t)(y_byte_txrx( 0x00 ));
+	return max_speed;
+}
+
 
 void x_reset( void ) {
 	x_byte_txrx( 0xc0 );
@@ -252,7 +271,17 @@ void x_set_max_speed( uint16_t speed ) {
 	x_byte_txrx( (uint8_t)(speed & 0xff) );
 }
 
-
+uint16_t x_get_max_speed( void ) {
+	uint16_t max_speed = 0;
+	// Command
+	x_byte_txrx( 0x27 );
+	// NOP
+	max_speed += (uint16_t)(x_byte_txrx( 0x00 ));
+	max_speed <<= 8;
+	// NOP
+	max_speed += (uint16_t)(x_byte_txrx( 0x00 ));
+	return max_speed;
+}
 
 
 

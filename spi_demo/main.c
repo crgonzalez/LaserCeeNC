@@ -171,7 +171,7 @@ void main()
     L6472_init();
 
     // Initialize laser control
-    laser_init();
+    //laser_init();
 
     // Read a character from UART terminal
     Report( "\r\nPress a key: " );
@@ -179,9 +179,17 @@ void main()
     ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 
 
+    /*y_set_max_speed( 5 );
+    Report( "\r\nmax speed: %d", y_get_max_speed() );
+
+    x_set_max_speed( 5 );
+    Report( "\r\nmax speed: %d", x_get_max_speed() );*/
+
+    //Report( "\r\nstatus: %d", y_get_status() );
+
 
     uint16_t i;
-    for( i = 1; i <= 10; i++ ) {
+    for( i = 9; i <= 10; i++ ) {
 		// Set Speeds
 		//y_set_max_speed_mm( 0.1*i );
     	y_set_max_speed( i );
@@ -202,11 +210,33 @@ void main()
 		y_release_bridge();
     }
 
+    //uint16_t i;
+    for( i = 9; i <= 10; i++ ) {
+		// Set Speeds
+		//y_set_max_speed_mm( 0.1*i );
+    	x_set_max_speed( i );
+		Report( "\r\n%d max speed", i );
+		// Move to a different position
+		x_move_mm( 50 );
+		x_wait();
+		x_release_bridge();
+		i++;
+
+		// Set Speeds
+		//y_set_max_speed_mm( 0.1*i );
+    	x_set_max_speed( i );
+		Report( "\r\n%d max speed", i );
+		// Move to a different position
+		x_move_mm( -50 );
+		x_wait();
+		x_release_bridge();
+    }
+
     /*y_move_mm( 100 );
     y_wait();
     y_release_bridge();*/
 
-    laser_off();
+    //laser_off();
 
     while(1)
     {
