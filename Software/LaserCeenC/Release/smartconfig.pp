@@ -3,8 +3,8 @@
 smartconfig.obj: ../smartconfig.c
 smartconfig.obj: C:/ti/CC3200SDK_1.1.0/cc3200-sdk/simplelink/include/simplelink.h
 smartconfig.obj: C:/ti/CC3200SDK_1.1.0/cc3200-sdk/simplelink/include/../user.h
-smartconfig.obj: C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/include/string.h
-smartconfig.obj: C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/include/linkage.h
+smartconfig.obj: C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/string.h
+smartconfig.obj: C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/linkage.h
 smartconfig.obj: C:/ti/CC3200SDK_1.1.0/cc3200-sdk/simplelink/include/../cc_pal.h
 smartconfig.obj: C:/ti/CC3200SDK_1.1.0/cc3200-sdk/oslib/osi.h
 smartconfig.obj: C:/ti/CC3200SDK_1.1.0/cc3200-sdk/simplelink/include/../source/objInclusion.h
@@ -24,8 +24,8 @@ smartconfig.obj: C:/ti/CC3200SDK_1.1.0/cc3200-sdk/example/common/uart_if.h
 ../smartconfig.c: 
 C:/ti/CC3200SDK_1.1.0/cc3200-sdk/simplelink/include/simplelink.h: 
 C:/ti/CC3200SDK_1.1.0/cc3200-sdk/simplelink/include/../user.h: 
-C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/include/string.h: 
-C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/include/linkage.h: 
+C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/string.h: 
+C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/linkage.h: 
 C:/ti/CC3200SDK_1.1.0/cc3200-sdk/simplelink/include/../cc_pal.h: 
 C:/ti/CC3200SDK_1.1.0/cc3200-sdk/oslib/osi.h: 
 C:/ti/CC3200SDK_1.1.0/cc3200-sdk/simplelink/include/../source/objInclusion.h: 
