@@ -84,6 +84,7 @@
 #include "gpio_if.h"
 #include "uart_if.h"
 #include "common.h"
+#include "gpio.h"
 
 //fatfs includes
 #include "sdhost_demo.h"
@@ -1143,6 +1144,65 @@ DisplayBanner(char * AppName)
 
 //*****************************************************************************
 //
+//! Handle the Tilt Sensor Interrupt
+//!
+//! \param  None
+//!
+//! \return None
+//
+//*****************************************************************************
+static void
+TiltSensorInterruptHandler()
+{
+	/*
+	 * MAP_GPIOIntDisable(GPIOA0_BASE,GPIO_PIN_0);
+     * MAP_GPIOIntClear(GPIOA0_BASE,GPIO_PIN_0);
+	 */
+}
+
+//*****************************************************************************
+//
+//! Initialize the Tilt Sensor Interrupt
+//!
+//! \param[in] TiltInterruptHandler The handler function for the tilt sensor
+//!
+//! \return None
+//
+//*****************************************************************************
+static void
+Tilt_IF_Init(void (*TiltInterruptHandler)())
+{
+
+ if(TiltInterruptHandler != NULL)
+ {
+   //
+   // Set Interrupt Type for GPIO
+   //
+   MAP_GPIOIntTypeSet(GPIOA0_BASE,GPIO_PIN_0,GPIO_RISING_EDGE);
+
+   //
+   // Register Interrupt handler
+   //
+   #ifdef SL_PLATFORM_MULTI_THREADED /* If OS-based application */
+   	   osi_InterruptRegister(INT_GPIOA0, \
+   			   (P_OSI_INTR_ENTRY)TiltSensorInterruptHandler, \
+   			   INT_PRIORITY_LVL_1);
+   #else
+   	   MAP_GPIOIntRegister(GPIOA0_BASE, TiltInterruptHandler);
+   #endif
+
+   //
+   // Enable Interrupt
+   //
+
+   MAP_GPIOIntClear(GPIOA0_BASE,GPIO_PIN_0);
+
+   MAP_GPIOIntEnable(GPIOA0_BASE,GPIO_INT_PIN_0);
+ }
+}
+
+//*****************************************************************************
+//
 //! Board Initialization & Configuration
 //!
 //! \param  None
@@ -1210,6 +1270,9 @@ void main()
     //Display Application Banner on UART Terminal
     DisplayBanner(APPLICATION_NAME);
     
+    //Initialize Tilt Sensor Interrupt
+	Tilt_IF_Init(TiltSensorInterruptHandler);
+
     //
     // Simplelinkspawntask
     //
