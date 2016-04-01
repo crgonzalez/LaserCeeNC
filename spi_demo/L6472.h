@@ -28,6 +28,10 @@ void L6472_init( void );
 // y move commands!
 void 	xy_wait( void );
 
+void	xy_move_mm( float xMMs, float yMMs );
+
+void	move_coord( float x_dest, float y_dest );
+
 /**********************************************************************
  * Y motor control functions
  **********************************************************************/
@@ -55,6 +59,8 @@ void 	y_wait( void );
 //
 // RECOMENDATION - 0 to 4 for cutting speed, 10 for fast movement when not cutting
 void 	y_set_max_speed( uint16_t speed );
+
+
 
 /**********************************************************************
  * X motor control functions
@@ -86,6 +92,65 @@ void 	x_set_max_speed( uint16_t speed );
 
 
 
+/**********************************************************************
+ * X and Y Register Setting Functions
+ **********************************************************************/
+void xy_set_fs_speed( uint16_t xfsspeed, uint16_t yfsspeed );
+void xy_set_accel_speed( uint16_t xaccel, uint16_t yaccel );
+void xy_set_decel_speed( uint16_t xdecel, uint16_t ydecel );
+
+/**********************************************************************
+ * X and Y Register Reading Functions
+ **********************************************************************/
+void	xy_get_accel_speed( void );
+
+void	xy_get_decel_speed( void );
+
+void	xy_get_max_speed( void );
+
+void	xy_get_min_speed( void );
+
+void	xy_get_fullstep_speed( void );
+
+void	xy_get_const_cur( void );
+
+void	xy_get_accel_cur( void );
+
+void	xy_get_decel_cur( void );
+
+void	xy_get_status( void );
+
+void	xy_get_config( void );
+
+/*uint16_t x_get_accel_speed( void );
+uint16_t y_get_accel_speed( void );
+
+uint16_t x_get_decel_speed( void );
+uint16_t y_get_decel_speed( void );
+
+uint16_t x_get_max_speed( void );
+uint16_t y_get_max_speed( void );
+
+uint16_t x_get_min_speed( void );
+uint16_t y_get_min_speed( void );
+
+uint16_t x_get_fullstep_speed( void );
+uint16_t y_get_fullstep_speed( void );
+
+uint8_t x_get_const_cur( void );
+uint8_t y_get_const_cur( void );
+
+uint8_t x_get_accel_cur( void );
+uint8_t y_get_accel_cur( void );
+
+uint8_t x_get_decel_cur( void );
+uint8_t y_get_decel_cur( void );
+
+uint16_t x_get_status( void );
+uint16_t y_get_status( void );
+
+uint16_t x_get_config( void );
+uint16_t y_get_config( void );*/
 
 
 #endif /* L6472_H_ */

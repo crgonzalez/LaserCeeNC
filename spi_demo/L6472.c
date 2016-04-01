@@ -34,26 +34,31 @@
  * Parameters for Y_BUSY GPIO pin
  ****************************************************************************/
 // Dev board
-#define Y_BUSY_PCLK		PRCM_GPIOA3
+/*#define Y_BUSY_PCLK		PRCM_GPIOA3
 #define	Y_BUSY_PIN		PIN_18
 #define Y_BUSY_GPIOBASE	GPIOA3_BASE
-#define	Y_BUSY_GPIOPIN	GPIO_PIN_4
+#define	Y_BUSY_GPIOPIN	GPIO_PIN_4*/
 
 // Actual board
-/*#define Y_BUSY_PCLK		PRCM_GPIOA0
+#define Y_BUSY_PCLK		PRCM_GPIOA0
 #define	Y_BUSY_PIN		PIN_61
 #define Y_BUSY_GPIOBASE	GPIOA0_BASE
-#define	Y_BUSY_GPIOPIN	GPIO_PIN_6*/
+#define	Y_BUSY_GPIOPIN	GPIO_PIN_6
 
 /****************************************************************************
  * Parameters for X_BUSY GPIO pin
  ****************************************************************************/
+// Dev board
+/*#define X_BUSY_PCLK		PRCM_GPIOA3
+#define	X_BUSY_PIN		PIN_17
+#define X_BUSY_GPIOBASE	GPIOA3_BASE
+#define	X_BUSY_GPIOPIN	GPIO_PIN_0*/
+
 // Actual board
 #define X_BUSY_PCLK		PRCM_GPIOA0
 #define	X_BUSY_PIN		PIN_60
 #define X_BUSY_GPIOBASE	GPIOA0_BASE
 #define	X_BUSY_GPIOPIN	GPIO_PIN_5
-
 
 //*****************************************************************************
 //                 GLOBAL VARIABLES
@@ -61,6 +66,8 @@
 static unsigned char g_ucTxBuff[TR_BUFF_SIZE];
 static unsigned char g_ucRxBuff[TR_BUFF_SIZE];
 
+static float x_pos = 0;
+static float y_pos = 0;
 
 
 //*****************************************************************************
@@ -68,6 +75,9 @@ static unsigned char g_ucRxBuff[TR_BUFF_SIZE];
 //*****************************************************************************
 uint16_t get_status( void );
 uint16_t L6472_spi_txrx( uint8_t xByte, uint8_t yByte );
+
+void	xy_byte_tx( uint8_t xByte, uint8_t yByte );
+void	xy_move( direction_t xdir, uint32_t xsteps, direction_t ydir, uint32_t ysteps );
 
 void	y_set_run_current( uint8_t current );
 uint8_t y_byte_txrx( uint8_t yByte );
@@ -80,7 +90,7 @@ void 	x_move( direction_t dir, uint32_t steps );
 uint8_t x_busy( void );
 
 //*****************************************************************************
-//                  Public Functions
+//                  General Public Functions
 //*****************************************************************************
 void L6472_init( void ) {
 	// Enable SPI Peripheral Clock
@@ -128,17 +138,199 @@ void L6472_init( void ) {
 
     // Reset the device
     y_reset();
+    x_reset();
 
     // Configure motor current parameter
-    y_set_run_current( 10 );
+    y_set_run_current( 15 );
+    x_set_run_current( 15 );
+
+    // Force microstepping
+    xy_set_fs_speed( 0x3ff, 0x3ff );
 
 }
 
+
+//*****************************************************************************
+//                  XY Public Functions
+//*****************************************************************************
 void 	xy_wait( void ) {
-	while( y_busy() || x_busy() );
+	uint8_t xBool = 1;
+	uint8_t yBool = 1;
+	while( 1 ) {
+		if( xBool == 0 && yBool == 0 ) {
+			return;
+		}
+
+		if( xBool == 1 && x_busy() == 0 ) {
+			xBool = 0;
+			x_release_bridge();
+		}
+
+		if( yBool == 1 && y_busy() == 0 ) {
+			yBool = 0;
+			y_release_bridge();
+		}
+	}
 }
 
 
+void	xy_move_mm( float xMMs, float yMMs ) {
+	// Determine Distance
+	uint32_t xsteps = (uint32_t)abs( xMMs*STEPS_TO_MM );
+	uint32_t ysteps = (uint32_t)abs( yMMs*STEPS_TO_MM );
+
+	if( xMMs > 0 ) {
+		if( yMMs > 0 ) {
+			xy_move( POSITIVE, xsteps, POSITIVE, ysteps );
+		} else if( yMMs < 0 ) {
+			xy_move( POSITIVE, xsteps, NEGATIVE, ysteps );
+		}
+	} else if( xMMs < 0 ) {
+		if( yMMs > 0 ) {
+			xy_move( NEGATIVE, xsteps, POSITIVE, ysteps );
+		} else if( yMMs < 0 ) {
+			xy_move( NEGATIVE, xsteps, NEGATIVE, ysteps );
+		}
+	}
+
+	// Set x_pos and y_pos to origin
+	x_pos = 0;
+	y_pos = 0;
+}
+
+
+void	move_coord( float x_dest, float y_dest ) {
+	float x_delta = x_dest - x_pos;
+	float y_delta = y_dest - y_pos;
+
+	// Both zero do nothing
+	if( x_delta == 0 && y_delta == 0 ) {
+		Report( "\r\n\tNothing" );
+		return;
+
+	// Only x is zero
+	} else if( x_delta == 0 ) {
+		Report( "\r\n\tVertical" );
+		while( y_delta != 0 ) {
+			if( y_delta > 0.2 ) {
+				y_move_mm( 0.1 );
+				y_delta -= 0.1;
+			} else if( y_delta < -0.2 ) {
+				y_move_mm( -0.1 );
+				y_delta += 0.1;
+			} else {
+				y_move_mm( y_delta );
+				y_delta = 0;
+			}
+			y_wait();
+		}
+
+	// Only y is zero
+	} else if( y_delta == 0 ) {
+		Report( "\r\n\tHorizontal" );
+		while( x_delta != 0 ) {
+			if( x_delta > 0.2 ) {
+				x_move_mm( 0.1 );
+				x_delta -= 0.1;
+			} else if( x_delta < -0.2 ) {
+				x_move_mm( -0.1 );
+				x_delta += 0.1;
+			} else {
+				x_move_mm( x_delta );
+				x_delta = 0;
+			}
+			x_wait();
+		}
+
+	// |x| equals |y|
+	} else if( abs(x_delta) == abs(y_delta) ) {
+		Report( "\r\n\t45 Degree" );
+		while( y_delta != 0 ) {
+			// Handle y
+			if( y_delta > 0.2 ) {
+				y_move_mm( 0.1 );
+				y_delta -= 0.1;
+			} else if( y_delta < -0.2 ) {
+				y_move_mm( -0.1 );
+				y_delta += 0.1;
+			} else {
+				y_move_mm( y_delta );
+				y_delta = 0;
+			}
+			y_wait();
+
+			// Handle y
+			if( x_delta > 0.2 ) {
+				x_move_mm( 0.1 );
+				x_delta -= 0.1;
+			} else if( x_delta < -0.2 ) {
+				x_move_mm( -0.1 );
+				x_delta += 0.1;
+			} else {
+				x_move_mm( x_delta );
+				x_delta = 0;
+			}
+			x_wait();
+		}
+
+	// |x| > |y|
+	} else if( abs(x_delta) > abs(y_delta) ) {
+		Report( "\r\n\t<45 Degree" );
+		float x_step = x_delta/abs(y_delta/0.1);
+
+		while( y_delta != 0 ) {
+			// Handle y
+			if( y_delta > 0.2 ) {
+				y_move_mm( 0.1 );
+				y_delta -= 0.1;
+			} else if( y_delta < -0.2 ) {
+				y_move_mm( -0.1 );
+				y_delta += 0.1;
+			} else {
+				y_move_mm( y_delta );
+				y_delta = 0;
+			}
+			y_wait();
+
+			// Handle x
+			x_move_mm( x_step );
+			x_delta -= x_step;
+			x_wait();
+		}
+
+	// |y| > |x|
+	} else if( abs(y_delta) > abs(x_delta) ) {
+		Report( "\r\n\t>45 Degree" );
+		float y_step = y_delta/abs(x_delta/0.1);
+
+		while( x_delta != 0 ) {
+			// Handle y
+			if( x_delta > 0.2 ) {
+				x_move_mm( 0.1 );
+				x_delta -= 0.1;
+			} else if( x_delta < -0.2 ) {
+				x_move_mm( -0.1 );
+				x_delta += 0.1;
+			} else {
+				x_move_mm( x_delta );
+				x_delta = 0;
+			}
+			x_wait();
+
+			// Handle x
+			y_move_mm( y_step );
+			y_delta -= y_step;
+			y_wait();
+		}
+
+	}
+
+}
+
+
+//*****************************************************************************
+//                  Y Public Functions
+//*****************************************************************************
 void y_reset( void ) {
 	y_byte_txrx( 0xc0 );
 }
@@ -153,6 +345,9 @@ void 	y_move_mm( float MMs ) {
 	} else if( MMs < 0 ) {
 		y_move( NEGATIVE, steps );
 	}
+
+	// Move y_pos
+	y_pos += MMs;
 }
 
 
@@ -172,17 +367,24 @@ void y_set_origin( void ) {
 	y_byte_txrx( (uint8_t)( (origin >> 8) & 0xff) );
 	// LSByte
 	y_byte_txrx( (uint8_t)(origin & 0xff) );
+
+	// Set y_pos to origin
+	y_pos = 0;
 }
 
 
 void y_goto_origin( void ) {
 	// Command (Go Home to ABS_POS = 0)
 	y_byte_txrx( 0x70 );
+
+	// Set y_pos to origin
+	y_pos = 0;
 }
 
 
 void y_wait( void ) {
 	while( y_busy() );
+	y_release_bridge();
 }
 
 
@@ -195,7 +397,22 @@ void y_set_max_speed( uint16_t speed ) {
 	y_byte_txrx( (uint8_t)(speed & 0xff) );
 }
 
+uint16_t y_get_max_speed( void ) {
+	uint16_t max_speed = 0;
+	// Command
+	y_byte_txrx( 0x27 );
+	// NOP
+	max_speed += (uint16_t)(y_byte_txrx( 0x00 ));
+	max_speed <<= 8;
+	// NOP
+	max_speed += (uint16_t)(y_byte_txrx( 0x00 ));
+	return max_speed;
+}
 
+
+//*****************************************************************************
+//                  X Public Functions
+//*****************************************************************************
 void x_reset( void ) {
 	x_byte_txrx( 0xc0 );
 }
@@ -210,6 +427,9 @@ void 	x_move_mm( float MMs ) {
 	} else if( MMs < 0 ) {
 		x_move( NEGATIVE, steps );
 	}
+
+	// Move x_pos
+	x_pos += MMs;
 }
 
 
@@ -229,19 +449,25 @@ void x_set_origin( void ) {
 	x_byte_txrx( (uint8_t)( (origin >> 8) & 0xff) );
 	// LSByte
 	x_byte_txrx( (uint8_t)(origin & 0xff) );
+
+	// Set x_pos to origin
+	x_pos = 0;
 }
 
 
 void x_goto_origin( void ) {
 	// Command (Go Home to ABS_POS = 0)
 	x_byte_txrx( 0x70 );
+
+	// Set x_pos to origin
+	x_pos = 0;
 }
 
 
 void x_wait( void ) {
 	while( x_busy() );
+	x_release_bridge();
 }
-
 
 void x_set_max_speed( uint16_t speed ) {
 	// Command
@@ -252,12 +478,22 @@ void x_set_max_speed( uint16_t speed ) {
 	x_byte_txrx( (uint8_t)(speed & 0xff) );
 }
 
-
+uint16_t x_get_max_speed( void ) {
+	uint16_t max_speed = 0;
+	// Command
+	x_byte_txrx( 0x27 );
+	// NOP
+	max_speed += (uint16_t)(x_byte_txrx( 0x00 ));
+	max_speed <<= 8;
+	// NOP
+	max_speed += (uint16_t)(x_byte_txrx( 0x00 ));
+	return max_speed;
+}
 
 
 
 //*****************************************************************************
-//                 Private functions
+//                 General Private functions
 //*****************************************************************************
 uint16_t get_status( void ) {
 	uint16_t status;
@@ -290,6 +526,47 @@ uint16_t L6472_spi_txrx( uint8_t xByte, uint8_t yByte ) {
 }
 
 
+//*****************************************************************************
+//                 XY Private functions
+//*****************************************************************************
+void	xy_byte_tx( uint8_t xByte, uint8_t yByte ) {
+	// Send x and y bytes
+	L6472_spi_txrx( xByte, yByte );
+}
+
+
+void	xy_move( direction_t xdir, uint32_t xsteps, direction_t ydir, uint32_t ysteps ) {
+	// Choose direction
+	if( xdir == POSITIVE ) {
+		if( ydir == POSITIVE ) {
+			xy_byte_tx( 0x41, 0x41 );
+		} else {
+			xy_byte_tx( 0x41, 0x40 );
+		}
+	} else {
+		if( ydir == POSITIVE ) {
+			xy_byte_tx( 0x40, 0x41 );
+		} else {
+			xy_byte_tx( 0x40, 0x40 );
+		}
+	}
+
+	// Truncate x and y steps to 20 bits
+	xsteps &= 0x000fffff;
+	ysteps &= 0x000fffff;
+
+	// MSByte
+	xy_byte_tx( (uint8_t)( (xsteps >> 16) & 0xff), (uint8_t)( (ysteps >> 16) & 0xff) );
+	// Middle Byte
+	xy_byte_tx( (uint8_t)( (xsteps >> 8) & 0xff), (uint8_t)( (ysteps >> 8) & 0xff) );
+	// LSByte
+	xy_byte_tx( (uint8_t)(xsteps & 0xff), (uint8_t)(ysteps & 0xff) );
+}
+
+
+//*****************************************************************************
+//                 Y Private functions
+//*****************************************************************************
 void	y_set_run_current( uint8_t current ) {
 	// Command
 	y_byte_txrx( 0x0A );
@@ -339,6 +616,9 @@ uint8_t y_busy( void ) {
 }
 
 
+//*****************************************************************************
+//                 X Private functions
+//*****************************************************************************
 void	x_set_run_current( uint8_t current ) {
 	// Command
 	x_byte_txrx( 0x0A );
@@ -388,4 +668,108 @@ uint8_t x_busy( void ) {
 }
 
 
+/**********************************************************************
+ * X and Y Register Setting Functions
+ **********************************************************************/
+void xy_set_fs_speed( uint16_t xfsspeed, uint16_t yfsspeed ) {
+	// strip off extra bits (more than 10 bits)
+	xfsspeed &= 0x03ff;
+	yfsspeed &= 0x03ff;
+
+	// Command
+	xy_byte_tx( 0x15, 0x15 );
+	// MSByte
+	xy_byte_tx( (uint8_t)( (xfsspeed >> 8) & 0xff), (uint8_t)( (yfsspeed >> 8) & 0xff) );
+	// LSByte
+	xy_byte_tx( (uint8_t)(xfsspeed & 0xff), (uint8_t)(yfsspeed & 0xff) );
+}
+
+
+void xy_set_accel_speed( uint16_t xaccel, uint16_t yaccel ) {
+	// strip off extra bits (more than 12 bits)
+	xaccel &= 0x0fff;
+	yaccel &= 0x0fff;
+
+	// Command
+	xy_byte_tx( 0x05, 0x05 );
+	// MSByte
+	xy_byte_tx( (uint8_t)( (xaccel >> 8) & 0xff), (uint8_t)( (yaccel >> 8) & 0xff) );
+	// LSByte
+	xy_byte_tx( (uint8_t)(xaccel & 0xff), (uint8_t)(yaccel & 0xff) );
+}
+
+
+void xy_set_decel_speed( uint16_t xdecel, uint16_t ydecel ) {
+	// strip off extra bits (more than 12 bits)
+	xdecel &= 0x0fff;
+	ydecel &= 0x0fff;
+
+	// Command
+	xy_byte_tx( 0x06, 0x06 );
+	// MSByte
+	xy_byte_tx( (uint8_t)( (xdecel >> 8) & 0xff), (uint8_t)( (ydecel >> 8) & 0xff) );
+	// LSByte
+	xy_byte_tx( (uint8_t)(xdecel & 0xff), (uint8_t)(ydecel & 0xff) );
+}
+
+
+/**********************************************************************
+ * X and Y Register Reading Functions
+ **********************************************************************/
+void	xy_get_accel_speed( void ) {
+	xy_byte_tx( 0x25, 0x25 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_decel_speed( void ) {
+	xy_byte_tx( 0x26, 0x26 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_max_speed( void ) {
+	xy_byte_tx( 0x27, 0x27 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_min_speed( void ) {
+	xy_byte_tx( 0x28, 0x28 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_fullstep_speed( void ) {
+	xy_byte_tx( 0x35, 0x35 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_const_cur( void ) {
+	xy_byte_tx( 0x2A, 0x2A );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_accel_cur( void ) {
+	xy_byte_tx( 0x2B, 0x2B);
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_decel_cur( void ) {
+	xy_byte_tx( 0x2C, 0x2C );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_status( void ) {
+	xy_byte_tx( 0x39, 0x39 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
+
+void	xy_get_config( void ) {
+	xy_byte_tx( 0x38, 0x38 );
+	xy_byte_tx( 0x00, 0x00 );
+	xy_byte_tx( 0x00, 0x00 );
+}
 
