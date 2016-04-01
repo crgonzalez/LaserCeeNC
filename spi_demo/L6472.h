@@ -30,6 +30,8 @@ void 	xy_wait( void );
 
 void	xy_move_mm( float xMMs, float yMMs );
 
+void	move_coord( float x_dest, float y_dest );
+
 /**********************************************************************
  * Y motor control functions
  **********************************************************************/

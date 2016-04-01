@@ -66,6 +66,8 @@
 static unsigned char g_ucTxBuff[TR_BUFF_SIZE];
 static unsigned char g_ucRxBuff[TR_BUFF_SIZE];
 
+static float x_pos = 0;
+static float y_pos = 0;
 
 
 //*****************************************************************************
@@ -190,6 +192,139 @@ void	xy_move_mm( float xMMs, float yMMs ) {
 			xy_move( NEGATIVE, xsteps, NEGATIVE, ysteps );
 		}
 	}
+
+	// Set x_pos and y_pos to origin
+	x_pos = 0;
+	y_pos = 0;
+}
+
+
+void	move_coord( float x_dest, float y_dest ) {
+	float x_delta = x_dest - x_pos;
+	float y_delta = y_dest - y_pos;
+
+	// Both zero do nothing
+	if( x_delta == 0 && y_delta == 0 ) {
+		Report( "\r\n\tNothing" );
+		return;
+
+	// Only x is zero
+	} else if( x_delta == 0 ) {
+		Report( "\r\n\tVertical" );
+		while( y_delta != 0 ) {
+			if( y_delta > 0.2 ) {
+				y_move_mm( 0.1 );
+				y_delta -= 0.1;
+			} else if( y_delta < -0.2 ) {
+				y_move_mm( -0.1 );
+				y_delta += 0.1;
+			} else {
+				y_move_mm( y_delta );
+				y_delta = 0;
+			}
+			y_wait();
+		}
+
+	// Only y is zero
+	} else if( y_delta == 0 ) {
+		Report( "\r\n\tHorizontal" );
+		while( x_delta != 0 ) {
+			if( x_delta > 0.2 ) {
+				x_move_mm( 0.1 );
+				x_delta -= 0.1;
+			} else if( x_delta < -0.2 ) {
+				x_move_mm( -0.1 );
+				x_delta += 0.1;
+			} else {
+				x_move_mm( x_delta );
+				x_delta = 0;
+			}
+			x_wait();
+		}
+
+	// |x| equals |y|
+	} else if( abs(x_delta) == abs(y_delta) ) {
+		Report( "\r\n\t45 Degree" );
+		while( y_delta != 0 ) {
+			// Handle y
+			if( y_delta > 0.2 ) {
+				y_move_mm( 0.1 );
+				y_delta -= 0.1;
+			} else if( y_delta < -0.2 ) {
+				y_move_mm( -0.1 );
+				y_delta += 0.1;
+			} else {
+				y_move_mm( y_delta );
+				y_delta = 0;
+			}
+			y_wait();
+
+			// Handle y
+			if( x_delta > 0.2 ) {
+				x_move_mm( 0.1 );
+				x_delta -= 0.1;
+			} else if( x_delta < -0.2 ) {
+				x_move_mm( -0.1 );
+				x_delta += 0.1;
+			} else {
+				x_move_mm( x_delta );
+				x_delta = 0;
+			}
+			x_wait();
+		}
+
+	// |x| > |y|
+	} else if( abs(x_delta) > abs(y_delta) ) {
+		Report( "\r\n\t<45 Degree" );
+		float x_step = x_delta/abs(y_delta/0.1);
+
+		while( y_delta != 0 ) {
+			// Handle y
+			if( y_delta > 0.2 ) {
+				y_move_mm( 0.1 );
+				y_delta -= 0.1;
+			} else if( y_delta < -0.2 ) {
+				y_move_mm( -0.1 );
+				y_delta += 0.1;
+			} else {
+				y_move_mm( y_delta );
+				y_delta = 0;
+			}
+			y_wait();
+
+			// Handle x
+			x_move_mm( x_step );
+			x_delta -= x_step;
+			x_wait();
+		}
+
+	// |y| > |x|
+	} else if( abs(y_delta) > abs(x_delta) ) {
+		Report( "\r\n\t>45 Degree" );
+		float y_step = y_delta/abs(x_delta/0.1);
+
+		while( x_delta != 0 ) {
+			// Handle y
+			if( x_delta > 0.2 ) {
+				x_move_mm( 0.1 );
+				x_delta -= 0.1;
+			} else if( x_delta < -0.2 ) {
+				x_move_mm( -0.1 );
+				x_delta += 0.1;
+			} else {
+				x_move_mm( x_delta );
+				x_delta = 0;
+			}
+			x_wait();
+
+			// Handle x
+			y_move_mm( y_step );
+			y_delta -= y_step;
+			y_wait();
+		}
+
+	}
+
 }
 
 
@@ -210,6 +345,9 @@ void 	y_move_mm( float MMs ) {
 	} else if( MMs < 0 ) {
 		y_move( NEGATIVE, steps );
 	}
+
+	// Move y_pos
+	y_pos += MMs;
 }
 
 
@@ -229,12 +367,18 @@ void y_set_origin( void ) {
 	y_byte_txrx( (uint8_t)( (origin >> 8) & 0xff) );
 	// LSByte
 	y_byte_txrx( (uint8_t)(origin & 0xff) );
+
+	// Set y_pos to origin
+	y_pos = 0;
 }
 
 
 void y_goto_origin( void ) {
 	// Command (Go Home to ABS_POS = 0)
 	y_byte_txrx( 0x70 );
+
+	// Set y_pos to origin
+	y_pos = 0;
 }
 
 
@@ -283,6 +427,9 @@ void 	x_move_mm( float MMs ) {
 	} else if( MMs < 0 ) {
 		x_move( NEGATIVE, steps );
 	}
+
+	// Move x_pos
+	x_pos += MMs;
 }
 
 
@@ -302,12 +449,18 @@ void x_set_origin( void ) {
 	x_byte_txrx( (uint8_t)( (origin >> 8) & 0xff) );
 	// LSByte
 	x_byte_txrx( (uint8_t)(origin & 0xff) );
+
+	// Set x_pos to origin
+	x_pos = 0;
 }
 
 
 void x_goto_origin( void ) {
 	// Command (Go Home to ABS_POS = 0)
 	x_byte_txrx( 0x70 );
+
+	// Set x_pos to origin
+	x_pos = 0;
 }
 
 
