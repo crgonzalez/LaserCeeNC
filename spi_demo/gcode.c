@@ -5,6 +5,7 @@
  *      Author: Isaac
  */
 
+#include <math.h>
 
 #include "gcode.h"
 #include "L6472.h"
@@ -28,6 +29,13 @@ static float f_g0 = 3;
 static float f_g1 = 3;
 // M3 and M5 laser intensity
 static uint8_t s_m3_m5;
+
+
+/****************************************************************************
+ * Private function prototypes
+ ****************************************************************************/
+// Find the distance between (x,y) and (i,j)
+float distance_xyij( float x, float y, float i, float j );
 
 
 /****************************************************************************
@@ -73,6 +81,15 @@ void G1_xy( float x, float y ) {
 
 
 /****************************************************************************
+ * G2: Clockwise arc
+ ****************************************************************************/
+// Move to (x,y) while remaining equidistant form (i,j)
+void G2_xyij( float x, float y, float i, float j ) {
+
+}
+
+
+/****************************************************************************
  * G4: Dwell
  ****************************************************************************/
 //
@@ -83,7 +100,7 @@ void G4_p( float p ) {
 
 
 /****************************************************************************
- * G1: Linear interpolation
+ * G21: MMs as units
  ****************************************************************************/
 // Program in MMs
 void G21( void ) {
@@ -137,4 +154,13 @@ void M18( void ) {
 	Report( "\r\nM18" );
 	x_release_bridge();
 	y_release_bridge();
+}
+
+
+/****************************************************************************
+ * Private function definitions
+ ****************************************************************************/
+// Find the distance between (x,y) and (i,j)
+float distance_xyij( float x, float y, float i, float j ) {
+	return sqrt( (x - i)*(x - i) + (y - j)*(y - j) );
 }

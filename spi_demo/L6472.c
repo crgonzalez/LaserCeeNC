@@ -212,138 +212,56 @@ void	move_coord( float x_dest, float y_dest ) {
 	float x_delta = x_dest - x_pos;
 	float y_delta = y_dest - y_pos;
 
-	if( x_delta < 0.1 && x_delta > -0.1 ) {
-		x_delta = 0;
+	// Absolute value of deltas
+	const float x_delta_const = abs(x_delta);
+	const float y_delta_const = abs(y_delta);
+
+	// Declare direction variables
+	int x_dir = 1;
+	int y_dir = 1;
+
+	// Store x direction of movement
+	if( x_delta >= 0 ) {
+		x_dir = 1;	// Positive
+	} else {
+		x_dir = -1;	// Negative
 	}
 
-	if( y_delta < 0.1 && y_delta > -0.1 ) {
-		y_delta = 0;
+	// Store y direction of movement
+	if( y_delta >= 0 ) {
+		y_dir = 1;	// Positive
+	} else {
+		y_dir = -1;	// Negative
 	}
 
-	Report( "x %f y %f", x_delta, y_delta );
+	// Remove sign from deltas
+	x_delta = abs(x_delta);
+	y_delta = abs(y_delta);
 
-	// Both zero do nothing
-	if( x_delta == 0 && y_delta == 0 ) {
-		Report( "\r\n\tNothing" );
-		return;
-
-	// Only x is zero
-	} else if( x_delta == 0 ) {
-		Report( "\r\n\tVertical" );
-		while( y_delta != 0 ) {
-			if( y_delta > 0.2 ) {
-				y_move_mm( 0.1 );
-				y_delta -= 0.1;
-			} else if( y_delta < -0.2 ) {
-				y_move_mm( -0.1 );
-				y_delta += 0.1;
-			} else {
-				y_move_mm( y_delta );
-				y_delta = 0;
-			}
-			y_wait();
-		}
-
-	// Only y is zero
-	} else if( y_delta == 0 ) {
-		Report( "\r\n\tHorizontal" );
-		while( x_delta != 0 ) {
-			if( x_delta > 0.2 ) {
-				x_move_mm( 0.1 );
+	// Loop until not movement is necessary
+	while( x_delta != 0 || y_delta != 0 ) {
+		if( x_delta/x_delta_const >= y_delta/y_delta_const ) {
+			if( x_delta >= 0.1 ) {
+				x_move_mm( 0.1*x_dir );
+				x_wait();
 				x_delta -= 0.1;
-			} else if( x_delta < -0.2 ) {
-				x_move_mm( -0.1 );
-				x_delta += 0.1;
-			} else {
-				x_move_mm( x_delta );
+			} else if( x_delta < 0.1 ) {
+				x_move_mm( x_delta*x_dir );
+				x_wait();
 				x_delta = 0;
 			}
-			x_wait();
-		}
-
-	// |x| equals |y|
-	} else if( abs(x_delta) == abs(y_delta) ) {
-		Report( "\r\n\t45 Degree" );
-		while( y_delta != 0 ) {
-			// Handle y
-			if( y_delta > 0.2 ) {
-				y_move_mm( 0.1 );
+		} else {
+			if( y_delta >= 0.1 ) {
+				y_move_mm( 0.1*y_dir );
+				y_wait();
 				y_delta -= 0.1;
-			} else if( y_delta < -0.2 ) {
-				y_move_mm( -0.1 );
-				y_delta += 0.1;
-			} else {
-				y_move_mm( y_delta );
+			} else if( y_delta < 0.1 ) {
+				y_move_mm( y_delta*y_dir );
+				y_wait();
 				y_delta = 0;
 			}
-			y_wait();
-
-			// Handle y
-			if( x_delta > 0.2 ) {
-				x_move_mm( 0.1 );
-				x_delta -= 0.1;
-			} else if( x_delta < -0.2 ) {
-				x_move_mm( -0.1 );
-				x_delta += 0.1;
-			} else {
-				x_move_mm( x_delta );
-				x_delta = 0;
-			}
-			x_wait();
 		}
-
-	// |x| > |y|
-	} else if( abs(x_delta) > abs(y_delta) ) {
-		Report( "\r\n\t<45 Degree" );
-		float x_step = x_delta/abs(y_delta/0.1);
-
-		while( y_delta != 0 ) {
-			// Handle y
-			if( y_delta > 0.2 ) {
-				y_move_mm( 0.1 );
-				y_delta -= 0.1;
-			} else if( y_delta < -0.2 ) {
-				y_move_mm( -0.1 );
-				y_delta += 0.1;
-			} else {
-				y_move_mm( y_delta );
-				y_delta = 0;
-			}
-			y_wait();
-
-			// Handle x
-			x_move_mm( x_step );
-			x_delta -= x_step;
-			x_wait();
-		}
-
-	// |y| > |x|
-	} else if( abs(y_delta) > abs(x_delta) ) {
-		Report( "\r\n\t>45 Degree" );
-		float y_step = y_delta/abs(x_delta/0.1);
-
-		while( x_delta != 0 ) {
-			// Handle y
-			if( x_delta > 0.2 ) {
-				x_move_mm( 0.1 );
-				x_delta -= 0.1;
-			} else if( x_delta < -0.2 ) {
-				x_move_mm( -0.1 );
-				x_delta += 0.1;
-			} else {
-				x_move_mm( x_delta );
-				x_delta = 0;
-			}
-			x_wait();
-
-			// Handle x
-			y_move_mm( y_step );
-			y_delta -= y_step;
-			y_wait();
-		}
-
 	}
-
 }
 
 
