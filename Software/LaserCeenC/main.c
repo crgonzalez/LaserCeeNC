@@ -96,30 +96,24 @@
 #include "smartconfig.h"
 #include "pinmux.h"
 
-
-#define WRITE_TEST_EN        0
+#define SIZE_40K                40960  /* Serial flash file size 40 KB */
+#define MAX_BUFF_SIZE           1460
 
 #if WRITE_TEST_EN
 #warning Enabling WRITE_TEST_EN will corrupt the existing filesystem on the card
 #endif
 
 
-#define APPLICATION_NAME        "Webpage Example"
+#define APPLICATION_NAME        "LaserCeeNC"
 #define APPLICATION_VERSION     "1.1.1"
 #define AP_SSID_LEN_MAX         (33)
 #define ROLE_INVALID            (-5)
 
-#define LED_STRING              "LED"
-#define LED1_STRING             "LED1_"
-#define LED2_STRING             ",LED2_"
-#define LED_ON_STRING           "ON"
-#define LED_OFF_STRING          "OFF"
-
-
 ///////Variables for my webpage
 
 #define Z_STRING				"The G-Code"
-#define FILE_NAME				"DATA.txt"
+#define FILE_NAME				"GCODE.txt"
+#define BUSY_FILE              	"Busy"
 
 ///////
 
@@ -158,11 +152,20 @@ unsigned char GET_token[]  = "__SL_G_ULD";
 int g_iSimplelinkRole = ROLE_INVALID;
 signed int g_uiIpAddress = 0;
 unsigned char g_ucSSID[AP_SSID_LEN_MAX];
+
+//Variables for file operations
+unsigned char OP_STATUS = 0;	//Will hold status of current operation
 unsigned char* G_FILE;				//Will hold data from received file
-long G_FILE_SIZE;					//Size of sstring holding file data
+long fileHandle = -1;
+unsigned long Token = 0;
+long bytesReceived = 0; // variable to store the file size
+long bytesRead; // variable to manage file read
+int blocks;			// variable for dividing file during processing
 
 //Variables for tasks
+OsiMsgQ_t OpenFile;						//Signal to signal a file creation or open op
 OsiMsgQ_t FileAvail;					//Signal between tasks for file availability
+OsiMsgQ_t FileSaved;					//Signal between tasks that file has been saved
 OsiMsgQ_t Processing;					//Signal that file is currently being processed
 
 //OsiTime_t TASK_WAIT_TIME = OSI_WAIT_FOREVER;	//Sets infinite wait time on tasks
@@ -585,6 +588,8 @@ void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent,
                                SlHttpServerResponse_t *pSlHttpServerResponse)
 {
     unsigned char strLenVal = 0;
+    long lRetVal = 0;
+    unsigned char ucQueueMsg = 0;
 
     if(!pSlHttpServerEvent || !pSlHttpServerResponse)
     {
@@ -595,60 +600,29 @@ void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent,
     {
         case SL_NETAPP_HTTPGETTOKENVALUE_EVENT:
         {
-          unsigned char status, *ptr;
+          unsigned char *ptr;
 
           ptr = pSlHttpServerResponse->ResponseData.token_value.data;
           pSlHttpServerResponse->ResponseData.token_value.len = 0;
           if(memcmp(pSlHttpServerEvent->EventData.httpTokenName.data, GET_token,
                     strlen((const char *)GET_token)) == 0)
           {
-            status = GPIO_IF_LedStatus(MCU_RED_LED_GPIO);
-            strLenVal = strlen(LED1_STRING);
-            memcpy(ptr, LED1_STRING, strLenVal);
-            ptr += strLenVal;
-            pSlHttpServerResponse->ResponseData.token_value.len += strLenVal;
-            if(status & 0x01)
+            if(OP_STATUS)
             {
-              strLenVal = strlen(LED_ON_STRING);
-              memcpy(ptr, LED_ON_STRING, strLenVal);
-              ptr += strLenVal;
-              pSlHttpServerResponse->ResponseData.token_value.len += strLenVal;
-            }
-            else
-            {
-              strLenVal = strlen(LED_OFF_STRING);
-              memcpy(ptr, LED_OFF_STRING, strLenVal);
-              ptr += strLenVal;
-              pSlHttpServerResponse->ResponseData.token_value.len += strLenVal;
-            }
-            status = GPIO_IF_LedStatus(MCU_GREEN_LED_GPIO);
-            strLenVal = strlen(LED2_STRING);
-            memcpy(ptr, LED2_STRING, strLenVal);
-            ptr += strLenVal;
-            pSlHttpServerResponse->ResponseData.token_value.len += strLenVal;
-            if(status & 0x01)
-            {
-              strLenVal = strlen(LED_ON_STRING);
-              memcpy(ptr, LED_ON_STRING, strLenVal);
-              ptr += strLenVal;
-              pSlHttpServerResponse->ResponseData.token_value.len += strLenVal;
-            }
-            else
-            {
-              strLenVal = strlen(LED_OFF_STRING);
-              memcpy(ptr, LED_OFF_STRING, strLenVal);
-              ptr += strLenVal;
-              pSlHttpServerResponse->ResponseData.token_value.len += strLenVal;
+                strLenVal = strlen(BUSY_FILE);
+                memcpy(ptr, BUSY_FILE, strLenVal);
+                ptr += strLenVal;
+                pSlHttpServerResponse->ResponseData.token_value.len += strLenVal;
             }
             *ptr = '\0';
           }
-
         }
         break;
 
         case SL_NETAPP_HTTPPOSTTOKENVALUE_EVENT:
         {
           unsigned char *ptr = pSlHttpServerEvent->EventData.httpPostData.token_name.data;
+          OP_STATUS = 1;
 
           if(memcmp(ptr, POST_token, strlen((const char *)POST_token)) == 0)
           {
@@ -659,30 +633,33 @@ void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent,
             if(memcmp(ptr, Z_STRING, strLenVal) != 0)
             	break;
 
-            //unsigned char ucQueueMsg = 0;
-            //long lRetVal = 0;
             ptr = ptr + 10;
-
-            //strcat((char*)G_FILE, (const char*)ptr);    //Stores it here so it can be used outside task
+            G_FILE = ptr;
 
             unsigned char thelength = pSlHttpServerEvent->EventData.httpPostData.token_value.len;
 
             ptr[thelength-10] = 0x00;
 
-            UART_PRINT((const char *)ptr);
-
-
-
-            /*if ((const char*)ptr == "\0")
+            if (memcmp(ptr, "Done", 4) == 0)
             {
-            	//UART_PRINT((const char*)G_FILE);
-            	lRetVal = osi_MsgQWrite(&FileAvail, &ucQueueMsg, OSI_NO_WAIT);
+            	osi_Sleep(5);
+
+    			UART_PRINT("File has been saved\n"   \
+    					   "Total bytes received: %d\n\r", bytesReceived);
+
+            	lRetVal = osi_MsgQWrite(&Processing, &ucQueueMsg, OSI_NO_WAIT);
             	if ( lRetVal < 0 )
             	{
             		UART_PRINT("Unable to write to Message Q\n\r");
             		UART_PRINT("Cannot save file\n\r");
             	}
-            }*/
+            }
+            else
+            {
+            	//UART_PRINT((const char *)G_FILE);
+            	lRetVal = osi_MsgQWrite(&FileAvail, &ucQueueMsg, OSI_NO_WAIT);
+            	osi_Sleep(3);
+            }
           }
         }
           break;
@@ -876,21 +853,21 @@ long ConnectToNetwork()
 
     // Device is not in STA mode and Force AP Jumper is not Connected 
     //- Switch to STA mode
-    if(g_uiSimplelinkRole != ROLE_STA && g_uiDeviceModeConfig == ROLE_STA )
-    {
+   // if(g_uiSimplelinkRole != ROLE_STA && g_uiDeviceModeConfig == ROLE_STA )
+   // {
         //Switch to STA Mode
-        lRetVal = sl_WlanSetMode(ROLE_STA);
-        ASSERT_ON_ERROR(lRetVal);
+   //     lRetVal = sl_WlanSetMode(ROLE_STA);
+   //     ASSERT_ON_ERROR(lRetVal);
         
-        lRetVal = sl_Stop(SL_STOP_TIMEOUT);
+   //     lRetVal = sl_Stop(SL_STOP_TIMEOUT);
         
-        g_usMCNetworkUstate = 0;
-        g_uiSimplelinkRole =  sl_Start(NULL,NULL,NULL);
-    }
+   //     g_usMCNetworkUstate = 0;
+   //     g_uiSimplelinkRole =  sl_Start(NULL,NULL,NULL);
+   // }
 
     //Device is not in AP mode and Force AP Jumper is Connected - 
     //Switch to AP mode
-    if(g_uiSimplelinkRole != ROLE_AP && g_uiDeviceModeConfig == ROLE_AP )
+    if(g_uiSimplelinkRole != ROLE_AP)// && g_uiDeviceModeConfig == ROLE_AP )
     {
          //Switch to AP Mode
         lRetVal = sl_WlanSetMode(ROLE_AP);
@@ -1044,6 +1021,7 @@ static void ReadDeviceConfiguration()
 static void HTTPServerTask(void *pvParameters)
 {
     long lRetVal = -1;
+	unsigned char ucQueueMsg = 0;
     InitializeAppVariables();
 
     //
@@ -1092,6 +1070,7 @@ static void HTTPServerTask(void *pvParameters)
         LOOP_FOREVER();
     }
 
+	lRetVal = osi_MsgQWrite(&OpenFile, &ucQueueMsg, OSI_NO_WAIT);
 
     //Handle Async Events
     while(1)
@@ -1111,15 +1090,119 @@ static void HTTPServerTask(void *pvParameters)
 //****************************************************************************
 static void SaveFileTask(void *pvParameters)
 {
+	unsigned char ucQueueMsg = 0;
+	long lRetVal = -1;
+	unsigned long MaxSize = 63 * 1024;
+
+	osi_MsgQRead(&OpenFile, &ucQueueMsg, OSI_WAIT_FOREVER);
+
+	// Open file to save the downloaded file
+	lRetVal = sl_FsOpen((_u8 *)FILE_NAME, FS_MODE_OPEN_WRITE, &Token, &fileHandle);
+	if(lRetVal < 0)
+	{
+		UART_PRINT("Creating file to save data.");
+		// File Doesn't exit create a new of 40 KB file
+		lRetVal = sl_FsOpen((unsigned char *)FILE_NAME, FS_MODE_OPEN_CREATE(MaxSize, \
+						   _FS_FILE_OPEN_FLAG_COMMIT|_FS_FILE_PUBLIC_WRITE),
+						   &Token, &fileHandle);
+		if(lRetVal < 0)
+		{
+			UART_PRINT("Could not make file");
+		}
+	}
+
+	for ( ;; )
+	{
+		osi_MsgQRead(&FileAvail, &ucQueueMsg, OSI_WAIT_FOREVER);
+
+		int len=strlen((const char*)G_FILE);
+		//UART_PRINT((const char *)G_FILE);
+		bytesReceived +=len;
+
+		lRetVal = sl_FsWrite(fileHandle, bytesReceived-len,	G_FILE, len);
+
+		if(lRetVal != len)
+		{
+			UART_PRINT("Error in file write.");
+		}
+
+		osi_Sleep(1);
+	}
+}
+
+//****************************************************************************
+//
+//!  \brief                     Handles Parsing of G-Code File
+//!
+//! \param[in]                  pvParameters is the data passed to the Task
+//!
+//! \return                        None
+//
+//****************************************************************************
+static void GCodeParse(void *pvParameters)
+{
     unsigned char ucQueueMsg = 0;
-    osi_MsgQRead(&FileAvail, &ucQueueMsg, OSI_WAIT_FOREVER);
-    osi_MsgQDelete(&FileAvail);
+    SlFsFileInfo_t file_info;
+    long lRetVal = -1;
+    int len = 246;
+    unsigned char file_line[len];
 
-    //unsigned long MaxSize = 63 * 1024;
+    osi_MsgQRead(&Processing, &ucQueueMsg, OSI_WAIT_FOREVER);
 
-    UART_PRINT("\nSaveFileTask has started!\n\r");
+	lRetVal = sl_FsClose(fileHandle, 0, 0, 0);
+	if(lRetVal < 0)
+	{
+		UART_PRINT("Error closing file.");
+	}
 
 
+    for ( ;; )
+    {
+		UART_PRINT("\nGCodeParse has started!\n\r");
+
+		// Get file info
+		lRetVal = sl_FsGetInfo((_u8 *)FILE_NAME, 0, &file_info);
+		if(lRetVal < 0)
+		{
+			lRetVal = sl_FsClose(fileHandle, 0, 0, 0);
+			UART_PRINT("Could not open file to get info");
+
+		}
+
+		// Open file to save the downloaded file
+		lRetVal = sl_FsOpen((_u8 *)FILE_NAME, FS_MODE_OPEN_READ, &Token, &fileHandle);
+		if(lRetVal < 0)
+		{
+			lRetVal = sl_FsClose(fileHandle, 0, 0, 0);
+			UART_PRINT("Could not open file");
+		}
+
+		blocks = 1; //file_info.FileLen / len;
+		len = file_info.FileLen;
+		bytesRead = 0;
+
+		while(blocks)
+		{
+			lRetVal = sl_FsRead(fileHandle, bytesRead, file_line, len);
+			if (lRetVal != len)
+			{
+					lRetVal = sl_FsClose(fileHandle, 0, 0, 0);
+					UART_PRINT("File read failed.");
+			}
+			bytesRead += len;
+			UART_PRINT((const char*)file_line);
+			UART_PRINT("\n");
+			blocks--;
+		}
+
+		lRetVal = sl_FsClose(fileHandle, 0, 0, 0);
+		if (SL_RET_CODE_OK != lRetVal)
+		{
+			UART_PRINT("Error on file close");
+		}
+
+		osi_Sleep(7);
+    }
 }
 //*****************************************************************************
 //
@@ -1136,7 +1219,7 @@ DisplayBanner(char * AppName)
 
     Report("\n\n\n\r");
     Report("\t\t *************************************************\n\r");
-    Report("\t\t      THE CC3200 %s      \n\r", AppName);
+    Report("\t\t         	  %s      \n\r", AppName);
     Report("\t\t *************************************************\n\r");
     Report("\n\n\n\r");
 }
@@ -1180,9 +1263,6 @@ BoardInit(void)
 void main()
 {
     long lRetVal = -1;
-    //CardAttrib_t sCard;
-    //unsigned long ulCapacity;
-    //unsigned long ulAddress;
 
     //Board Initialization
     BoardInit();
@@ -1223,8 +1303,37 @@ void main()
     //
     // sync object for inter thread communication
     //
-    lRetVal = osi_MsgQCreate(&FileAvail, NULL, sizeof( unsigned char ),
-                             1);
+    lRetVal = osi_MsgQCreate(&OpenFile, NULL, sizeof( unsigned char ), 1);
+    if(lRetVal < 0)
+    {
+        UART_PRINT("Could not create msg queue\n\r");
+        LOOP_FOREVER();
+    }
+
+    //
+    // sync object for inter thread communication
+    //
+    lRetVal = osi_MsgQCreate(&FileAvail, NULL, sizeof( unsigned char ), 1);
+    if(lRetVal < 0)
+    {
+        UART_PRINT("Could not create msg queue\n\r");
+        LOOP_FOREVER();
+    }
+
+    //
+    // sync object for inter thread communication
+    //
+    lRetVal = osi_MsgQCreate(&FileSaved, NULL, sizeof( unsigned char ), 1);
+    if(lRetVal < 0)
+    {
+        UART_PRINT("Could not create msg queue\n\r");
+        LOOP_FOREVER();
+    }
+
+    //
+    // sync object for inter thread communication
+    //
+    lRetVal = osi_MsgQCreate(&Processing, NULL, sizeof( unsigned char ), 1);
     if(lRetVal < 0)
     {
         UART_PRINT("Could not create msg queue\n\r");
@@ -1247,14 +1356,13 @@ void main()
         LOOP_FOREVER();
     }
 
-   // lRetVal = osi_TaskCreate(GCodeParse, (signed char*)"GCodeParse",
-  //                       OSI_STACK_SIZE, NULL, 7, NULL );
-  //  if(lRetVal < 0)
-  //  {
-  //      UART_PRINT("Unable to create G-Code Parse Task\n\r");
-  //      LOOP_FOREVER();
-  //  }
-
+    lRetVal = osi_TaskCreate(GCodeParse, (signed char*)"GCodeParse",
+                         OSI_STACK_SIZE, NULL, 7, NULL );
+    if(lRetVal < 0)
+    {
+        UART_PRINT("Unable to create G-Code Parse Task\n\r");
+        LOOP_FOREVER();
+    }
 
     //
     // Start OS Scheduler
