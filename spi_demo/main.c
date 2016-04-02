@@ -187,41 +187,104 @@ void main()
 
     	//M05 S0
     	M5_s( 0 );
-
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//G90
     	G90();
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//G21
     	G21();
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//G1 F3000
     	G1_f( 3000 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//G1  X28.1445 Y50.5719
-    	G1_xy( 28.1445, 50.5719 );
+    	//G1_xy( 28.1445, 50.5719 );
+    	G1_xy( 28, 50 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//G4 P0
-    	//G4
+    	G4_p( 0 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//M03 S256
+    	M3_s( 256 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//G4 P0
+    	G4_p( 0 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//G1 F100.000000
+    	G1_f( 100 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//G1  X50.5719 Y28.1444
+    	//G1_xy( 50.5719, 28.1444 );
+    	G1_xy( 50, 28 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//G1  X28.1445 Y5.717
+    	//G1_xy( 28.1445, 5.717 );
+    	G1_xy( 28, 5 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//G1  X5.717 Y28.1445
+    	//G1_xy( 5.717, 28.1445 );
+    	G1_xy( 5, 28 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//G1  X28.1445 Y50.5719
+    	//G1_xy( 28.1445, 50.5719 );
+    	G1_xy( 28, 50 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//G4 P0
+    	G4_p( 0 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//M05 S0
+    	M5_s( 0 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//G1 F3000
+      /*G1_f( 3000 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);*/
     	//G1  X5.6947 Y50.5942
+    	//G1_xy( 5.6947, 50.5942 );
+    	G1_xy( 5, 50 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//G4 P0
+    	G4_p( 0 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//M03 S256
+    	M3_s( 256 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//G4 P0
+    	G4_p( 0 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//G1 F100.000000
+    	G1_f( 100 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//G1  X50.5942 Y50.5942
+    	//G1_xy( 50.5942, 50.5942 );
+    	G1_xy( 50, 50 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//G1  X50.5942 Y5.6947
+    	//G1_xy( 50.5942, 5.6947 );
+    	G1_xy( 50, 5 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//G1  X5.6947 Y5.6947
+    	//G1_xy( 5.6947, 5.6947 );
+    	G1_xy( 5, 5 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//G1  X5.6947 Y50.5942
+    	//G1_xy( 5.6947, 50.5942 );
+    	G1_xy( 5, 50 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//G4 P0
+    	G4_p( 0 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//M05 S0
+    	M5_s( 0 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//G1 F3000
+    	G1_f( 3000 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//G1 X0 Y0
+    	G1_xy( 0, 0 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//M18
+    	M18();
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 
 
 
