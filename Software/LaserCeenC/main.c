@@ -90,8 +90,8 @@
 #include "stdcmd.h"
 
 //Laser/Motor control includes
-//#include "L6472.h"
-//#include "LaserBoard.h"
+#include "L6472.h"
+#include "LaserBoard.h"
 
 #include "smartconfig.h"
 #include "pinmux.h"

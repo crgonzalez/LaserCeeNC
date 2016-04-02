@@ -1,7 +1,7 @@
 ******************************************************************************
                   TI ARM Linker PC v5.2.7                      
 ******************************************************************************
->> Linked Fri Apr 01 20:42:26 2016
+>> Linked Fri Apr 01 21:08:59 2016
 
 OUTPUT FILE NAME:   <LaserCeenC.out>
 ENTRY POINT SYMBOL: "_c_int00"  address: 2000ebb5
@@ -717,7 +717,7 @@ ffffffff  binit
 2000e9a9  ldexp                                 
 20009979  lseek                                 
 2000e565  ltoa                                  
-20005465  main                                  
+20005495  main                                  
 2001f9a4  main_func_sp                          
 200090ab  malloc                                
 20008f8d  mem_Free                              
@@ -922,7 +922,7 @@ address   name
 20004645  SimpleLinkSockEventHandler            
 20004791  SimpleLinkHttpServerCallback          
 20004d35  ConnectToNetwork                      
-20005465  main                                  
+20005495  main                                  
 200057ad  xTaskGenericCreate                    
 200058bb  vTaskDelete                           
 2000594b  vTaskDelayUntil                       

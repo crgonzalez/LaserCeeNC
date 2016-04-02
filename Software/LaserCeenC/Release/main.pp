@@ -40,6 +40,8 @@ main.obj: C:/ti/CC3200SDK_1.1.0/cc3200-sdk/example/common/uart_if.h
 main.obj: C:/ti/CC3200SDK_1.1.0/cc3200-sdk/example/common/common.h
 main.obj: ../sdhost_demo.h
 main.obj: ../stdcmd.h
+main.obj: C:/Users/Zachary/Documents/GitHub/LaserCeeNC/spi_demo/L6472.h
+main.obj: C:/Users/Zachary/Documents/GitHub/LaserCeeNC/spi_demo/LaserBoard.h
 main.obj: ../smartconfig.h
 main.obj: ../pinmux.h
 
@@ -83,5 +85,7 @@ C:/ti/CC3200SDK_1.1.0/cc3200-sdk/example/common/uart_if.h:
 C:/ti/CC3200SDK_1.1.0/cc3200-sdk/example/common/common.h: 
 ../sdhost_demo.h: 
 ../stdcmd.h: 
+C:/Users/Zachary/Documents/GitHub/LaserCeeNC/spi_demo/L6472.h: 
+C:/Users/Zachary/Documents/GitHub/LaserCeeNC/spi_demo/LaserBoard.h: 
 ../smartconfig.h: 
 ../pinmux.h: 
