@@ -77,6 +77,7 @@
 // My includes
 #include "L6472.h"
 #include "LaserBoard.h"
+#include "gcode.h"
 
 
 #define APPLICATION_VERSION     "1.1.1"
@@ -177,186 +178,51 @@ void main()
     Report( "\r\nPress a key: " );
     unsigned long ulUserData;
 
-
-
-    /*y_set_max_speed( 5 );
-    Report( "\r\nmax speed: %d", y_get_max_speed() );
-
-    x_set_max_speed( 5 );
-    Report( "\r\nmax speed: %d", x_get_max_speed() );*/
-
-    //Report( "\r\nstatus: %d", y_get_status() );
-
-
-	/*xy_get_accel_speed();
-	xy_get_decel_speed();
-	xy_get_max_speed();
-	xy_get_min_speed();
-	xy_get_fullstep_speed();
-    xy_get_const_cur();
-    xy_get_accel_cur();
-    xy_get_decel_cur();
-    xy_get_status();
-    xy_get_config();*/
-
-	/*y_set_max_speed( 5 );
-	x_set_max_speed( 5 );
-
-	Report( "\r\nX Positive" );
-	x_move_mm( 50 );
-	x_wait();
-	x_release_bridge();
-
-	Report( "\r\nX Negative" );
-	x_move_mm( -50 );
-	x_wait();
-	x_release_bridge();
-
-	Report( "\r\nY Positive" );
-	y_move_mm( 50 );
-	y_wait();
-	y_release_bridge();
-
-	Report( "\r\nY Negative" );
-	y_move_mm( -50 );
-	y_wait();
-	y_release_bridge();*/
-
-    //Report( "\r\n x10 xBA" );
-    /*xy_set_accel_speed( 0x10, 0x8A );
-    xy_set_decel_speed( 0x10, 0x8A );
-
-    uint16_t i;
-    for( i = 1; i <= 12; i++ ) {
-		// Start
-    	y_set_max_speed( i );
-    	x_set_max_speed( i );
-		Report( "\r\n%d: ", i );
-
-		if( i % 4 == 1 ) {
-			// Move to a different position
-			Report( "+x +y " );
-			xy_move_mm( 20, 20 );
-			xy_wait();
-		}
-
-		if( i % 4 == 2 ) {
-			// Move to a different position
-			Report( "+x -y " );
-			xy_move_mm( 20, -20 );
-			xy_wait();
-		}
-
-		if( i % 4 == 3 ) {
-			// Move to a different position
-			Report( "-x -y " );
-			xy_move_mm( -20, -20 );
-			xy_wait();
-		}
-
-		if( i % 4 == 0 ) {
-			// Move to a different position
-			Report( "-x +y " );
-			xy_move_mm( -20, 20 );
-			xy_wait();
-		}
-    }*/
-
-    /*y_move_mm( 100 );
-    y_wait();
-    y_release_bridge();*/
-
     laser_off();
-
-    x_set_origin();
-    y_set_origin();
-	y_set_max_speed( 10 );
-	x_set_max_speed( 10 );
 
     while(1)
     {
     	Report( "\r\nPress key to turn run: " );
     	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 
-    	laser_on();
-    	Report( "\r\nx: %dmm\ty: %dmm", 10, 0 );
-    	move_coord( 10, 0 );
-    	laser_off();
-    	move_coord( 0, 0 );
+    	//M05 S0
+    	M5_s( 0 );
 
-    	laser_on();
-    	Report( "\r\nx: %dmm\ty: %dmm", -10, 0 );
-    	move_coord( -10, 0 );
-    	laser_off();
-    	move_coord( 0, 0 );
+    	//G90
+    	G90();
+    	//G21
+    	G21();
+    	//G1 F3000
+    	G1_f( 3000 );
+    	//G1  X28.1445 Y50.5719
+    	G1_xy( 28.1445, 50.5719 );
+    	//G4 P0
+    	//G4
+    	//M03 S256
+    	//G4 P0
+    	//G1 F100.000000
+    	//G1  X50.5719 Y28.1444
+		//G1  X28.1445 Y5.717
+    	//G1  X5.717 Y28.1445
+		//G1  X28.1445 Y50.5719
+    	//G4 P0
+    	//M05 S0
+		//G1 F3000
+    	//G1  X5.6947 Y50.5942
+		//G4 P0
+    	//M03 S256
+		//G4 P0
+    	//G1 F100.000000
+		//G1  X50.5942 Y50.5942
+    	//G1  X50.5942 Y5.6947
+		//G1  X5.6947 Y5.6947
+		//G1  X5.6947 Y50.5942
+		//G4 P0
+		//M05 S0
+		//G1 F3000
+		//G1 X0 Y0
+		//M18
 
-    	laser_on();
-    	Report( "\r\nx: %dmm\ty: %dmm", 0, 10 );
-    	move_coord( 0, 10 );
-    	laser_off();
-    	move_coord( 0, 0 );
-
-    	laser_on();
-    	Report( "\r\nx: %dmm\ty: %dmm", 0, -10 );
-    	move_coord( 0, -10 );
-    	laser_off();
-    	move_coord( 0, 0 );
-
-    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
-
-    	laser_on();
-    	Report( "\r\nx: %dmm\ty: %dmm", 10, 5 );
-    	move_coord( 10, 5 );
-    	laser_off();
-    	move_coord( 0, 0 );
-
-    	laser_on();
-    	Report( "\r\nx: %dmm\ty: %dmm", 5, 10 );
-    	move_coord( 5, 10 );
-    	laser_off();
-    	move_coord( 0, 0 );
-
-    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
-
-    	laser_on();
-    	Report( "\r\nx: %dmm\ty: %dmm", -5, 10 );
-    	move_coord( -5, 10 );
-    	laser_off();
-    	move_coord( 0, 0 );
-
-    	laser_on();
-    	Report( "\r\nx: %dmm\ty: %dmm", -5, 10 );
-    	move_coord( -10, 5 );
-    	laser_off();
-    	move_coord( 0, 0 );
-
-    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
-
-    	laser_on();
-    	Report( "\r\nx: %dmm\ty: %dmm", -10, -5 );
-    	move_coord( -10, -5 );
-    	laser_off();
-    	move_coord( 0, 0 );
-
-    	laser_on();
-    	Report( "\r\nx: %dmm\ty: %dmm", -5, -10 );
-    	move_coord( -5, -10 );
-    	laser_off();
-    	move_coord( 0, 0 );
-
-    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
-
-    	laser_on();
-    	Report( "\r\nx: %dmm\ty: %dmm", 5, -10 );
-    	move_coord( 5, -10 );
-    	laser_off();
-    	move_coord( 0, 0 );
-
-    	laser_on();
-    	Report( "\r\nx: %dmm\ty: %dmm", 10, -5 );
-    	move_coord( 10, -5 );
-    	laser_off();
-    	move_coord( 0, 0 );
 
 
     }
