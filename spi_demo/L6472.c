@@ -212,6 +212,16 @@ void	move_coord( float x_dest, float y_dest ) {
 	float x_delta = x_dest - x_pos;
 	float y_delta = y_dest - y_pos;
 
+	if( x_delta < 0.1 && x_delta > -0.1 ) {
+		x_delta = 0;
+	}
+
+	if( y_delta < 0.1 && y_delta > -0.1 ) {
+		y_delta = 0;
+	}
+
+	Report( "x %f y %f", x_delta, y_delta );
+
 	// Both zero do nothing
 	if( x_delta == 0 && y_delta == 0 ) {
 		Report( "\r\n\tNothing" );
@@ -349,7 +359,7 @@ void 	y_move_mm( float MMs ) {
 	// Determine Distance
 	uint32_t steps = (uint32_t)abs( MMs*STEPS_TO_MM );
 
-	if( MMs > 0 ) {
+	if( MMs >= 0 ) {
 		y_move( POSITIVE, steps );
 	} else if( MMs < 0 ) {
 		y_move( NEGATIVE, steps );
@@ -431,7 +441,7 @@ void 	x_move_mm( float MMs ) {
 	// Determine Distance
 	uint32_t steps = (uint32_t)abs( MMs*STEPS_TO_MM );
 
-	if( MMs > 0 ) {
+	if( MMs >= 0 ) {
 		x_move( POSITIVE, steps );
 	} else if( MMs < 0 ) {
 		x_move( NEGATIVE, steps );

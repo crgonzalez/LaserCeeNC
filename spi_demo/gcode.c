@@ -47,7 +47,7 @@ void G0_xy( float x, float y ) {
 	y_set_max_speed( f_g0 );
 
 	// Execute move
-	move_coord_direct( x, y );
+	move_coord( x, y );
 }
 
 
@@ -68,7 +68,7 @@ void G1_xy( float x, float y ) {
 	y_set_max_speed( f_g1 );
 
 	// Execute move
-	move_coord_direct( x, y );
+	move_coord( x, y );
 }
 
 
