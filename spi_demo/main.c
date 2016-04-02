@@ -236,8 +236,8 @@ void main()
     	M5_s( 0 );
     	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 		//G1 F3000
-      /*G1_f( 3000 );
-    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);*/
+        G1_f( 3000 );
+    	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
     	//G1  X5.6947 Y50.5942
     	//G1_xy( 5.6947, 50.5942 );
     	G1_xy( 5, 50 );

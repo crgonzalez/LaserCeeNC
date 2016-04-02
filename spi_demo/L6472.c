@@ -179,23 +179,32 @@ void	xy_move_mm( float xMMs, float yMMs ) {
 	uint32_t xsteps = (uint32_t)abs( xMMs*STEPS_TO_MM );
 	uint32_t ysteps = (uint32_t)abs( yMMs*STEPS_TO_MM );
 
-	if( xMMs > 0 ) {
-		if( yMMs > 0 ) {
+	if( xMMs >= 0 ) {
+		if( yMMs >= 0 ) {
 			xy_move( POSITIVE, xsteps, POSITIVE, ysteps );
 		} else if( yMMs < 0 ) {
 			xy_move( POSITIVE, xsteps, NEGATIVE, ysteps );
 		}
 	} else if( xMMs < 0 ) {
-		if( yMMs > 0 ) {
+		if( yMMs >= 0 ) {
 			xy_move( NEGATIVE, xsteps, POSITIVE, ysteps );
 		} else if( yMMs < 0 ) {
 			xy_move( NEGATIVE, xsteps, NEGATIVE, ysteps );
 		}
 	}
 
-	// Set x_pos and y_pos to origin
-	x_pos = 0;
-	y_pos = 0;
+	// Move x_pos and y_pos
+	x_pos += xMMs;
+	y_pos += yMMs;
+}
+
+
+void	move_coord_direct( float x_dest, float y_dest ) {
+	float x_delta = x_dest - x_pos;
+	float y_delta = y_dest - y_pos;
+
+	xy_move_mm( x_delta, y_delta );
+	xy_wait();
 }
 
 
