@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
@@ -159,14 +159,16 @@
 <wire x1="1.27" y1="-0.254" x2="1.27" y2="0.254" width="0.127" layer="51"/>
 </package>
 <package name="LB16CKW01-5C-JC">
-<pad name="-" x="0" y="-2.54" drill="3"/>
-<pad name="+" x="0" y="2.54" drill="3"/>
+<pad name="-" x="0" y="2.54" drill="3"/>
+<pad name="+" x="0" y="-2.54" drill="3"/>
 <pad name="2" x="-5.08" y="0" drill="3"/>
-<pad name="1" x="-5.08" y="-5.08" drill="3"/>
-<pad name="3" x="-5.08" y="5.08" drill="3"/>
+<pad name="1" x="-5.08" y="5.08" drill="3"/>
+<pad name="3" x="-5.08" y="-5.08" drill="3"/>
 <circle x="0" y="0" radius="12" width="1.27" layer="21"/>
-<text x="2.54" y="5.08" size="5" layer="51">+</text>
-<text x="2.54" y="-7.62" size="5" layer="51">-</text>
+<text x="2.54" y="-2.54" size="1.27" layer="21">LED+</text>
+<text x="2.54" y="2.54" size="1.27" layer="21">LED-</text>
+<text x="-7.62" y="0" size="1.27" layer="21" rot="R180">Out</text>
+<text x="-7.62" y="5.08" size="1.27" layer="21" rot="R180">In</text>
 </package>
 <package name="KEYSTONE3527">
 <pad name="P$1" x="-11.684" y="0" drill="1.9812"/>
@@ -256,6 +258,21 @@
 <rectangle x1="-4.34" y1="-3.65" x2="-3.16" y2="-3.05" layer="41"/>
 <rectangle x1="-4.55" y1="2.09" x2="4.45" y2="7.62" layer="41"/>
 <rectangle x1="5.31" y1="3.45" x2="6.71" y2="6.95" layer="41"/>
+</package>
+<package name="SOT363">
+<description>&lt;b&gt;SOT-363 (SC-706 Lead)&lt;/b&gt;&lt;p&gt;
+Source: &lt;a href="http://www.farnell.com/datasheets/461166.pdf"&gt; Data sheet &lt;/a&gt;</description>
+<wire x1="1" y1="0.55" x2="1" y2="-0.55" width="0.2032" layer="21"/>
+<wire x1="-1" y1="-0.55" x2="-1" y2="0.55" width="0.2032" layer="21"/>
+<circle x="-0.7" y="-0.1625" radius="0.15" width="0" layer="21"/>
+<smd name="1" x="-0.65" y="-0.8" dx="0.4" dy="0.8" layer="1"/>
+<smd name="2" x="0" y="-0.8" dx="0.4" dy="0.8" layer="1"/>
+<smd name="3" x="0.65" y="-0.8" dx="0.4" dy="0.8" layer="1"/>
+<smd name="4" x="0.65" y="0.8" dx="0.4" dy="0.8" layer="1"/>
+<smd name="5" x="0" y="0.8" dx="0.4" dy="0.8" layer="1"/>
+<smd name="6" x="-0.65" y="0.8" dx="0.4" dy="0.8" layer="1"/>
+<text x="-1.1" y="1.45" size="1.27" layer="25">&gt;NAME</text>
+<text x="-1.1" y="-2.7" size="1.27" layer="27">&gt;VALUE</text>
 </package>
 </packages>
 <symbols>
@@ -497,6 +514,20 @@
 <pin name="SWA" x="-15.24" y="-10.16" length="short"/>
 <pin name="SWB" x="-15.24" y="-12.7" length="short"/>
 </symbol>
+<symbol name="74LVC1T45">
+<pin name="VCCA" x="-25.4" y="15.24" length="middle"/>
+<pin name="GND" x="-25.4" y="10.16" length="middle"/>
+<pin name="A" x="-25.4" y="5.08" length="middle"/>
+<pin name="VCCB" x="2.54" y="15.24" length="middle" rot="R180"/>
+<pin name="DIR" x="2.54" y="10.16" length="middle" rot="R180"/>
+<pin name="B" x="2.54" y="5.08" length="middle" rot="R180"/>
+<wire x1="-20.32" y1="17.78" x2="-20.32" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-20.32" y1="2.54" x2="-2.54" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="2.54" x2="-2.54" y2="17.78" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="17.78" x2="-20.32" y2="17.78" width="0.254" layer="94"/>
+<text x="-20.32" y="20.32" size="1.27" layer="94">&gt;NAME</text>
+<text x="-10.16" y="20.32" size="1.27" layer="94">&gt;VALUE</text>
+</symbol>
 </symbols>
 <devicesets>
 <deviceset name="CAPACITOR_POL_0805">
@@ -677,6 +708,26 @@
 <connect gate="G$1" pin="SWA" pad="SWA"/>
 <connect gate="G$1" pin="SWB" pad="SWB"/>
 <connect gate="G$1" pin="VDD" pad="VDD"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="74LVC1T45">
+<gates>
+<gate name="G$1" symbol="74LVC1T45" x="10.16" y="-10.16"/>
+</gates>
+<devices>
+<device name="" package="SOT363">
+<connects>
+<connect gate="G$1" pin="A" pad="3"/>
+<connect gate="G$1" pin="B" pad="4"/>
+<connect gate="G$1" pin="DIR" pad="5"/>
+<connect gate="G$1" pin="GND" pad="2"/>
+<connect gate="G$1" pin="VCCA" pad="1"/>
+<connect gate="G$1" pin="VCCB" pad="6"/>
 </connects>
 <technologies>
 <technology name=""/>
