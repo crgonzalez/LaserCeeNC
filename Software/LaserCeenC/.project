@@ -26,6 +26,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>CC3200.ccxml</name>
+			<type>1</type>
+			<location>C:/Users/Zachary/ti/CCSTargetConfigurations/CC3200.ccxml</location>
+		</link>
+		<link>
 			<name>gpio_if.c</name>
 			<type>1</type>
 			<locationURI>CC3200_SDK_ROOT/example/common/gpio_if.c</locationURI>

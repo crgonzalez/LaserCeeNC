@@ -57,6 +57,7 @@
 // Standard includes
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 // Simplelink includes
 #include "simplelink.h"
@@ -85,13 +86,12 @@
 #include "uart_if.h"
 #include "common.h"
 
-//fatfs includes
-#include "sdhost_demo.h"
-#include "stdcmd.h"
-
 //Laser/Motor control includes
-//#include "L6472.h"
-//#include "LaserBoard.h"
+#include "L6472.h"
+#include "LaserBoard.h"
+#include "gcode.h"
+
+#include "fileparse.h"
 
 #include "smartconfig.h"
 #include "pinmux.h"
@@ -656,8 +656,8 @@ void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent,
             }
             else
             {
-            	//UART_PRINT((const char *)G_FILE);
-            	lRetVal = osi_MsgQWrite(&FileAvail, &ucQueueMsg, OSI_NO_WAIT);
+            	if ( memcmp(G_FILE, "\015", 2) != 0)
+            		lRetVal = osi_MsgQWrite(&FileAvail, &ucQueueMsg, OSI_NO_WAIT);
             	osi_Sleep(3);
             }
           }
@@ -904,7 +904,16 @@ long ConnectToNetwork()
        lRetVal = sl_WlanGet(SL_WLAN_CFG_AP_ID, &config_opt , &len,
                                               (unsigned char*) ucAPSSID);
         ASSERT_ON_ERROR(lRetVal);
-        
+
+       // Set SSID name for AP mode
+       //unsigned char  str[33] = "LaserCeeNC";
+       //unsigned short  length = strlen((const char *)str);
+       //sl_WlanSet(SL_WLAN_CFG_AP_ID, WLAN_AP_OPT_SSID, length, str);
+
+       //lRetVal = sl_Stop(0);
+       //lRetVal = sl_Start(NULL, NULL, NULL);
+
+
        Report("\n\rDevice is in AP Mode.\n Please Connect to AP [%s] and "
           "type [mysimplelink.net] in the browser \n\r",ucAPSSID);
        
@@ -1092,7 +1101,7 @@ static void SaveFileTask(void *pvParameters)
 {
 	unsigned char ucQueueMsg = 0;
 	long lRetVal = -1;
-	unsigned long MaxSize = 63 * 1024;
+	unsigned long MaxSize = 64 * 1024;
 
 	osi_MsgQRead(&OpenFile, &ucQueueMsg, OSI_WAIT_FOREVER);
 
@@ -1121,7 +1130,7 @@ static void SaveFileTask(void *pvParameters)
 
 		lRetVal = sl_FsWrite(fileHandle, bytesReceived-len,	G_FILE, len);
 
-		if(lRetVal != len)
+		if(lRetVal < len)
 		{
 			UART_PRINT("Error in file write.");
 		}
@@ -1144,8 +1153,11 @@ static void GCodeParse(void *pvParameters)
     unsigned char ucQueueMsg = 0;
     SlFsFileInfo_t file_info;
     long lRetVal = -1;
-    int len = 246;
-    unsigned char file_line[len];
+    int len = 100;
+    char buff[len];
+    char* file_line;
+    char line[len];
+    int end;
 
     osi_MsgQRead(&Processing, &ucQueueMsg, OSI_WAIT_FOREVER);
 
@@ -1177,21 +1189,34 @@ static void GCodeParse(void *pvParameters)
 			UART_PRINT("Could not open file");
 		}
 
-		blocks = 1; //file_info.FileLen / len;
-		len = file_info.FileLen;
+		blocks = file_info.FileLen / len;
+		if (file_info.FileLen % len)
+			blocks++;
 		bytesRead = 0;
 
 		while(blocks)
 		{
-			lRetVal = sl_FsRead(fileHandle, bytesRead, file_line, len);
+			lRetVal = sl_FsRead(fileHandle, bytesRead, (_u8 *)buff, len);
 			if (lRetVal != len)
 			{
 					lRetVal = sl_FsClose(fileHandle, 0, 0, 0);
 					UART_PRINT("File read failed.");
 			}
+			buff[lRetVal - 1] = 'Z';
+			buff[lRetVal] = 0x00;
 			bytesRead += len;
-			UART_PRINT((const char*)file_line);
-			UART_PRINT("\n");
+			//UART_PRINT((const char*)buff);
+			file_line = buff;
+
+			while (1) {
+				if (sscanf(file_line, "%50[^\r\n]%n", line, &end) < 1)
+					break;
+				file_line += end+1;
+				if (fileparse(line)) {
+					bytesRead -= end;
+					break;
+				}
+			}
 			blocks--;
 		}
 

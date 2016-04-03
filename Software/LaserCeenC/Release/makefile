@@ -10,6 +10,7 @@ GEN_OPTS__FLAG :=
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
+"./fileparse.obj" \
 "./gpio_if.obj" \
 "./main.obj" \
 "./pinmux.obj" \
@@ -18,10 +19,13 @@ ORDERED_OBJS += \
 "./uart_if.obj" \
 "../cc3200v1p32.cmd" \
 $(GEN_CMDS__FLAG) \
+-lL6472.obj \
+-lLaserBoard.obj \
 -l"libc.a" \
 -lsimplelink.a \
 -ldriverlib.a \
 -lfree_rtos.a \
+-lgcode.obj \
 
 -include ../makefile.init
 
@@ -144,7 +148,7 @@ all: LaserCeenC.out
 LaserCeenC.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: ARM Linker'
-	"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/bin/armcl" -mv7M4 --code_state=16 --float_support=fpalib --abi=eabi -me -g --define=ccs --define=cc3200 --define=USE_FREERTOS --define=SL_PLATFORM_MULTI_THREADED --diag_wrap=off --display_error_number --diag_warning=225 -z -m"LaserCeenC.map" --heap_size=0x8000 --stack_size=0x800 -i"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/include" -i"C:/ti/CC3200SDK_1.1.0/cc3200-sdk/driverlib/ccs/Release" -i"C:/ti/CC3200SDK_1.1.0/cc3200-sdk/simplelink/ccs/OS" -i"C:/ti/CC3200SDK_1.1.0/cc3200-sdk/oslib/ccs/free_rtos" --reread_libs --display_error_number --diag_wrap=off --warn_sections --xml_link_info="LaserCeenC_linkInfo.xml" --rom_model -o "LaserCeenC.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/bin/armcl" -mv7M4 --code_state=16 --float_support=fpalib --abi=eabi -me -g --define=ccs --define=cc3200 --define=USE_FREERTOS --define=SL_PLATFORM_MULTI_THREADED --diag_wrap=off --display_error_number --diag_warning=225 -z -m"LaserCeenC.map" --heap_size=0x8000 --stack_size=0x800 -i"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/lib" -i"C:/Users/Zachary/Documents/GitHub/LaserCeeNC/spi_demo/Release" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/include" -i"C:/ti/CC3200SDK_1.1.0/cc3200-sdk/driverlib/ccs/Release" -i"C:/ti/CC3200SDK_1.1.0/cc3200-sdk/simplelink/ccs/OS" -i"C:/ti/CC3200SDK_1.1.0/cc3200-sdk/oslib/ccs/free_rtos" --reread_libs --display_error_number --diag_wrap=off --warn_sections --xml_link_info="LaserCeenC_linkInfo.xml" --rom_model -o "LaserCeenC.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
@@ -159,8 +163,8 @@ LaserCeenC.bin: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
-	-$(RM) "gpio_if.pp" "main.pp" "pinmux.pp" "smartconfig.pp" "startup_ccs.pp" "uart_if.pp" 
-	-$(RM) "gpio_if.obj" "main.obj" "pinmux.obj" "smartconfig.obj" "startup_ccs.obj" "uart_if.obj" 
+	-$(RM) "fileparse.pp" "gpio_if.pp" "main.pp" "pinmux.pp" "smartconfig.pp" "startup_ccs.pp" "uart_if.pp" 
+	-$(RM) "fileparse.obj" "gpio_if.obj" "main.obj" "pinmux.obj" "smartconfig.obj" "startup_ccs.obj" "uart_if.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
