@@ -185,10 +185,13 @@ void main()
     	Report( "\r\nPress key to turn run: " );
     	ulUserData = MAP_UARTCharGet(UARTA0_BASE);
 
-    	M3_s( 256 );
+
     	G90();
     	//G2_xyij( 0, 0, 0, 5 );
-    	G2_xyij( 0.000003, 0, 0, 5 );
+    	G1_xy( -10, -10 );
+    	M3_s( 256 );
+    	G3_xyij( -10, -10, -10, -5 );
+    	G2_xyij( -10, -10, -10, -15 );
     	//G2_xyij( 10, 10, 5, 10 );
     	//G3_xyij( 10, 10, 5, 10 );
     	//G3_xyij( -5, 5, 0, 5 );

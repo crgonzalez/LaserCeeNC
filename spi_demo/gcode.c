@@ -43,9 +43,6 @@ float distance_xyij( float x, float y, float i, float j );
 // Find the side of a radius a line falls
 rad_side_t side_of_rad( float xc, float yc, float xs, float ys, float xf, float yf );
 
-// find whether final point is within the finish threshold
-int clockwise_threshold( float xc, float yc, float xs, float ys, float xf, float yf );
-
 
 /****************************************************************************
  * G0: Rapid positioning
@@ -95,7 +92,7 @@ void G1_xy( float x, float y ) {
 // Move to (x,y) while remaining equidistant form (i,j)
 void G2_xyij( float x, float y, float i, float j ) {
 
-	const float dist_threshold = 0.2;
+
 
 	float x_cur = x_get_position();
 	float y_cur = y_get_position();
@@ -108,13 +105,16 @@ void G2_xyij( float x, float y, float i, float j ) {
 	const float radius = distance_xyij( x, y, i, j );
 	float x_mov = 0.2;
 
+	const float dist_threshold = .6;
+
 	float cur_dist = distance_xyij( x, y, x_cur, y_cur );
 
 	int same_flag = 0;
-	if( x == x_cur && y == y_cur )
+	if( x == x_cur && y == y_cur ) {
 		same_flag = 1;
+	}
 
-	while( cur_dist > dist_threshold || side_of_rad( i, j, x_cur, y_cur, x, y ) == POSITIVE || same_flag == 1 ) {
+	while( cur_dist > dist_threshold || side_of_rad( i, j, x_cur, y_cur, x, y ) == LEFT || same_flag == 1 ) {
 		//Report( "\r\nx_cur %f y_cur %f", x_cur, y_cur );
 		if( y_cur < j ) {
 			//Report( "A" );
@@ -170,7 +170,6 @@ void G2_xyij( float x, float y, float i, float j ) {
 // Move to (x,y) while remaining equidistant form (i,j)
 void G3_xyij( float x, float y, float i, float j ) {
 
-	const float dist_threshold = 0.2;
 
 	float x_cur = x_get_position();
 	float y_cur = y_get_position();
@@ -183,9 +182,16 @@ void G3_xyij( float x, float y, float i, float j ) {
 	const float radius = distance_xyij( x, y, i, j );
 	float x_mov = 0.2;
 
+	const float dist_threshold = 0.6;
+
 	float cur_dist = distance_xyij( x, y, x_cur, y_cur );
 
-	while( cur_dist > dist_threshold ) {
+	int same_flag = 0;
+	if( x == x_cur && y == y_cur ) {
+		same_flag = 1;
+	}
+
+	while( cur_dist > dist_threshold || side_of_rad( i, j, x_cur, y_cur, x, y ) == RIGHT || same_flag == 1 ) {
 		//Report( "\r\nx_cur %f y_cur %f", x_cur, y_cur );
 		if( y_cur < j ) {
 			//Report( "A" );
@@ -203,7 +209,7 @@ void G3_xyij( float x, float y, float i, float j ) {
 
 		} else if( y_cur == j && x_cur < i ) {
 			//Report( "C" );
-			x_next = x_cur - x_mov;
+			x_next = x_cur + x_mov;
 			y_next = -sqrt( radius*radius - (x_next - i)*(x_next - i) );
 
 		} else {
@@ -226,6 +232,8 @@ void G3_xyij( float x, float y, float i, float j ) {
 		//x_cur = x_next;
 		//y_cur = y_next;
 		cur_dist = distance_xyij( x, y, x_cur, y_cur );
+
+		same_flag = 0;
 	}
 
 	move_coord( x, y );
@@ -323,27 +331,3 @@ rad_side_t side_of_rad( float xc, float yc, float xs, float ys, float xf, float 
 	}
 }
 
-
-// find whether final point is within the finish threshold
-int clockwise_threshold( float xc, float yc, float xs, float ys, float xf, float yf ) {
-	if( xs == xf && ys == yf ) {
-		return 0;
-	}
-
-	float side = ( (xs - xc)*(yf - yc) - (ys - yc)*(xf - xc) );
-
-	// left of radius vector (behind)
-	if( side > 0 ) {
-		return 0;
-	}
-
-	float distance = distance_xyij( xs, ys, xf, yf );
-	float radius = distance_xyij( xs, ys, xc, yc );
-	float threshold = radius * 0.05;
-
-	if( distance < threshold ) {
-		return 1;
-	}
-
-	return 0;
-}
