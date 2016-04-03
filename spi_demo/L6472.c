@@ -7,6 +7,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "L6472.h"
 
@@ -176,8 +177,8 @@ void 	xy_wait( void ) {
 
 void	xy_move_mm( float xMMs, float yMMs ) {
 	// Determine Distance
-	uint32_t xsteps = (uint32_t)abs( xMMs*STEPS_TO_MM );
-	uint32_t ysteps = (uint32_t)abs( yMMs*STEPS_TO_MM );
+	uint32_t xsteps = (uint32_t)fabs( xMMs*STEPS_TO_MM );
+	uint32_t ysteps = (uint32_t)fabs( yMMs*STEPS_TO_MM );
 
 	if( xMMs >= 0 ) {
 		if( yMMs >= 0 ) {
@@ -213,12 +214,12 @@ void	move_coord( float x_dest, float y_dest ) {
 	float y_delta = y_dest - y_pos;
 
 	// Absolute value of deltas
-	const float x_delta_const = abs(x_delta);
-	const float y_delta_const = abs(y_delta);
+	const float x_delta_const = fabs(x_delta);
+	const float y_delta_const = fabs(y_delta);
 
 	// Declare direction variables
-	int x_dir = 1;
-	int y_dir = 1;
+	float x_dir = 1;
+	float y_dir = 1;
 
 	// Store x direction of movement
 	if( x_delta >= 0 ) {
@@ -235,11 +236,14 @@ void	move_coord( float x_dest, float y_dest ) {
 	}
 
 	// Remove sign from deltas
-	x_delta = abs(x_delta);
-	y_delta = abs(y_delta);
+	x_delta = fabs(x_delta);
+	y_delta = fabs(y_delta);
 
 	// Loop until not movement is necessary
+	Report( "\r\nHere! x_delta: %f  y_delta: %f", x_delta, y_delta );
 	while( x_delta != 0 || y_delta != 0 ) {
+		Report( "\r\nHere Again!" );
+		Report( "\r\nx_pos: %f  y_pos: %f", x_pos, y_pos );
 		if( x_delta/x_delta_const >= y_delta/y_delta_const ) {
 			if( x_delta >= 0.1 ) {
 				x_move_mm( 0.1*x_dir );
@@ -247,6 +251,7 @@ void	move_coord( float x_dest, float y_dest ) {
 				x_delta -= 0.1;
 			} else if( x_delta < 0.1 ) {
 				x_move_mm( x_delta*x_dir );
+
 				x_wait();
 				x_delta = 0;
 			}
@@ -264,6 +269,14 @@ void	move_coord( float x_dest, float y_dest ) {
 	}
 }
 
+float	x_get_position( void ) {
+	return x_pos;
+}
+
+float 	y_get_position( void ) {
+	return y_pos;
+}
+
 
 //*****************************************************************************
 //                  Y Public Functions
@@ -275,7 +288,7 @@ void y_reset( void ) {
 
 void 	y_move_mm( float MMs ) {
 	// Determine Distance
-	uint32_t steps = (uint32_t)abs( MMs*STEPS_TO_MM );
+	uint32_t steps = (uint32_t)fabs( MMs*STEPS_TO_MM );
 
 	if( MMs >= 0 ) {
 		y_move( POSITIVE, steps );
@@ -357,7 +370,7 @@ void x_reset( void ) {
 
 void 	x_move_mm( float MMs ) {
 	// Determine Distance
-	uint32_t steps = (uint32_t)abs( MMs*STEPS_TO_MM );
+	uint32_t steps = (uint32_t)fabs( MMs*STEPS_TO_MM );
 
 	if( MMs >= 0 ) {
 		x_move( POSITIVE, steps );

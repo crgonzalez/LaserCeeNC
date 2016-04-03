@@ -86,6 +86,135 @@ void G1_xy( float x, float y ) {
 // Move to (x,y) while remaining equidistant form (i,j)
 void G2_xyij( float x, float y, float i, float j ) {
 
+	const float dist_threshold = 0.2;
+
+	float x_cur = x_get_position();
+	float y_cur = y_get_position();
+
+	//Report( "\r\nStart X%f Y%f", x_cur, y_cur );
+
+	float x_next;
+	float y_next;
+
+	const float radius = distance_xyij( x, y, i, j );
+	float x_mov = 0.2;
+
+	float cur_dist = distance_xyij( x, y, x_cur, y_cur );
+
+	while( cur_dist > dist_threshold ) {
+		//Report( "\r\nx_cur %f y_cur %f", x_cur, y_cur );
+		if( y_cur < j ) {
+			//Report( "A" );
+			x_next = x_cur - x_mov;
+			if( x_next < i - radius ) {
+				x_next = i - radius;
+				y_next = 0;
+			} else {
+				y_next = -sqrt( radius*radius - x_next*x_next );
+			}
+		} else if( y_cur == j && x_cur > i ) {
+			//Report( "B" );
+			x_next = x_cur - x_mov;
+			y_next = -sqrt( radius*radius - x_next*x_next );
+
+		} else if( y_cur == j && x_cur < i ) {
+			//Report( "C" );
+			x_next = x_cur + x_mov;
+			y_next = sqrt( radius*radius - x_next*x_next );
+
+		} else {
+			//Report( "D" );
+			x_next = x_cur + x_mov;
+			if( x_next > i + radius ) {
+				x_next = i + radius;
+				y_next = 0;
+			} else {
+				y_next = sqrt( radius*radius - x_next*x_next );
+			}
+		}
+
+		//x_next += x_cur;
+		y_next += j;
+		//Report( "\r\nX%f Y%f", x_next, y_next );
+		move_coord( x_next, y_next );
+		x_cur = x_get_position();
+		y_cur = y_get_position();
+		//x_cur = x_next;
+		//y_cur = y_next;
+		cur_dist = distance_xyij( x, y, x_cur, y_cur );
+	}
+
+	move_coord( x, y );
+
+}
+
+
+/****************************************************************************
+ * G3: Counterclockwise arc
+ ****************************************************************************/
+// Move to (x,y) while remaining equidistant form (i,j)
+void G3_xyij( float x, float y, float i, float j ) {
+
+	const float dist_threshold = 0.2;
+
+	float x_cur = x_get_position();
+	float y_cur = y_get_position();
+
+	//Report( "\r\nStart X%f Y%f", x_cur, y_cur );
+
+	float x_next;
+	float y_next;
+
+	const float radius = distance_xyij( x, y, i, j );
+	float x_mov = 0.2;
+
+	float cur_dist = distance_xyij( x, y, x_cur, y_cur );
+
+	while( cur_dist > dist_threshold ) {
+		//Report( "\r\nx_cur %f y_cur %f", x_cur, y_cur );
+		if( y_cur < j ) {
+			Report( "A" );
+			x_next = x_cur + x_mov;
+			if( x_next > i + radius ) {
+				x_next = i + radius;
+				y_next = 0;
+			} else {
+				y_next = -sqrt( radius*radius - x_next*x_next );
+			}
+		} else if( y_cur == j && x_cur > i ) {
+			Report( "B" );
+			x_next = x_cur - x_mov;
+			y_next = sqrt( radius*radius - x_next*x_next );
+
+		} else if( y_cur == j && x_cur < i ) {
+			Report( "C" );
+			x_next = x_cur - x_mov;
+			y_next = -sqrt( radius*radius - x_next*x_next );
+
+		} else {
+			Report( "D" );
+			x_next = x_cur - x_mov;
+			if( x_next < i - radius ) {
+				x_next = i - radius;
+				y_next = 0;
+			} else {
+				y_next = sqrt( radius*radius - x_next*x_next );
+			}
+		}
+
+		//x_next += x_cur;
+		y_next += j;
+		//Report( "\r\nX%f Y%f", x_next, y_next );
+		move_coord( x_next, y_next );
+		x_cur = x_get_position();
+		y_cur = y_get_position();
+		//x_cur = x_next;
+		//y_cur = y_next;
+		cur_dist = distance_xyij( x, y, x_cur, y_cur );
+	}
+
+	move_coord( x, y );
+
 }
 
 

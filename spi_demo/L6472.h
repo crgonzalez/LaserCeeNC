@@ -34,6 +34,10 @@ void	move_coord_direct( float x_dest, float y_dest );
 
 void	move_coord( float x_dest, float y_dest );
 
+float	x_get_position( void );
+
+float 	y_get_position( void );
+
 /**********************************************************************
  * Y motor control functions
  **********************************************************************/
