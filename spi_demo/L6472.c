@@ -7,6 +7,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "L6472.h"
 
@@ -176,26 +177,35 @@ void 	xy_wait( void ) {
 
 void	xy_move_mm( float xMMs, float yMMs ) {
 	// Determine Distance
-	uint32_t xsteps = (uint32_t)abs( xMMs*STEPS_TO_MM );
-	uint32_t ysteps = (uint32_t)abs( yMMs*STEPS_TO_MM );
+	uint32_t xsteps = (uint32_t)fabs( xMMs*STEPS_TO_MM );
+	uint32_t ysteps = (uint32_t)fabs( yMMs*STEPS_TO_MM );
 
-	if( xMMs > 0 ) {
-		if( yMMs > 0 ) {
+	if( xMMs >= 0 ) {
+		if( yMMs >= 0 ) {
 			xy_move( POSITIVE, xsteps, POSITIVE, ysteps );
 		} else if( yMMs < 0 ) {
 			xy_move( POSITIVE, xsteps, NEGATIVE, ysteps );
 		}
 	} else if( xMMs < 0 ) {
-		if( yMMs > 0 ) {
+		if( yMMs >= 0 ) {
 			xy_move( NEGATIVE, xsteps, POSITIVE, ysteps );
 		} else if( yMMs < 0 ) {
 			xy_move( NEGATIVE, xsteps, NEGATIVE, ysteps );
 		}
 	}
 
-	// Set x_pos and y_pos to origin
-	x_pos = 0;
-	y_pos = 0;
+	// Move x_pos and y_pos
+	x_pos += xMMs;
+	y_pos += yMMs;
+}
+
+
+void	move_coord_direct( float x_dest, float y_dest ) {
+	float x_delta = x_dest - x_pos;
+	float y_delta = y_dest - y_pos;
+
+	xy_move_mm( x_delta, y_delta );
+	xy_wait();
 }
 
 
@@ -203,128 +213,68 @@ void	move_coord( float x_dest, float y_dest ) {
 	float x_delta = x_dest - x_pos;
 	float y_delta = y_dest - y_pos;
 
-	// Both zero do nothing
-	if( x_delta == 0 && y_delta == 0 ) {
-		Report( "\r\n\tNothing" );
-		return;
+	// Absolute value of deltas
+	const float x_delta_const = fabs(x_delta);
+	const float y_delta_const = fabs(y_delta);
 
-	// Only x is zero
-	} else if( x_delta == 0 ) {
-		Report( "\r\n\tVertical" );
-		while( y_delta != 0 ) {
-			if( y_delta > 0.2 ) {
-				y_move_mm( 0.1 );
-				y_delta -= 0.1;
-			} else if( y_delta < -0.2 ) {
-				y_move_mm( -0.1 );
-				y_delta += 0.1;
-			} else {
-				y_move_mm( y_delta );
-				y_delta = 0;
-			}
-			y_wait();
-		}
+	// Declare direction variables
+	float x_dir = 1;
+	float y_dir = 1;
 
-	// Only y is zero
-	} else if( y_delta == 0 ) {
-		Report( "\r\n\tHorizontal" );
-		while( x_delta != 0 ) {
-			if( x_delta > 0.2 ) {
-				x_move_mm( 0.1 );
-				x_delta -= 0.1;
-			} else if( x_delta < -0.2 ) {
-				x_move_mm( -0.1 );
-				x_delta += 0.1;
-			} else {
-				x_move_mm( x_delta );
-				x_delta = 0;
-			}
-			x_wait();
-		}
-
-	// |x| equals |y|
-	} else if( abs(x_delta) == abs(y_delta) ) {
-		Report( "\r\n\t45 Degree" );
-		while( y_delta != 0 ) {
-			// Handle y
-			if( y_delta > 0.2 ) {
-				y_move_mm( 0.1 );
-				y_delta -= 0.1;
-			} else if( y_delta < -0.2 ) {
-				y_move_mm( -0.1 );
-				y_delta += 0.1;
-			} else {
-				y_move_mm( y_delta );
-				y_delta = 0;
-			}
-			y_wait();
-
-			// Handle y
-			if( x_delta > 0.2 ) {
-				x_move_mm( 0.1 );
-				x_delta -= 0.1;
-			} else if( x_delta < -0.2 ) {
-				x_move_mm( -0.1 );
-				x_delta += 0.1;
-			} else {
-				x_move_mm( x_delta );
-				x_delta = 0;
-			}
-			x_wait();
-		}
-
-	// |x| > |y|
-	} else if( abs(x_delta) > abs(y_delta) ) {
-		Report( "\r\n\t<45 Degree" );
-		float x_step = x_delta/abs(y_delta/0.1);
-
-		while( y_delta != 0 ) {
-			// Handle y
-			if( y_delta > 0.2 ) {
-				y_move_mm( 0.1 );
-				y_delta -= 0.1;
-			} else if( y_delta < -0.2 ) {
-				y_move_mm( -0.1 );
-				y_delta += 0.1;
-			} else {
-				y_move_mm( y_delta );
-				y_delta = 0;
-			}
-			y_wait();
-
-			// Handle x
-			x_move_mm( x_step );
-			x_delta -= x_step;
-			x_wait();
-		}
-
-	// |y| > |x|
-	} else if( abs(y_delta) > abs(x_delta) ) {
-		Report( "\r\n\t>45 Degree" );
-		float y_step = y_delta/abs(x_delta/0.1);
-
-		while( x_delta != 0 ) {
-			// Handle y
-			if( x_delta > 0.2 ) {
-				x_move_mm( 0.1 );
-				x_delta -= 0.1;
-			} else if( x_delta < -0.2 ) {
-				x_move_mm( -0.1 );
-				x_delta += 0.1;
-			} else {
-				x_move_mm( x_delta );
-				x_delta = 0;
-			}
-			x_wait();
-
-			// Handle x
-			y_move_mm( y_step );
-			y_delta -= y_step;
-			y_wait();
-		}
-
+	// Store x direction of movement
+	if( x_delta >= 0 ) {
+		x_dir = 1;	// Positive
+	} else {
+		x_dir = -1;	// Negative
 	}
 
+	// Store y direction of movement
+	if( y_delta >= 0 ) {
+		y_dir = 1;	// Positive
+	} else {
+		y_dir = -1;	// Negative
+	}
+
+	// Remove sign from deltas
+	x_delta = fabs(x_delta);
+	y_delta = fabs(y_delta);
+
+	// Loop until not movement is necessary
+	//Report( "\r\nHere! x_delta: %f  y_delta: %f", x_delta, y_delta );
+	while( x_delta != 0 || y_delta != 0 ) {
+		//Report( "\r\nHere Again!" );
+		//Report( "\r\nx_pos: %f  y_pos: %f", x_pos, y_pos );
+		if( x_delta/x_delta_const >= y_delta/y_delta_const ) {
+			if( x_delta >= 0.1 ) {
+				x_move_mm( 0.1*x_dir );
+				x_wait();
+				x_delta -= 0.1;
+			} else if( x_delta < 0.1 ) {
+				x_move_mm( x_delta*x_dir );
+
+				x_wait();
+				x_delta = 0;
+			}
+		} else {
+			if( y_delta >= 0.1 ) {
+				y_move_mm( 0.1*y_dir );
+				y_wait();
+				y_delta -= 0.1;
+			} else if( y_delta < 0.1 ) {
+				y_move_mm( y_delta*y_dir );
+				y_wait();
+				y_delta = 0;
+			}
+		}
+	}
+}
+
+float	x_get_position( void ) {
+	return x_pos;
+}
+
+float 	y_get_position( void ) {
+	return y_pos;
 }
 
 
@@ -338,9 +288,9 @@ void y_reset( void ) {
 
 void 	y_move_mm( float MMs ) {
 	// Determine Distance
-	uint32_t steps = (uint32_t)abs( MMs*STEPS_TO_MM );
+	uint32_t steps = (uint32_t)fabs( MMs*STEPS_TO_MM );
 
-	if( MMs > 0 ) {
+	if( MMs >= 0 ) {
 		y_move( POSITIVE, steps );
 	} else if( MMs < 0 ) {
 		y_move( NEGATIVE, steps );
@@ -420,9 +370,9 @@ void x_reset( void ) {
 
 void 	x_move_mm( float MMs ) {
 	// Determine Distance
-	uint32_t steps = (uint32_t)abs( MMs*STEPS_TO_MM );
+	uint32_t steps = (uint32_t)fabs( MMs*STEPS_TO_MM );
 
-	if( MMs > 0 ) {
+	if( MMs >= 0 ) {
 		x_move( POSITIVE, steps );
 	} else if( MMs < 0 ) {
 		x_move( NEGATIVE, steps );
