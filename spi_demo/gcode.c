@@ -31,11 +31,20 @@ static float f_g1 = 3;
 static uint8_t s_m3_m5;
 
 
+typedef enum RADIUS_SIDE { LEFT, RIGHT, ON_LINE } rad_side_t;
+
+
 /****************************************************************************
  * Private function prototypes
  ****************************************************************************/
 // Find the distance between (x,y) and (i,j)
 float distance_xyij( float x, float y, float i, float j );
+
+// Find the side of a radius a line falls
+rad_side_t side_of_rad( float xc, float yc, float xs, float ys, float xf, float yf );
+
+// find whether final point is within the finish threshold
+int clockwise_threshold( float xc, float yc, float xs, float ys, float xf, float yf );
 
 
 /****************************************************************************
@@ -101,7 +110,11 @@ void G2_xyij( float x, float y, float i, float j ) {
 
 	float cur_dist = distance_xyij( x, y, x_cur, y_cur );
 
-	while( cur_dist > dist_threshold ) {
+	int same_flag = 0;
+	if( x == x_cur && y == y_cur )
+		same_flag = 1;
+
+	while( cur_dist > dist_threshold || side_of_rad( i, j, x_cur, y_cur, x, y ) == POSITIVE || same_flag == 1 ) {
 		//Report( "\r\nx_cur %f y_cur %f", x_cur, y_cur );
 		if( y_cur < j ) {
 			//Report( "A" );
@@ -110,17 +123,17 @@ void G2_xyij( float x, float y, float i, float j ) {
 				x_next = i - radius;
 				y_next = 0;
 			} else {
-				y_next = -sqrt( radius*radius - x_next*x_next );
+				y_next = -sqrt( radius*radius - (x_next - i)*(x_next - i) );
 			}
 		} else if( y_cur == j && x_cur > i ) {
 			//Report( "B" );
 			x_next = x_cur - x_mov;
-			y_next = -sqrt( radius*radius - x_next*x_next );
+			y_next = -sqrt( radius*radius - (x_next - i)*(x_next - i) );
 
 		} else if( y_cur == j && x_cur < i ) {
 			//Report( "C" );
 			x_next = x_cur + x_mov;
-			y_next = sqrt( radius*radius - x_next*x_next );
+			y_next = sqrt( radius*radius - (x_next - i)*(x_next - i) );
 
 		} else {
 			//Report( "D" );
@@ -129,19 +142,21 @@ void G2_xyij( float x, float y, float i, float j ) {
 				x_next = i + radius;
 				y_next = 0;
 			} else {
-				y_next = sqrt( radius*radius - x_next*x_next );
+				y_next = sqrt( radius*radius - (x_next - i)*(x_next - i) );
 			}
 		}
 
 		//x_next += x_cur;
 		y_next += j;
-		//Report( "\r\nX%f Y%f", x_next, y_next );
+		Report( "\r\nX%f Y%f", x_next, y_next );
 		move_coord( x_next, y_next );
 		x_cur = x_get_position();
 		y_cur = y_get_position();
 		//x_cur = x_next;
 		//y_cur = y_next;
 		cur_dist = distance_xyij( x, y, x_cur, y_cur );
+
+		same_flag = 0;
 	}
 
 	move_coord( x, y );
@@ -173,32 +188,32 @@ void G3_xyij( float x, float y, float i, float j ) {
 	while( cur_dist > dist_threshold ) {
 		//Report( "\r\nx_cur %f y_cur %f", x_cur, y_cur );
 		if( y_cur < j ) {
-			Report( "A" );
+			//Report( "A" );
 			x_next = x_cur + x_mov;
 			if( x_next > i + radius ) {
 				x_next = i + radius;
 				y_next = 0;
 			} else {
-				y_next = -sqrt( radius*radius - x_next*x_next );
+				y_next = -sqrt( radius*radius - (x_next - i)*(x_next - i) );
 			}
 		} else if( y_cur == j && x_cur > i ) {
-			Report( "B" );
+			//Report( "B" );
 			x_next = x_cur - x_mov;
-			y_next = sqrt( radius*radius - x_next*x_next );
+			y_next = sqrt( radius*radius - (x_next - i)*(x_next - i) );
 
 		} else if( y_cur == j && x_cur < i ) {
-			Report( "C" );
+			//Report( "C" );
 			x_next = x_cur - x_mov;
-			y_next = -sqrt( radius*radius - x_next*x_next );
+			y_next = -sqrt( radius*radius - (x_next - i)*(x_next - i) );
 
 		} else {
-			Report( "D" );
+			//Report( "D" );
 			x_next = x_cur - x_mov;
 			if( x_next < i - radius ) {
 				x_next = i - radius;
 				y_next = 0;
 			} else {
-				y_next = sqrt( radius*radius - x_next*x_next );
+				y_next = sqrt( radius*radius - (x_next - i)*(x_next - i) );
 			}
 		}
 
@@ -292,4 +307,43 @@ void M18( void ) {
 // Find the distance between (x,y) and (i,j)
 float distance_xyij( float x, float y, float i, float j ) {
 	return sqrt( (x - i)*(x - i) + (y - j)*(y - j) );
+}
+
+
+// Find the side of a radius a line falls
+rad_side_t side_of_rad( float xc, float yc, float xs, float ys, float xf, float yf ) {
+	float side = ( (xs - xc)*(yf - yc) - (ys - yc)*(xf - xc) );
+
+	if( side > 0 ) {
+		return LEFT;
+	} else if( side < 0 ) {
+		return RIGHT;
+	} else {
+		return ON_LINE;
+	}
+}
+
+
+// find whether final point is within the finish threshold
+int clockwise_threshold( float xc, float yc, float xs, float ys, float xf, float yf ) {
+	if( xs == xf && ys == yf ) {
+		return 0;
+	}
+
+	float side = ( (xs - xc)*(yf - yc) - (ys - yc)*(xf - xc) );
+
+	// left of radius vector (behind)
+	if( side > 0 ) {
+		return 0;
+	}
+
+	float distance = distance_xyij( xs, ys, xf, yf );
+	float radius = distance_xyij( xs, ys, xc, yc );
+	float threshold = radius * 0.05;
+
+	if( distance < threshold ) {
+		return 1;
+	}
+
+	return 0;
 }

@@ -240,10 +240,10 @@ void	move_coord( float x_dest, float y_dest ) {
 	y_delta = fabs(y_delta);
 
 	// Loop until not movement is necessary
-	Report( "\r\nHere! x_delta: %f  y_delta: %f", x_delta, y_delta );
+	//Report( "\r\nHere! x_delta: %f  y_delta: %f", x_delta, y_delta );
 	while( x_delta != 0 || y_delta != 0 ) {
-		Report( "\r\nHere Again!" );
-		Report( "\r\nx_pos: %f  y_pos: %f", x_pos, y_pos );
+		//Report( "\r\nHere Again!" );
+		//Report( "\r\nx_pos: %f  y_pos: %f", x_pos, y_pos );
 		if( x_delta/x_delta_const >= y_delta/y_delta_const ) {
 			if( x_delta >= 0.1 ) {
 				x_move_mm( 0.1*x_dir );
