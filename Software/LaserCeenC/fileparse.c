@@ -120,14 +120,14 @@ void gcommand(char* instr)
 		if (param1[0] == 'F')
 		{
 			sscanf(instr, "F%f", &f_val);
-			//G0_f(f_val);
-			UART_PRINT("G0 F%f\n", f_val);
+			G0_f(f_val);
+			//UART_PRINT("G0 F%f\n", f_val);
 		}
 		else
 		{
 			sscanf(instr, "X%f Y%f", &x_vals, &y_vals);
-			//G0_xy(x_vals, y_vals);
-			UART_PRINT("G0 X%f Y%f\n", x_vals, y_vals);
+			G0_xy(x_vals, y_vals);
+			//UART_PRINT("G0 X%f Y%f\n", x_vals, y_vals);
 		}
 		break;
 	case 1:
@@ -136,37 +136,37 @@ void gcommand(char* instr)
 		if (param1[0] == 'F')
 		{
 			sscanf(instr, "F%f", &f_val);
-			//G1_f(f_val);
-			UART_PRINT("G1 F%f\n", f_val);
+			G1_f(f_val);
+			//UART_PRINT("G1 F%f\n", f_val);
 		}
 		else
 		{
 			sscanf(instr, "X%f Y%f", &x_vals, &y_vals);
-			//G1_xy(x_vals, y_vals);
-			UART_PRINT("G1 X%f Y%f\n", x_vals, y_vals);
+			G1_xy(x_vals, y_vals);
+			//UART_PRINT("G1 X%f Y%f\n", x_vals, y_vals);
 		}
 		break;
 	case 2:
 		while (instr[0] != 'X')
 			instr++;
 		sscanf(instr, "X%f Y%f I%f J%f", &x_vals, &y_vals, &i_vals, &j_vals);
-		//G2_xyij(x_vals, y_vals, i_vals, j_vals);
-		UART_PRINT("G2 X%f Y%f I%f J%f\n", x_vals, y_vals, i_vals, j_vals);
+		G2_xyij(x_vals, y_vals, i_vals, j_vals);
+		//UART_PRINT("G2 X%f Y%f I%f J%f\n", x_vals, y_vals, i_vals, j_vals);
 		break;
 	case 4:
 		while (instr[0] != 'P')
 			instr++;
 		sscanf(instr, "P%f", &p_val);
-		//G4_p(p_vals);
-		UART_PRINT("G4 P%f\n", p_val);
+		G4_p(p_val);
+		//UART_PRINT("G4 P%f\n", p_val);
 		break;
 	case 21:
-		//G21();
-		UART_PRINT("G21\n");
+		G21();
+		//UART_PRINT("G21\n");
 		break;
 	case 90:
-		//G90();
-		UART_PRINT("G90\n");
+		G90();
+		//UART_PRINT("G90\n");
 		break;
 	default:
 		break;
@@ -191,16 +191,16 @@ void mcommand(char* instr)
 
 	switch(m_num){
 	case 3:
-		//M3_s(s_val);
-		UART_PRINT("M3 S%d\n", s_val);
+		M3_s(s_val);
+		//UART_PRINT("M3 S%d\n", s_val);
 		break;
 	case 5:
-		//M5_s(s_val);
-		UART_PRINT("M5 S%d\n", s_val);
+		M5_s(s_val);
+		//UART_PRINT("M5 S%d\n", s_val);
 		break;
 	case 18:
-		//M18();
-		UART_PRINT("M18\n");
+		M18();
+		//UART_PRINT("M18\n");
 		break;
 	default:
 		break;

@@ -642,7 +642,6 @@ void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent,
 
             if (memcmp(ptr, "Done", 4) == 0)
             {
-            	osi_Sleep(5);
 
     			UART_PRINT("File has been saved\n"   \
     					   "Total bytes received: %d\n\r", bytesReceived);
@@ -656,9 +655,9 @@ void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent,
             }
             else
             {
-            	if ( memcmp(G_FILE, "\015", 2) != 0)
+            	if (memcmp(G_FILE, "\015", 2) != 0)
             		lRetVal = osi_MsgQWrite(&FileAvail, &ucQueueMsg, OSI_NO_WAIT);
-            	osi_Sleep(3);
+            	osi_Sleep(2);
             }
           }
         }
@@ -1125,7 +1124,7 @@ static void SaveFileTask(void *pvParameters)
 		osi_MsgQRead(&FileAvail, &ucQueueMsg, OSI_WAIT_FOREVER);
 
 		int len=strlen((const char*)G_FILE);
-		//UART_PRINT((const char *)G_FILE);
+		UART_PRINT((const char*)G_FILE);
 		bytesReceived +=len;
 
 		lRetVal = sl_FsWrite(fileHandle, bytesReceived-len,	G_FILE, len);
@@ -1301,6 +1300,13 @@ void main()
     //Pin Configuration
     PinMuxConfig();
     
+    //Init Laser
+    laser_init();
+
+    //Init Motors
+    L6472_init();
+
+
     //Change Pin 58 Configuration from Default to Pull Down
     MAP_PinConfigSet(PIN_58,PIN_STRENGTH_2MA|PIN_STRENGTH_4MA,PIN_TYPE_STD_PD);
     
