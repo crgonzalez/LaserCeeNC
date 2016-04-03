@@ -1,0 +1,1 @@
+"./fileparse.obj" "./gpio_if.obj" "./main.obj" "./pinmux.obj" "./smartconfig.obj" "./startup_ccs.obj" "./uart_if.obj" "../cc3200v1p32.cmd" -lL6472.obj -lLaserBoard.obj -l"libc.a" -lsimplelink.a -ldriverlib.a -lfree_rtos.a -lgcode.obj 
