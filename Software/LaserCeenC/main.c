@@ -1154,6 +1154,7 @@ static void GCodeParse(void *pvParameters)
     SlFsFileInfo_t file_info;
     long lRetVal = -1;
     int len = 100;
+    int addblock = 0;
     char buff[len];
     char* file_line;
     char line[len];
@@ -1197,10 +1198,10 @@ static void GCodeParse(void *pvParameters)
 		while(blocks)
 		{
 			lRetVal = sl_FsRead(fileHandle, bytesRead, (_u8 *)buff, len);
-			if (lRetVal != len)
+			if (lRetVal < 0)
 			{
-					lRetVal = sl_FsClose(fileHandle, 0, 0, 0);
 					UART_PRINT("File read failed.");
+					break;
 			}
 			buff[lRetVal - 1] = 'Z';
 			buff[lRetVal] = 0x00;
@@ -1217,7 +1218,12 @@ static void GCodeParse(void *pvParameters)
 					break;
 				}
 			}
-			blocks--;
+			addblock += end;
+			if (addblock > len){
+				addblock = 0;
+				blocks++;
+			}else
+				blocks--;
 		}
 
 		lRetVal = sl_FsClose(fileHandle, 0, 0, 0);
@@ -1226,7 +1232,7 @@ static void GCodeParse(void *pvParameters)
 			UART_PRINT("Error on file close");
 		}
 
-		osi_Sleep(7);
+		osi_Sleep(90000);
     }
 }
 //*****************************************************************************
