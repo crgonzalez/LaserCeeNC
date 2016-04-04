@@ -89,13 +89,14 @@ void G1_xy( float x, float y ) {
 /****************************************************************************
  * G2: Clockwise arc
  ****************************************************************************/
-// Move to (x,y) while remaining equidistant form (i,j)
+// Move to (x,y) while remaining equidistant from (i,j)+starting point
 void G2_xyij( float x, float y, float i, float j ) {
-
-
-
 	float x_cur = x_get_position();
 	float y_cur = y_get_position();
+
+	// Add center to i and j
+	i += x_cur;
+	j += y_cur;
 
 	//Report( "\r\nStart X%f Y%f", x_cur, y_cur );
 
@@ -167,12 +168,14 @@ void G2_xyij( float x, float y, float i, float j ) {
 /****************************************************************************
  * G3: Counterclockwise arc
  ****************************************************************************/
-// Move to (x,y) while remaining equidistant form (i,j)
+// Move to (x,y) while remaining equidistant form (i,j)+starting point
 void G3_xyij( float x, float y, float i, float j ) {
-
-
 	float x_cur = x_get_position();
 	float y_cur = y_get_position();
+
+	// Add starting point to i and j
+	i += x_cur;
+	j += y_cur;
 
 	//Report( "\r\nStart X%f Y%f", x_cur, y_cur );
 
