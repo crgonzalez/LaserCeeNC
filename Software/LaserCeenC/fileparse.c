@@ -150,7 +150,14 @@ void gcommand(char* instr)
 		while (instr[0] != 'X')
 			instr++;
 		sscanf(instr, "X%f Y%f I%f J%f", &x_vals, &y_vals, &i_vals, &j_vals);
+		UART_PRINT("G2 X%f Y%f I%f J%f\n", x_vals, y_vals, i_vals, j_vals);
 		G2_xyij(x_vals, y_vals, i_vals, j_vals);
+		break;
+	case 3:
+		while (instr[0] != 'X')
+			instr++;
+		sscanf(instr, "X%f Y%f I%f J%f", &x_vals, &y_vals, &i_vals, &j_vals);
+		G3_xyij(x_vals, y_vals, i_vals, j_vals);
 		//UART_PRINT("G2 X%f Y%f I%f J%f\n", x_vals, y_vals, i_vals, j_vals);
 		break;
 	case 4:
