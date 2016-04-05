@@ -149,7 +149,13 @@ void G2_xyij( float x, float y, float i, float j ) {
 
 		//x_next += x_cur;
 		y_next += j;
-		Report( "\r\nX%f Y%f", x_next, y_next );
+
+		if( distance_xyij( x_cur, y_cur, x_next, y_next ) >= distance_xyij( x_cur, y_cur, x, y )
+				&& side_of_rad( i, j, x_cur, y_cur, x, y ) == RIGHT ) {
+			break;
+		}
+
+		//Report( "\r\nX%f Y%f", x_next, y_next );
 		move_coord( x_next, y_next );
 		x_cur = x_get_position();
 		y_cur = y_get_position();
@@ -228,6 +234,13 @@ void G3_xyij( float x, float y, float i, float j ) {
 
 		//x_next += x_cur;
 		y_next += j;
+
+		Report("\r\nD2next %f D2Fin %f", distance_xyij( x_cur, y_cur, x_next, y_next ), distance_xyij( x_cur, y_cur, x, y ));
+		if( distance_xyij( x_cur, y_cur, x_next, y_next ) >= distance_xyij( x_cur, y_cur, x, y )
+				&& side_of_rad( i, j, x_cur, y_cur, x, y ) == LEFT ) {
+			break;
+		}
+
 		//Report( "\r\nX%f Y%f", x_next, y_next );
 		move_coord( x_next, y_next );
 		x_cur = x_get_position();

@@ -4,7 +4,7 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5
+CG_TOOL_ROOT := C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -13,7 +13,6 @@ ORDERED_OBJS += \
 "./L6472.obj" \
 "./LaserBoard.obj" \
 "./gcode.obj" \
-"./main.obj" \
 "./pinmux.obj" \
 "./startup_ccs.obj" \
 "./uart_if.obj" \
@@ -143,14 +142,14 @@ all: spi_demo.out
 spi_demo.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: ARM Linker'
-	"C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5/bin/armcl" -mv7M4 --code_state=16 --float_support=vfplib --abi=eabi -me -g --define=ccs --define=cc3200 --display_error_number --diag_warning=225 --diag_wrap=off -z -m"spi_demo.map" --heap_size=0x800 --stack_size=0x800 -i"C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5/lib" -i"C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="spi_demo_linkInfo.xml" --rom_model -o "spi_demo.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/bin/armcl" -mv7M4 --code_state=16 --float_support=vfplib --abi=eabi -me -g --define=ccs --define=cc3200 --display_error_number --diag_warning=225 --diag_wrap=off -z -m"spi_demo.map" --heap_size=0x800 --stack_size=0x800 -i"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="spi_demo_linkInfo.xml" --rom_model -o "spi_demo.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
 
 spi_demo.bin: $(EXE_OUTPUTS)
 	@echo 'Invoking: ARM Hex Utility'
-	"C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5/bin/armhex"  -o "spi_demo.bin" $(EXE_OUTPUTS__QUOTED)
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/bin/armhex"  -o "spi_demo.bin" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $@'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
@@ -158,13 +157,13 @@ spi_demo.bin: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
-	-$(RM) "L6472.pp" "LaserBoard.pp" "gcode.pp" "main.pp" "pinmux.pp" "startup_ccs.pp" "uart_if.pp" 
-	-$(RM) "L6472.obj" "LaserBoard.obj" "gcode.obj" "main.obj" "pinmux.obj" "startup_ccs.obj" "uart_if.obj" 
+	-$(RM) "L6472.pp" "LaserBoard.pp" "gcode.pp" "pinmux.pp" "startup_ccs.pp" "uart_if.pp" 
+	-$(RM) "L6472.obj" "LaserBoard.obj" "gcode.obj" "pinmux.obj" "startup_ccs.obj" "uart_if.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
 post-build:
-	-"C:/TI/ccsv6/utils/tiobj2bin/tiobj2bin" "spi_demo.out" "spi_demo.bin" "C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5/bin/armofd" "C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5/bin/armhex" "C:/TI/ccsv6/utils/tiobj2bin/mkhex4bin"
+	-"C:/ti/ccsv6/utils/tiobj2bin/tiobj2bin" "spi_demo.out" "spi_demo.bin" "C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/bin/armofd" "C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/bin/armhex" "C:/ti/ccsv6/utils/tiobj2bin/mkhex4bin"
 	-@echo ' '
 
 .PHONY: all clean dependents
