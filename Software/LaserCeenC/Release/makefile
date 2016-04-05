@@ -4,7 +4,7 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7
+CG_TOOL_ROOT := C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -148,14 +148,14 @@ all: LaserCeenC.out
 LaserCeenC.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: ARM Linker'
-	"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/bin/armcl" -mv7M4 --code_state=16 --float_support=vfplib --abi=eabi -me -g --define=ccs --define=cc3200 --define=USE_FREERTOS --define=SL_PLATFORM_MULTI_THREADED --diag_wrap=off --display_error_number --diag_warning=225 -z -m"LaserCeenC.map" --heap_size=0x8000 --stack_size=0x800 -i"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/lib" -i"C:/Users/Zachary/Documents/GitHub/LaserCeeNC/spi_demo/Release" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/include" -i"C:/ti/CC3200SDK_1.1.0/cc3200-sdk/driverlib/ccs/Release" -i"C:/ti/CC3200SDK_1.1.0/cc3200-sdk/simplelink/ccs/OS" -i"C:/ti/CC3200SDK_1.1.0/cc3200-sdk/oslib/ccs/free_rtos" --reread_libs --display_error_number --diag_wrap=off --warn_sections --xml_link_info="LaserCeenC_linkInfo.xml" --rom_model -o "LaserCeenC.out" $(ORDERED_OBJS)
+	"C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5/bin/armcl" -mv7M4 --code_state=16 --float_support=vfplib --abi=eabi -me -g --define=ccs --define=cc3200 --define=USE_FREERTOS --define=SL_PLATFORM_MULTI_THREADED --diag_wrap=off --diag_warning=225 --display_error_number -z -m"LaserCeenC.map" --heap_size=0x8000 --stack_size=0x800 -i"C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5/lib" -i"C:/Users/Isaac/Documents/GitHub/LaserCeeNC/spi_demo/Release" -i"C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5/include" -i"C:/ti/CC3200SDK_1.1.0/cc3200-sdk/driverlib/ccs/Release" -i"C:/ti/CC3200SDK_1.1.0/cc3200-sdk/simplelink/ccs/OS" -i"C:/ti/CC3200SDK_1.1.0/cc3200-sdk/oslib/ccs/free_rtos" --reread_libs --display_error_number --diag_wrap=off --warn_sections --xml_link_info="LaserCeenC_linkInfo.xml" --rom_model -o "LaserCeenC.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
 
 LaserCeenC.bin: $(EXE_OUTPUTS)
 	@echo 'Invoking: ARM Hex Utility'
-	"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/bin/armhex"  -o "LaserCeenC.bin" $(EXE_OUTPUTS__QUOTED)
+	"C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5/bin/armhex"  -o "LaserCeenC.bin" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $@'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
@@ -170,7 +170,7 @@ clean:
 
 post-build:
 	-@echo 'Converting to bin'
-	-"C:/ti/ccsv6/utils/tiobj2bin/tiobj2bin" "LaserCeenC.out" "LaserCeenC.bin" "C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/bin/armofd" "C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.7/bin/armhex" "C:/ti/ccsv6/utils/tiobj2bin/mkhex4bin"
+	-"C:/TI/ccsv6/utils/tiobj2bin/tiobj2bin" "LaserCeenC.out" "LaserCeenC.bin" "C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5/bin/armofd" "C:/TI/ccsv6/tools/compiler/ti-cgt-arm_5.2.5/bin/armhex" "C:/TI/ccsv6/utils/tiobj2bin/mkhex4bin"
 	-@echo ' '
 
 .PHONY: all clean dependents
